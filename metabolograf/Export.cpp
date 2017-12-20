@@ -40,9 +40,6 @@ void Export::ExportDataString()
 	sprintf(bbuf, "TABLE {width: %dpx;    border-collapse: collapse; }A:link {text-decoration: none; color: black; }A:visited { text-decoration: none; color: black;}A:active { text-decoration: none; color: black;}A:hover {text-decoration: none; color: red; border-bottom: 1px dashed;}\n</style>\n</head> \n<center>\n", page_width);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
-	
-
-
 	sprintf(bbuf, "<table border=1><tr><td>ФИО<td>Дата исследования<td>Время исследования<td>Пол<td>Возраст<td>Рост<td>Вес<td>Потребление кислорода<td>Выделение углекислого газа<td>Частота дыхания<td>Дыхательный объем<td>Минутный объем дыхания<td>Дыхательный коэффициент<td>Дыхательный эквивален по O2<td>Дыхательный эквивален по CO2<td>ДМП<td>Метаболизм безбелковый<td>Метаболизм белковый<td>Б<td>Ж<td>У<td>Harris-Benedict<td>Muffin-Jeor<td>Katch-MacArdle");
 	fwrite(bbuf, strlen(bbuf), 1, file);
 	sprintf(bbuf, "<tr>");

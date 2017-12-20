@@ -5,6 +5,7 @@
 #include <string>
 #include "ugc.h"
 #include "Database.h"
+#include "DPIX.h"
 #include <sstream>
 #include <iomanip>
 class CurrentValues :
@@ -16,7 +17,7 @@ public:
 	void Init(Database* _database);
 	void SetSelected(int new_selected);
 	int GetSelected() { return selected; }
-	double getDPIX();
+	
 private:
 	int selected;
 	Database* database;

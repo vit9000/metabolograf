@@ -69,22 +69,12 @@ void CurrentValues::SetSelected(int new_selected)
 	RedrawWindow();
 }
 //------------------------------------------------------
-double CurrentValues::getDPIX()
-{
-	HDC hdcScreen = ::GetDC(NULL);
-	double iDPI = 96.; // assume failure
-	if (hdcScreen) {
-		iDPI = ::GetDeviceCaps(hdcScreen, LOGPIXELSX);
-		::ReleaseDC(NULL, hdcScreen);
-	}
-	return iDPI/96.;
-}
-//------------------------------------------------------
+
 void CurrentValues::OnPaint()
 {
 	CWnd::OnPaint();
 
-	double dpiX = getDPIX();
+	double dpiX = DPIX();
 
 	CRect rect;
 	GetClientRect(&rect);
