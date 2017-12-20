@@ -1,0 +1,328 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Исходники">
+      <UniqueIdentifier>{deaa2a56-c466-4666-af32-39fd09fb7321}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\VitLib">
+      <UniqueIdentifier>{1f001b9d-8975-4925-9e43-21ad91c6b16f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\metab">
+      <UniqueIdentifier>{12922732-9464-47d7-aa18-b37efe0f6dff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна">
+      <UniqueIdentifier>{793b8132-286f-4e01-8ca1-601a7fe2fbec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\MainFrame">
+      <UniqueIdentifier>{6c76c1a4-80cf-4d73-9c1f-ce6801e9f39b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\ChildView - DOCUMENT">
+      <UniqueIdentifier>{d1596fca-4114-4dae-96d0-21e26f79d4de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\sys">
+      <UniqueIdentifier>{259e5705-9d71-456a-8d43-7ff31082b6b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\MainListConfigDialog">
+      <UniqueIdentifier>{bd34ac2b-2cb1-4a01-814d-fa34acff0143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\MyControls">
+      <UniqueIdentifier>{d6f355c1-0a69-402c-8e6e-7e44be53fd22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\PlaygroundView">
+      <UniqueIdentifier>{406b54d7-7b04-4218-9fb5-13bb55bdf14e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\MainPlot">
+      <UniqueIdentifier>{c2ce8fac-be29-422e-bb5c-e4f11a524251}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\PlotCustomization">
+      <UniqueIdentifier>{4b9821d7-4398-4565-9fdb-05ba4c2967f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\PatientDialog">
+      <UniqueIdentifier>{cc1e9443-394d-4928-8d1b-5a2a910470cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\CurrentValues">
+      <UniqueIdentifier>{7bc94762-b774-422b-b6c7-2709f5fe8718}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\AxisDialog">
+      <UniqueIdentifier>{38fcde5c-be15-40b5-a888-06d1f393652b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\BigPlotDialog">
+      <UniqueIdentifier>{119eb7f1-3a36-4e15-a9e2-e72084cad2ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\TimerWindow">
+      <UniqueIdentifier>{4c184399-9bb7-4131-88b5-14a1f12059b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\SplashScreen">
+      <UniqueIdentifier>{46a1556b-382a-4292-9397-fd0e2c06a9fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\NutritionDialog">
+      <UniqueIdentifier>{babbe735-afaa-42cc-a22f-67643d2efad4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\VitLib\Plot">
+      <UniqueIdentifier>{72c3d35c-884f-4df2-ab73-c449ff63e1f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Окна\PowerStepDialog">
+      <UniqueIdentifier>{5f31992b-fd70-4029-b7b4-f49356ffb959}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Metab.h">
+      <Filter>Исходники\metab</Filter>
+    </ClInclude>
+    <ClInclude Include="metabdata.h">
+      <Filter>Исходники\metab</Filter>
+    </ClInclude>
+    <ClInclude Include="ydatabase.h">
+      <Filter>Исходники\metab</Filter>
+    </ClInclude>
+    <ClInclude Include="YuraDatabase.h">
+      <Filter>Исходники\metab</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>Исходники\Окна\MainFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="ChildView.h">
+      <Filter>Исходники\Окна\ChildView - DOCUMENT</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Исходники\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Исходники\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Исходники\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="MainListConfigDialog.h">
+      <Filter>Исходники\Окна\MainListConfigDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="MyListCtrl.h">
+      <Filter>Исходники\MyControls</Filter>
+    </ClInclude>
+    <ClInclude Include="metabolograf.h">
+      <Filter>Исходники\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="Analizator.h">
+      <Filter>Исходники\MyControls</Filter>
+    </ClInclude>
+    <ClInclude Include="Canvas.h">
+      <Filter>Исходники\MyControls</Filter>
+    </ClInclude>
+    <ClInclude Include="Highlighter.h">
+      <Filter>Исходники\MyControls</Filter>
+    </ClInclude>
+    <ClInclude Include="Export.h">
+      <Filter>Исходники\metab</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaygroundView.h">
+      <Filter>Исходники\Окна\PlaygroundView</Filter>
+    </ClInclude>
+    <ClInclude Include="MainPlot.h">
+      <Filter>Исходники\Окна\MainPlot</Filter>
+    </ClInclude>
+    <ClInclude Include="ugc.h">
+      <Filter>Исходники\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="PlotCustomization.h">
+      <Filter>Исходники\Окна\PlotCustomization</Filter>
+    </ClInclude>
+    <ClInclude Include="PatientDialog.h">
+      <Filter>Исходники\Окна\PatientDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="CurrentValues.h">
+      <Filter>Исходники\Окна\CurrentValues</Filter>
+    </ClInclude>
+    <ClInclude Include="AxisDialog.h">
+      <Filter>Исходники\Окна\AxisDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="BigPlotDialog.h">
+      <Filter>Исходники\Окна\BigPlotDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="BigPlot.h">
+      <Filter>Исходники\Окна\BigPlotDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerWindow.h">
+      <Filter>Исходники\Окна\TimerWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="DPIX.h">
+      <Filter>Исходники\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm.h">
+      <Filter>Исходники\VitLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Database.h">
+      <Filter>Исходники\VitLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Datetime.h">
+      <Filter>Исходники\VitLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Dictionary.h">
+      <Filter>Исходники\VitLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MTime.h">
+      <Filter>Исходники\VitLib</Filter>
+    </ClInclude>
+    <ClInclude Include="PlotParameter.h">
+      <Filter>Исходники\VitLib</Filter>
+    </ClInclude>
+    <ClInclude Include="string_extentions.h">
+      <Filter>Исходники\VitLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Structures.h">
+      <Filter>Исходники\VitLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Variable.h">
+      <Filter>Исходники\VitLib</Filter>
+    </ClInclude>
+    <ClInclude Include="SplashScreen.h">
+      <Filter>Исходники\Окна\SplashScreen</Filter>
+    </ClInclude>
+    <ClInclude Include="NutritionDialog.h">
+      <Filter>Исходники\Окна\NutritionDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Plot.h">
+      <Filter>Исходники\VitLib\Plot</Filter>
+    </ClInclude>
+    <ClInclude Include="PowerStepDialog.h">
+      <Filter>Исходники\Окна\PowerStepDialog</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>Исходники\Окна\MainFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildView.cpp">
+      <Filter>Исходники\Окна\ChildView - DOCUMENT</Filter>
+    </ClCompile>
+    <ClCompile Include="MainListConfigDialog.cpp">
+      <Filter>Исходники\Окна\MainListConfigDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="metabolograf.cpp">
+      <Filter>Исходники\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Исходники\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="Canvas.cpp">
+      <Filter>Исходники\MyControls</Filter>
+    </ClCompile>
+    <ClCompile Include="Export.cpp">
+      <Filter>Исходники\metab</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaygroundView.cpp">
+      <Filter>Исходники\Окна\PlaygroundView</Filter>
+    </ClCompile>
+    <ClCompile Include="MainPlot.cpp">
+      <Filter>Исходники\Окна\MainPlot</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotCustomization.cpp">
+      <Filter>Исходники\Окна\PlotCustomization</Filter>
+    </ClCompile>
+    <ClCompile Include="PatientDialog.cpp">
+      <Filter>Исходники\Окна\PatientDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="CurrentValues.cpp">
+      <Filter>Исходники\Окна\CurrentValues</Filter>
+    </ClCompile>
+    <ClCompile Include="AxisDialog.cpp">
+      <Filter>Исходники\Окна\AxisDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="BigPlotDialog.cpp">
+      <Filter>Исходники\Окна\BigPlotDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="BigPlot.cpp">
+      <Filter>Исходники\Окна\BigPlotDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerWindow.cpp">
+      <Filter>Исходники\Окна\TimerWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="SplashScreen.cpp">
+      <Filter>Исходники\Окна\SplashScreen</Filter>
+    </ClCompile>
+    <ClCompile Include="NutritionDialog.cpp">
+      <Filter>Исходники\Окна\NutritionDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Plot.cpp">
+      <Filter>Исходники\VitLib\Plot</Filter>
+    </ClCompile>
+    <ClCompile Include="PowerStepDialog.cpp">
+      <Filter>Исходники\Окна\PowerStepDialog</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="metabolograf.rc">
+      <Filter>Файлы ресурсов</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\buttons.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\filelarge.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\filesmall.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\main.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\writelarge.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\writesmall.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\metabolograf.ico">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Toolbar256.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\bitmap1.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\large.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\my.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\myicons.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\my_icons.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\icons.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\main.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\logo.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\icons_small.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\ribbon.mfcribbon-ms">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="res\metabolograf.rc2">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+  </ItemGroup>
+</Project>
