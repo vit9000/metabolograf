@@ -25,9 +25,6 @@ public:
 	map<string, Variable> variables;
 	vector<string> variable_names;
 
-	//bool UseMeanVolume;
-	//bool UseInspiratoryVolume;
-
 	double Benedict;
 	double Muffin_Jeor;
 	double Katch_MacArdle;
@@ -44,7 +41,6 @@ public:
 
 	void Default()
 	{
-		//memcpy(&hdata, 0, sizeof(hdata));
 		ZeroMemory((void*)&hdata, sizeof(hdata));
 		sprintf(hdata.PatientName, "");
 		hdata.UseMeanVolume = true;
@@ -192,7 +188,7 @@ public:
         if(!out.is_open())
 		{
 
-			//Application->MessageBox(fname, L"Ошибка сохранения файла", MB_OK);
+			MessageBox(0,fname, "Ошибка сохранения файла", MB_OK);
 
 			return false;
         }

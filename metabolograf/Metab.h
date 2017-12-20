@@ -194,7 +194,10 @@ public:
 			FetO2 = g_pdata->CiklSpiro[g_pdata->AmntCikl - 1].EtO2pr;
 			FiCO2 = g_pdata->CiklSpiro[g_pdata->AmntCikl - 1].FiCO2pr / 10;
 			FetCO2 = g_pdata->CiklSpiro[g_pdata->AmntCikl - 1].EtCO2;
-			if ((FiO2<15 || FiO2>100) || (FetO2<5 || FetO2>100) || (FiO2 < FetO2))
+
+
+			double tempco2 = FetCO2 / 760. * 100.;
+			if ((FiO2<15 || FiO2>100) || (FetO2<5 || FetO2>100) || (FiO2 < FetO2) || (FetCO2 / 760. * 100. > 10))
 			{
 				NewDataRecieved = false;
 				return;
