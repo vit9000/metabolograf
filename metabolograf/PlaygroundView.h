@@ -27,18 +27,7 @@ public:
 	~PlaygroundView();
 
 	void Init(Database* _database) { database = _database; }
-	double getDPIX()
-	{
-		HDC hdcScreen = ::GetDC(NULL);
-		double iDPI = 1; // assume failure
-		if (hdcScreen)
-		{
-			iDPI = (double)::GetDeviceCaps(hdcScreen, LOGPIXELSX);
-			::ReleaseDC(NULL, hdcScreen);
-			iDPI /= 96;
-		}
-		return iDPI;
-	}
+	
 
 	void UpdateVariablesList();
 	string BuildCode(string& code, Analizator& analizator);

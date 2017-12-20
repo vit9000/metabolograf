@@ -26,18 +26,6 @@ void MainListConfigDialog::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 }
 
-double MainListConfigDialog::getDPIX()
-{
-	HDC hdcScreen = ::GetDC(NULL);
-	double iDPI = 1; // assume failure
-	if (hdcScreen)
-	{
-		iDPI = (double)::GetDeviceCaps(hdcScreen, LOGPIXELSX);
-		::ReleaseDC(NULL, hdcScreen);
-		iDPI /= 96;
-	}
-	return iDPI;
-}
 
 BOOL MainListConfigDialog::OnInitDialog()
 {
@@ -47,7 +35,7 @@ BOOL MainListConfigDialog::OnInitDialog()
 	//checklist.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES| WS_BORDER);
 	CFont* pFont = new CFont;
 	VERIFY(pFont->CreateFont(
-		14 * getDPIX(),                        // nHeight
+		14 * DPIX(),                        // nHeight
 		0,                         // nWidth
 		0,                         // nEscapement
 		0,                         // nOrientation

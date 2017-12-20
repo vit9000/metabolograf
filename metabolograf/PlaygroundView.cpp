@@ -62,7 +62,7 @@ int PlaygroundView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CFont* pFont = new CFont;
 	pFont->CreateFont(
-		14 * getDPIX(),                        // nHeight
+		14 * DPIX(),                        // nHeight
 		0,                         // nWidth
 		0,                         // nEscapement
 		0,                         // nOrientation
@@ -107,7 +107,7 @@ void PlaygroundView::OnSize(UINT nType, int cx, int cy)
 	ScreenToClient(&rect);
 	rect.bottom -= rect.top;
 	rect.right -= rect.left;
-	double dpiX = getDPIX();
+	double dpiX = DPIX();
 
 	int tempX = 200 * dpiX;
 	::SetWindowPos(GetDlgItem(IDC_VARIABLELIST)->m_hWnd, HWND_TOP,

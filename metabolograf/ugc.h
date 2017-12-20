@@ -337,7 +337,7 @@ public:
 	//-------------------------------------------------------
 	int GetTextHeight(int size)
 	{
-		Gdiplus::Font font(FontName.c_str(), size / getDPIX(), Gdiplus::FontStyleRegular);
+		Gdiplus::Font font(FontName.c_str(), size / (double)DPIX(), Gdiplus::FontStyleRegular);
 		//Font font(L"Helvetica", TextSize, FontStyleRegular);
 
 		int length = 1;
@@ -612,13 +612,8 @@ public:
 
 	double getDPIX()
 	{
-		HDC hdcScreen = ::GetDC(NULL);
-		double iDPI = 96; // assume failure
-		if (hdcScreen) {
-			iDPI = ::GetDeviceCaps(hdcScreen, LOGPIXELSX);
-			::ReleaseDC(NULL, hdcScreen);
-		}
-		return iDPI/96;
+		
+		return DPIX();
 	}
 
 	

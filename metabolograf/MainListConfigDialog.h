@@ -21,7 +21,7 @@ public:
 		checked = _checked;
 		names = _names;
 	}
-	double getDPIX();
+	
 // Данные диалогового окна
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_MAINLIST_CONFIG_DIALOG };

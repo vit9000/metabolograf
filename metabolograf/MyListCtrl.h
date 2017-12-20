@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iomanip>
 #include <set>
+#include "DPIX.h"
 using namespace std;
 
 
@@ -25,7 +26,7 @@ protected:
 public:
 	MyListCtrl()
 	{
-		dpiX = getDPIX();
+		dpiX = DPIX();
 		busy = false;
 	}
 	~MyListCtrl()
@@ -268,19 +269,6 @@ public:
 		for (int i = 0; i < size; i++)
 			AddToList(i);
 
-	}
-	//-------------------------------------------------------------------------------------------
-	double getDPIX()
-	{
-		HDC hdcScreen = ::GetDC(NULL);
-		double iDPI = -1; // assume failure
-		if (hdcScreen) 
-		{
-			iDPI = (double)::GetDeviceCaps(hdcScreen, LOGPIXELSX);
-			::ReleaseDC(NULL, hdcScreen);
-			return iDPI / 96;
-		}
-		return 1.;
 	}
 	//-------------------------------------------------------------------------------------------
 	void OnDrawMyList(NMHDR* pNMHDR, LRESULT* pResult)
