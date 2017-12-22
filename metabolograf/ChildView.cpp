@@ -1277,9 +1277,14 @@ void CChildView::OnVolumeFilterButton()
 	{
 		double& Vinsp = database.variables.at("Vвдоха")[i];
 		double& Vexp = database.variables.at("Vвыдоха")[i];
+		if (Vinsp == 0 || Vexp == 0)
+		{
+			database.checked[i] = false;
+			continue;
+		}
 		double result=0;
-		if (Vinsp != 0)
-			result = (Vinsp - Vexp) / Vinsp * 100.;
+		
+		result = (Vinsp - Vexp) / Vinsp * 100.;
 		if (result < 0) result = -result;
 		if (result > 5 && database.checked[i]) database.checked[i] = false;
 	}
