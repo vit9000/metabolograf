@@ -234,6 +234,7 @@
     <ClCompile Include="ChildView.cpp" />
     <ClCompile Include="CurrentValues.cpp" />
     <ClCompile Include="Database.cpp" />
+    <ClCompile Include="Datetime.cpp" />
     <ClCompile Include="Export.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MainListConfigDialog.cpp" />

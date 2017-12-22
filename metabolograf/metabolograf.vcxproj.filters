@@ -71,6 +71,9 @@
     <Filter Include="Исходники\VitLib\Database">
       <UniqueIdentifier>{5bc86e35-8757-4ae9-8655-c302e5221ee7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходники\VitLib\Datetime">
+      <UniqueIdentifier>{35af136e-0d55-4af5-a582-f14caaf58374}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -160,9 +163,6 @@
     <ClInclude Include="Algorithm.h">
       <Filter>Исходники\VitLib</Filter>
     </ClInclude>
-    <ClInclude Include="Datetime.h">
-      <Filter>Исходники\VitLib</Filter>
-    </ClInclude>
     <ClInclude Include="Dictionary.h">
       <Filter>Исходники\VitLib</Filter>
     </ClInclude>
@@ -198,6 +198,9 @@
     </ClInclude>
     <ClInclude Include="Database.h">
       <Filter>Исходники\VitLib\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="Datetime.h">
+      <Filter>Исходники\VitLib\Datetime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -263,6 +266,9 @@
     </ClCompile>
     <ClCompile Include="Database.cpp">
       <Filter>Исходники\VitLib\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="Datetime.cpp">
+      <Filter>Исходники\VitLib\Datetime</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

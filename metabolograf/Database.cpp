@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Database.h"
 
 Database::Database()
@@ -57,7 +58,7 @@ void Database::Default()
 	AddPatientParametersToVariables();
 }
 //---------------------------------------------------------------------
-Variable_<MTime> Database::GetTimeFromZero(int zerotime = 0)
+Variable_<MTime> Database::GetTimeFromZero(int zerotime)
 {
 	Variable_<MTime> temp;
 	size_t size = datetime.size();
@@ -209,7 +210,7 @@ bool Database::SaveFile(const char *fname)
 	return true;
 }
 //---------------------------------------------------------------------
-void Database::SetVariable(string name, Variable& var, bool constant = false)
+void Database::SetVariable(string name, Variable& var, bool constant)
 {
 	if (variables.count(name) == 0)
 		variable_names.push_back(name);
@@ -411,6 +412,7 @@ void Database::CalculateParameters()
 	if (hdata.HR && variables["SD"].size() == 0)
 		FillSD();
 }
+//--------------------------------------------------------------------------
 void Database::FillSD()
 {
 	if (getCount() <= 0) return;
@@ -440,8 +442,8 @@ void Database::FillSD()
 
 	}
 }
-
-void Database::CalculateSD(int i, bool checktime = true)
+//--------------------------------------------------------------------------
+void Database::CalculateSD(int i, bool checktime)
 {
 	if (i < 0) return;
 	variables["RR"][i] = 60000. / variables["×ÑÑ"][i];
