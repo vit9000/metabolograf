@@ -74,6 +74,9 @@
     <Filter Include="Исходники\VitLib\Datetime">
       <UniqueIdentifier>{35af136e-0d55-4af5-a582-f14caaf58374}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходники\VitLib\MTime">
+      <UniqueIdentifier>{598adb96-e11a-4b10-907b-bf951e816093}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -166,9 +169,6 @@
     <ClInclude Include="Dictionary.h">
       <Filter>Исходники\VitLib</Filter>
     </ClInclude>
-    <ClInclude Include="MTime.h">
-      <Filter>Исходники\VitLib</Filter>
-    </ClInclude>
     <ClInclude Include="PlotParameter.h">
       <Filter>Исходники\VitLib</Filter>
     </ClInclude>
@@ -201,6 +201,9 @@
     </ClInclude>
     <ClInclude Include="Datetime.h">
       <Filter>Исходники\VitLib\Datetime</Filter>
+    </ClInclude>
+    <ClInclude Include="MTime.h">
+      <Filter>Исходники\VitLib\MTime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +272,9 @@
     </ClCompile>
     <ClCompile Include="Datetime.cpp">
       <Filter>Исходники\VitLib\Datetime</Filter>
+    </ClCompile>
+    <ClCompile Include="MTime.cpp">
+      <Filter>Исходники\VitLib\MTime</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

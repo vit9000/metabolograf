@@ -134,7 +134,7 @@ int CCanvas::getMinWidth(CRect& rect, int count)
 {
 	int w = rect.Width() / count;
 	int h = rect.Height() / count;
-	if (w > h) return h;
+	if (w >= h) return h;
 	else if (h > w) return w;
 	
 }
