@@ -34,7 +34,7 @@ public:
 	Database()
 	{
 		Ini ini("metabolograf_config.ini");
-		ADS = ini.Read("Statics", "AdditionslDeadSpace", 80.0);
+		ADS = ini.Read("Statics", "AdditionslDeadSpace", 0.0);
 		Default();
 		
 	}
