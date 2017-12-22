@@ -8,6 +8,7 @@
 #include "string_extentions.h"
 #include "PlotCustomization.h"
 #include "BigPlotDialog.h"
+#include "Ini.h"
 
 class MainPlot :
 	public CWnd

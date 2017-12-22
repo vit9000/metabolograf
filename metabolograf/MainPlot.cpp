@@ -290,92 +290,51 @@ void MainPlot::UpdatePlots(bool reload)
 	RedrawWindow();
 }
 //-------------------------------------------------------------------------------------------
-void MainPlot::WritePlotToConfig(const Plot& plot)
+void MainPlot::WritePlotToConfig(const Plot& plot)// PLOT_LIST on TABLE screen
 {
-	CString fname;
-	char buffer[MAX_PATH];
-	GetCurrentDirectory(sizeof(buffer), buffer);
-	fname.Format("%s\\metabolograf_config.ini", buffer);
-
-	WritePrivateProfileString("Plots", "plot_list", plot.plot_code.c_str(), fname);
+	
+	Ini ini("metabolograf_config.ini");
+	ini.Write("Plots", "plot_list", plot.plot_code);
 }
 
-void MainPlot::LoadPlotFromConfig(Plot& plot)
+void MainPlot::LoadPlotFromConfig(Plot& plot) //PLOT_LIST on TABLE screen
 {
-	CString fname;
-	char buffer[MAX_PATH];
-	GetCurrentDirectory(sizeof(buffer), buffer);
-	fname.Format("%s\\metabolograf_config.ini", buffer);
+	Ini ini("metabolograf_config.ini");
 
 	int w = Width / 3;
 	int h = Height / 2;
-	char *out = new char[256];
-	for (int i = 0; i<6; i++)
-	{
-		string param = string("plot_") + to_string(i);
-
-
-		DWORD dd = GetPrivateProfileString(
-			"Plots", "plot_list",
-			"plot(осреднение=\"1 сек\",y=\"ƒыхательный_коэффициент\")",
-			out,
-			256,
-			fname);
-
-		try {
-			plot.Run(database, out);
-		}
-		catch (...) {}
-
+	string out = ini.Read("Plots", "plot_list", "plot(осреднение=\"1 сек\",y=\"ƒыхательный_коэффициент\")");
+	try {
+		plot.Run(database, out);
 	}
-	delete[] out;
-
+	catch (...) {}
 
 }
 
 void MainPlot::WriteConfig()
 {
-	CString fname;
-	char buffer[MAX_PATH];
-	GetCurrentDirectory(sizeof(buffer), buffer);
-	fname.Format("%s\\metabolograf_config.ini", buffer);
+	Ini ini("metabolograf_config.ini");
 
 	for (int i = 0; i<plots.size(); i++)
 	{
 		string param = string("plot_") + to_string(i);
-		WritePrivateProfileString("Plots", param.c_str(), plots[i]->plot_code.c_str(), fname);
+		ini.Write("Plots", param.c_str(), plots[i]->plot_code);
 	}
 }
 //-------------------------------------------------------------------------------------------
 void MainPlot::LoadConfig()
 {
-	CString fname;
-	char buffer[MAX_PATH];
-	GetCurrentDirectory(sizeof(buffer), buffer);
-	fname.Format("%s\\metabolograf_config.ini", buffer);
-	
+	Ini ini("metabolograf_config.ini");
 	
 	int w = Width / 3;
 	int h = Height / 2;
-	char *out = new char[256];
 	for (int i = 0; i<6; i++)
 	{
 		string param = string("plot_") + to_string(i);
-		
-		
-		DWORD dd = GetPrivateProfileString(
-			"Plots",
-			param.c_str(),
-			defaultVal[i].c_str(),
-			out,
-			256,
-			fname);
-
+		string out = ini.Read("Plots", param.c_str(), defaultVal[i]);
 		AddPlot(out, w, h);
 
 	}
-	delete[] out;
-
 	
 }
 //-------------------------------------------------------------------------------------------
