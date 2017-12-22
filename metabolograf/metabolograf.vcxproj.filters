@@ -68,6 +68,9 @@
     <Filter Include="Исходники\Окна\PowerStepDialog">
       <UniqueIdentifier>{5f31992b-fd70-4029-b7b4-f49356ffb959}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходники\VitLib\Database">
+      <UniqueIdentifier>{5bc86e35-8757-4ae9-8655-c302e5221ee7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -157,9 +160,6 @@
     <ClInclude Include="Algorithm.h">
       <Filter>Исходники\VitLib</Filter>
     </ClInclude>
-    <ClInclude Include="Database.h">
-      <Filter>Исходники\VitLib</Filter>
-    </ClInclude>
     <ClInclude Include="Datetime.h">
       <Filter>Исходники\VitLib</Filter>
     </ClInclude>
@@ -195,6 +195,9 @@
     </ClInclude>
     <ClInclude Include="Ini.h">
       <Filter>Исходники\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="Database.h">
+      <Filter>Исходники\VitLib\Database</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -257,6 +260,9 @@
     </ClCompile>
     <ClCompile Include="PowerStepDialog.cpp">
       <Filter>Исходники\Окна\PowerStepDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Database.cpp">
+      <Filter>Исходники\VitLib\Database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
