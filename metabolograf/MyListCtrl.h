@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <set>
 #include "DPIX.h"
+#include "Ini.h"
 using namespace std;
 
 
@@ -181,32 +182,21 @@ public:
 	//-------------------------------------------------------------------------------------------
 	void WriteConfig()
 	{
-		CString fname;
-		char buffer[MAX_PATH];
-		GetCurrentDirectory(sizeof(buffer), buffer);
-		fname.Format("%s\\metabolograf.ini", buffer);
-
-		DeleteFile(fname);
+		Ini ini("metabolograf.ini");
+		ini.Delete();
 
 		for (auto& varname: show_parameters)
 		{
-			//if(database->variables[database->variable_names[i]].isConst())//сохраняем только константные переменные
-			WritePrivateProfileString("Variable_names", varname.c_str(), "1",  fname);
+			ini.Write("Variable_names", varname.c_str(), "1");
 		}	
 	}
 	//-------------------------------------------------------------------------------------------
 	void LoadConfig()
 	{
 		show_parameters.clear();
-		//show_parameters.resize(database->variable_names.size(), 1);
 		
-
-		CString fname;
-		char buffer[MAX_PATH];
-		GetCurrentDirectory(sizeof(buffer), buffer);
-		fname.Format("%s\\metabolograf.ini", buffer);
-
-		if (!PathFileExists(fname))
+		Ini ini("metabolograf.ini");
+		if (!ini.IsExists())
 		{
 			
 			show_parameters.push_back("Vвдоха");
@@ -234,8 +224,7 @@ public:
 			int defaultVal = 0;
 			string& varname = database->variable_names[i];
 
-			//if (i < 4) defaultVal = 0;//убираем скаляры константные
-			int temp = (bool)GetPrivateProfileInt("Variable_names", varname.c_str(), defaultVal, fname);
+			int temp = (bool)ini.Read<int>("Variable_names", varname.c_str(), defaultVal);
 			if (temp == 1)
 				show_parameters.push_back(varname);
 		}

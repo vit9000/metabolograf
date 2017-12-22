@@ -18,6 +18,16 @@ public:
 		file_name_ = (string)buffer + (string)"\\" + file_name;
 	}
 
+	void Delete()
+	{
+		DeleteFile(file_name_.c_str());
+	}
+
+	bool IsExists()
+	{
+		return PathFileExists(file_name_.c_str());
+	}
+
 	void Write(const string& section, const string& field, const string& value)
 	{
 		WritePrivateProfileString(section.c_str(), field.c_str(), value.c_str(), file_name_.c_str());
