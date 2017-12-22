@@ -28,6 +28,7 @@ public:
 	double Benedict;
 	double Muffin_Jeor;
 	double Katch_MacArdle;
+	double ADS;//дополнительное мертвое пространство
 
 	Database()
 	{

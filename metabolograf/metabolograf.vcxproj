@@ -198,6 +198,7 @@
     <ClInclude Include="DPIX.h" />
     <ClInclude Include="Export.h" />
     <ClInclude Include="Highlighter.h" />
+    <ClInclude Include="Ini.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MainListConfigDialog.h" />
     <ClInclude Include="MainPlot.h" />

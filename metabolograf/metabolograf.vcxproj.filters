@@ -193,6 +193,9 @@
     <ClInclude Include="PowerStepDialog.h">
       <Filter>Исходники\Окна\PowerStepDialog</Filter>
     </ClInclude>
+    <ClInclude Include="Ini.h">
+      <Filter>Исходники\sys</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainFrm.cpp">
