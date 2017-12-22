@@ -370,14 +370,14 @@ public:
 		if (hdata.PatientAge <= 14)
 		{
 			double childTV = ChildTV(hdata.PatientAge * 12);
-			variables["Vвдоха_без_МП"] = variables["Vвдоха"] - 0.3*childTV / 1000.;//без мертвого пространства
-			variables["Vвыдоха_без_МП"] = variables["Vвыдоха"] - 0.3*childTV / 1000.;//без мертвого пространства
+			variables["Vвдоха_без_МП"] = variables["Vвдоха"] - (0.3*childTV + ADS) / 1000.;//без мертвого пространства
+			variables["Vвыдоха_без_МП"] = variables["Vвыдоха"] - (0.3*childTV + ADS) / 1000.;//без мертвого пространства
 
 		}
 		else
 		{
-			variables["Vвдоха_без_МП"] = variables["Vвдоха"] - (2.2*(hdata.PatientHeight - 100)) / 1000.;//без мертвого пространства
-			variables["Vвыдоха_без_МП"] = variables["Vвыдоха"] - (2.2*(hdata.PatientHeight - 100)) / 1000.;//без мертвого пространства
+			variables["Vвдоха_без_МП"] = variables["Vвдоха"] - (2.2*(hdata.PatientHeight - 100) + ADS) / 1000.;//без мертвого пространства
+			variables["Vвыдоха_без_МП"] = variables["Vвыдоха"] - (2.2*(hdata.PatientHeight - 100) + ADS) / 1000.;//без мертвого пространства
 		}
 		Variable Vexp = variables["Vвыдоха_без_МП"];
 		Variable Vinsp = variables["Vвдоха_без_МП"];;
@@ -499,14 +499,14 @@ public:
 		if (hdata.PatientAge <= 14)
 		{
 			double childTV = ChildTV(hdata.PatientAge * 12);
-			variables["Vвдоха_без_МП"][i] = variables["Vвдоха"][i] - 0.3*childTV / 1000.;//без мертвого пространства
-			variables["Vвыдоха_без_МП"][i] = variables["Vвыдоха"][i] - 0.3*childTV / 1000.;//без мертвого пространства
+			variables["Vвдоха_без_МП"][i] = variables["Vвдоха"][i] - (0.3*childTV + ADS) / 1000.;//без мертвого пространства
+			variables["Vвыдоха_без_МП"][i] = variables["Vвыдоха"][i] - (0.3*childTV + ADS) / 1000.;//без мертвого пространства
 
 		}
 		else
 		{
-			variables["Vвдоха_без_МП"][i] = variables["Vвдоха"][i] - (2.2*(hdata.PatientHeight - 100)) / 1000.;//без мертвого пространства
-			variables["Vвыдоха_без_МП"][i] = variables["Vвыдоха"][i] - (2.2*(hdata.PatientHeight - 100)) / 1000.;//без мертвого пространства
+			variables["Vвдоха_без_МП"][i] = variables["Vвдоха"][i] - (2.2*(hdata.PatientHeight - 100) + ADS) / 1000.;//без мертвого пространства
+			variables["Vвыдоха_без_МП"][i] = variables["Vвыдоха"][i] - (2.2*(hdata.PatientHeight - 100) + ADS) / 1000.;//без мертвого пространства
 		}
 
 		double Vexp = variables["Vвыдоха_без_МП"][i];
