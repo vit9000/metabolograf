@@ -23,13 +23,12 @@ public:
 		WritePrivateProfileString(section.c_str(), field.c_str(), value.c_str(), file_name_.c_str());
 	}
 
-	
 	template <typename T>
 	void Write(const string& section, const string& field, const T& value)
 	{
 		stringstream ss;
 		ss << value;
-		WritePrivateProfileString(section.c_str(), field.c_str(), value.str().c_str(), file_name_.c_str());
+		WritePrivateProfileString(section.c_str(), field.c_str(), ss.str().c_str(), file_name_.c_str());
 	}
 
 	string Read(const string& section, const string& field, const string& default_value)

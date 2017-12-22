@@ -12,6 +12,7 @@
 #include "Structures.h"
 
 #include "Datetime.h"
+#include "Ini.h"
 
 
 using namespace std;
@@ -32,7 +33,15 @@ public:
 
 	Database()
 	{
+		Ini ini("metabolograf_config.ini");
+		ADS = ini.Read("Statics", "AdditionslDeadSpace", 80.0);
 		Default();
+		
+	}
+	~Database()
+	{
+		Ini ini("metabolograf_config.ini");
+		ini.Write("Statics", "AdditionslDeadSpace", ADS);
 	}
 
 	size_t getCount()
@@ -42,6 +51,7 @@ public:
 
 	void Default()
 	{
+		
 		ZeroMemory((void*)&hdata, sizeof(hdata));
 		sprintf(hdata.PatientName, "");
 		hdata.UseMeanVolume = true;
