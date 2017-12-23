@@ -198,6 +198,7 @@
     <ClInclude Include="DPIX.h" />
     <ClInclude Include="Export.h" />
     <ClInclude Include="Highlighter.h" />
+    <ClInclude Include="Histogram.h" />
     <ClInclude Include="Ini.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MainListConfigDialog.h" />
@@ -223,6 +224,7 @@
     <ClInclude Include="TimerWindow.h" />
     <ClInclude Include="ugc.h" />
     <ClInclude Include="Variable.h" />
+    <ClInclude Include="VolumeErrorDialog.h" />
     <ClInclude Include="ydatabase.h" />
     <ClInclude Include="YuraDatabase.h" />
   </ItemGroup>
@@ -236,6 +238,7 @@
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Datetime.cpp" />
     <ClCompile Include="Export.cpp" />
+    <ClCompile Include="Histogram.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MainListConfigDialog.cpp" />
     <ClCompile Include="MainPlot.cpp" />
@@ -255,6 +258,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TimerWindow.cpp" />
+    <ClCompile Include="VolumeErrorDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="metabolograf.rc" />

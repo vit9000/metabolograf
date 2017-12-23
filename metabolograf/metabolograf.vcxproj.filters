@@ -77,6 +77,9 @@
     <Filter Include="Исходники\VitLib\MTime">
       <UniqueIdentifier>{598adb96-e11a-4b10-907b-bf951e816093}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходники\Окна\VolumeErrorDialog">
+      <UniqueIdentifier>{cb91c091-cb2b-4883-af97-6f1e5484ce9c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -205,6 +208,12 @@
     <ClInclude Include="MTime.h">
       <Filter>Исходники\VitLib\MTime</Filter>
     </ClInclude>
+    <ClInclude Include="VolumeErrorDialog.h">
+      <Filter>Исходники\Окна\VolumeErrorDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Histogram.h">
+      <Filter>Исходники\Окна\VolumeErrorDialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainFrm.cpp">
@@ -275,6 +284,12 @@
     </ClCompile>
     <ClCompile Include="MTime.cpp">
       <Filter>Исходники\VitLib\MTime</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeErrorDialog.cpp">
+      <Filter>Исходники\Окна\VolumeErrorDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Histogram.cpp">
+      <Filter>Исходники\Окна\VolumeErrorDialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

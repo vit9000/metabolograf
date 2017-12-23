@@ -53,6 +53,7 @@
 #define IDD_CUSTOM_NUTRITION_DIALOG     335
 #define IDB_ICONS_SMALL_PNG             337
 #define IDD_POWER_STEP_DIALOG           340
+#define IDD_VOLUME_ERROR_DIALOG         342
 #define IDC_MAINLIST                    400
 #define IDC_CURRVALUES                  401
 #define IDC_HEADERS_CHECKLIST           500
@@ -171,7 +172,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        342
+#define _APS_NEXT_RESOURCE_VALUE        344
 #define _APS_NEXT_COMMAND_VALUE         32829
 #define _APS_NEXT_CONTROL_VALUE         1063
 #define _APS_NEXT_SYMED_VALUE           310

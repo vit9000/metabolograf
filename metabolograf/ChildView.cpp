@@ -1273,7 +1273,7 @@ void CChildView::OnBigPlotClick(int index)
 
 void CChildView::OnVolumeFilterButton()
 {
-	for (int i = 0; i < database.getCount(); ++i)
+	/*for (int i = 0; i < database.getCount(); ++i)
 	{
 		double& Vinsp = database.variables.at("Vвдоха")[i];
 		double& Vexp = database.variables.at("Vвыдоха")[i];
@@ -1292,4 +1292,18 @@ void CChildView::OnVolumeFilterButton()
 	listplot.Update();
 	curValues.RedrawWindow();
 	main_plot.UpdatePlots();
+	*/
+	VolumeErrorDialog dlg;
+	dlg.Init(&database);
+	if (dlg.DoModal() == MB_OK)
+	{
+		//снимаем галки, обновляем все
+		/*
+		main_list.Reload();
+		listplot.Update();
+		curValues.RedrawWindow();
+		main_plot.UpdatePlots();
+		*/
+	}
+
 }//таблица без галок - ошибка

@@ -30,6 +30,7 @@
 #include "NutritionDialog.h"
 #include "PowerStepDialog.h"
 #include "DPIX.h"
+#include "VolumeErrorDialog.h"
 
 // окно CChildView
 
