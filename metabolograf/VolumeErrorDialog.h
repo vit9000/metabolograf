@@ -19,7 +19,6 @@ public:
 
 protected:
 	Histogram hist;
-	Database *database_;
 	BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 

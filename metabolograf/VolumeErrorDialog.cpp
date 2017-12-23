@@ -32,8 +32,7 @@ END_MESSAGE_MAP()
 
 void VolumeErrorDialog::Init(Database* database)
 {
-	//hist.Init(database);
-	database_ = database;
+	hist.Init(database);
 }
 BOOL VolumeErrorDialog::OnInitDialog()
 {
@@ -44,6 +43,6 @@ BOOL VolumeErrorDialog::OnInitDialog()
 	DPIX dpix;
 	rect.bottom -= 30 * dpix;
 	hist.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, rect, this, IDC_BIG_PLOT);
-	hist.Init(database_);
+	hist.SetBounds();
 	return TRUE;
 }
