@@ -1087,10 +1087,8 @@ void CChildView::OnEndTestButton()
 
 void CChildView::OnUpdateRecordButton(CCmdUI* pCmdUI)
 {
-	 
 	if (Recording)
-	{
-		
+	{	
 		pCmdUI->SetText("«авершить исследование");
 		if(database.hdata.StartTest>0)//если проводитс€ опыт
 		{
@@ -1273,6 +1271,8 @@ void CChildView::OnBigPlotClick(int index)
 
 void CChildView::OnVolumeFilterButton()
 {
+	if (database.getCount() == 0) return;
+
 	/*for (int i = 0; i < database.getCount(); ++i)
 	{
 		double& Vinsp = database.variables.at("Vвдоха")[i];
@@ -1295,15 +1295,15 @@ void CChildView::OnVolumeFilterButton()
 	*/
 	VolumeErrorDialog dlg;
 	dlg.Init(&database);
-	if (dlg.DoModal() == MB_OK)
+	if (dlg.DoModal() == IDOK)
 	{
 		//снимаем галки, обновл€ем все
-		/*
+		dlg.Apply();
 		main_list.Reload();
 		listplot.Update();
 		curValues.RedrawWindow();
 		main_plot.UpdatePlots();
-		*/
+		
 	}
 
 }//таблица без галок - ошибка

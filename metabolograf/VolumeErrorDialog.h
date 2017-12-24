@@ -1,5 +1,6 @@
 #pragma once
 #include "Histogram.h"
+#include <sstream>
 
 // VolumeErrorDialog dialog
 
@@ -11,6 +12,7 @@ public:
 	void Init(Database *database);
 	VolumeErrorDialog(CWnd* pParent = NULL);   // standard constructor
 	virtual ~VolumeErrorDialog();
+	void Apply() { hist.Apply(); }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -18,9 +20,12 @@ public:
 #endif
 
 protected:
+	CComboBox combo;
 	Histogram hist;
 	BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnCbnSelchangeCombo();
 };

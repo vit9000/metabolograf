@@ -163,20 +163,37 @@ void CurrentValues::OnPaint()
 	//ugc.FillRectangle(xi + 2 * dpiX, yi + space, w/2 - 4 * dpiX, space);
 	ugc.SetDrawColor(0, 0, 0);
 
-	double result = 0;
-	if(database->getCount()>0)
-	{
-		double Vim = database->variables["Vвдоха"].mean(database->checked);
-		double Vexm = database->variables["Vвыдоха"].mean(database->checked);
-		if(Vim!=0)
-			result = (Vim - Vexm)/ Vim * 100.;
-	}
+	
 	ugc.Bold = true;
-	ugc.DrawString(DoubleToString(result), xi + w / 4, yi + space*0.6);
+	ugc.DrawString(DoubleToString(CalculateErr()), xi + w / 4, yi + space*0.6);
 	ugc.Bold = false;
 	ugc.SetAlign(ugc.LEFT);
 }
 //------------------------------------------------------
+double CurrentValues::CalculateErr()
+{
+	if (database->getCount() == 0) return 0;
+	double result = 0;
+	int count = 0;
+	for (int i = 0; i < database->getCount(); ++i)
+	{
+		if (database->checked[i])
+		{
+			double &Vim = database->variables["Vвдоха"][i];
+			double &Vex = database->variables["Vвыдоха"][i];
+			if (Vim != 0 && Vex !=0)
+			{
+				result += (Vim - Vex) / Vim * 100.;
+				++count;
+			}
+		}
+	}
+
+	result = result / count;
+	return result;
+}
+//------------------------------------------------------
+
 void CurrentValues::SetBounds()
 {
 	CRect rect;

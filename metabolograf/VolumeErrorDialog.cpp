@@ -24,10 +24,12 @@ VolumeErrorDialog::~VolumeErrorDialog()
 void VolumeErrorDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_COMBO, combo);
 }
 
 
 BEGIN_MESSAGE_MAP(VolumeErrorDialog, CDialogEx)
+	ON_CBN_SELCHANGE(IDC_COMBO, &VolumeErrorDialog::OnCbnSelchangeCombo)
 END_MESSAGE_MAP()
 
 void VolumeErrorDialog::Init(Database* database)
@@ -44,5 +46,24 @@ BOOL VolumeErrorDialog::OnInitDialog()
 	rect.bottom -= 30 * dpix;
 	hist.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, rect, this, IDC_BIG_PLOT);
 	hist.SetBounds();
+
+	
+	for (int i = 5; i <= 25; ++i)
+	{
+		std::stringstream ss;
+		ss << i;
+		combo.AddString(ss.str().c_str());
+		
+	}
+	combo.SetCurSel(15);
+	
+
 	return TRUE;
+}
+
+void VolumeErrorDialog::OnCbnSelchangeCombo()
+{
+	int res = combo.GetCurSel() + 5;
+	hist.BuildTable(res);
+	hist.RedrawWindow();
 }
