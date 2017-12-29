@@ -339,10 +339,7 @@ void PlotCustomization::UpdateLists()
 void PlotCustomization::OnAddButtonClick()
 {
 	AxisDialog dlg;
-	dlg.database = database;
-	
-	dlg.CountScale = GetAxisCount((*multiAxis))+1;
-	
+	dlg.Init(database, GetAxisCount((*multiAxis)) + 1);
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -370,12 +367,11 @@ void PlotCustomization::OnEditListButtonClick()
 	if (selected < 0) return;
 
 	AxisDialog dlg;
-	dlg.database = database;
-
-
-	dlg.CountScale = 0;
+	int CountScale = 0;
 	for (const auto& p : (*multiAxis))
-		dlg.CountScale = p.axis_number + 1;
+		CountScale = p.axis_number + 1;
+	dlg.Init(database, CountScale);
+
 
 	dlg.SetParameter((*multiAxis)[selected]);
 
@@ -392,12 +388,7 @@ void PlotCustomization::OnOneAxisEditButtonClick()
 	int selected = 0;//m_onevarlist.GetCurSel();
 	
 	AxisDialog dlg;
-	dlg.database = database;
-
-
-	dlg.CountScale = GetAxisCount(axisY)+1;
-	
-
+	dlg.Init(database, GetAxisCount(axisY) + 1);
 	dlg.SetParameter(axisY[selected]);
 
 	if (dlg.DoModal() == IDOK)

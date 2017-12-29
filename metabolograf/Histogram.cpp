@@ -32,25 +32,19 @@ void Histogram::Init(Database* _database)
 
 void Histogram::SetBounds()
 {
-
 	CRect rect;
 	GetWindowRect(&rect);
 	ScreenToClient(&rect);
 	rect.bottom -= rect.top;
 	rect.right -= rect.left;
-
 	Width = rect.Width();
 	Height = rect.Height();
-
-	
 }
 
 void Histogram::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
-
 }
-
 
 void Histogram::OnPaint()
 {
@@ -73,7 +67,7 @@ void Histogram::OnPaint()
 
 
 	ugc.SetAlign(ugc.CENTER);
-	ugc.SetTextSize(8* dpix);
+	ugc.SetTextSize(8 * dpix);
 	for (int i = 0; i < table_size; ++i)
 	{
 		int length = static_cast<int>(table[i].size());
