@@ -14,7 +14,7 @@ class CurrentValues :
 public:
 	CurrentValues();
 	~CurrentValues();
-	void Init(Database* _database);
+	void Init();
 	void SetSelected(int new_selected);
 	int GetSelected() { return selected; }
 	

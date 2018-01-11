@@ -40,9 +40,9 @@ BEGIN_MESSAGE_MAP(MainPlot, CWnd)
 	
 END_MESSAGE_MAP()
 
-void MainPlot::Init(Database* _database)
+void MainPlot::Init()
 {
-	database = _database;
+	database = Database::getInstance();
 	SetBounds();
 	
 	LoadConfig();
@@ -100,7 +100,7 @@ void MainPlot::ShowCustomizationDialog()
 	
 	if (selectedPlot < 0 && selectedPlot >= plots.size()) return;
 	PlotCustomization pltDlg;
-	int result = pltDlg.DoModal(database, plots[selectedPlot]);
+	int result = pltDlg.DoModal(plots[selectedPlot]);
 	if (result == IDOK)
 	{
 		WriteConfig();

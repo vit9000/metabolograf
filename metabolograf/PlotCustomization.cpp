@@ -21,9 +21,9 @@ PlotCustomization::~PlotCustomization()
 {
 }
 
-int PlotCustomization::DoModal(Database* _database, Plot* _plot, bool FullCustomization)
+int PlotCustomization::DoModal(Plot* _plot, bool FullCustomization)
 {
-	database = _database; 
+	database = Database::getInstance(); 
 	plot = _plot; 
 	plot_code_reserv = plot->plot_code; 
 	fullCustomization = FullCustomization;
@@ -339,7 +339,7 @@ void PlotCustomization::UpdateLists()
 void PlotCustomization::OnAddButtonClick()
 {
 	AxisDialog dlg;
-	dlg.Init(database, GetAxisCount((*multiAxis)) + 1);
+	dlg.Init(GetAxisCount((*multiAxis)) + 1);
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -370,7 +370,7 @@ void PlotCustomization::OnEditListButtonClick()
 	int CountScale = 0;
 	for (const auto& p : (*multiAxis))
 		CountScale = p.axis_number + 1;
-	dlg.Init(database, CountScale);
+	dlg.Init(CountScale);
 
 
 	dlg.SetParameter((*multiAxis)[selected]);
@@ -388,7 +388,7 @@ void PlotCustomization::OnOneAxisEditButtonClick()
 	int selected = 0;//m_onevarlist.GetCurSel();
 	
 	AxisDialog dlg;
-	dlg.Init(database, GetAxisCount(axisY) + 1);
+	dlg.Init(GetAxisCount(axisY) + 1);
 	dlg.SetParameter(axisY[selected]);
 
 	if (dlg.DoModal() == IDOK)

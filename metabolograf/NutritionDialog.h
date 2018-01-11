@@ -27,7 +27,7 @@ protected:
 	
 public:
 	CTabCtrl tab;
-	Database *database;
+	//Database *database;
 	CComboBox comboBox;
 	afx_msg void OnCbnSelchangeCombo1();
 	CEdit edit1;

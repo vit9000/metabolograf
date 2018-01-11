@@ -62,7 +62,7 @@ int PlaygroundView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CFont* pFont = new CFont;
 	pFont->CreateFont(
-		14 * DPIX(),                        // nHeight
+		14 * (double)DPIX(),                        // nHeight
 		0,                         // nWidth
 		0,                         // nEscapement
 		0,                         // nOrientation

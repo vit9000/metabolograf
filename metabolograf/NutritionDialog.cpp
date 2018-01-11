@@ -152,7 +152,7 @@ void NutritionDialog::Calculate(bool save)
 {
 	GetDlgItem(IDOK)->ShowWindow(SW_HIDE);
 	// TODO: добавьте свой код обработчика уведомлений
-	Export *dietexport = new Export(database);
+	Export *dietexport = new Export(Database::getInstance());
 	dietexport->CalculateMeanValues();
 
 	int index = comboBox.GetCurSel();
@@ -342,7 +342,7 @@ void NutritionDialog::OnBnClickedInfo()
 		break;
 	case 1:
 	{
-		double PatientAge = database->hdata.PatientAge;
+		double PatientAge = Database::getInstance()->hdata.PatientAge;
 		if (PatientAge >= 0.01 && PatientAge<0.06)
 			msg = "Норма мочевины: 10-17 ммоль/сут";
 		if (PatientAge >= 0.06 && PatientAge<1)

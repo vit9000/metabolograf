@@ -20,7 +20,7 @@ public:
 	PlotCustomization(CWnd* pParent = NULL);   // стандартный конструктор
 	virtual ~PlotCustomization();
 	int GetAxisCount(vector<Parameter>& axis);
-	int DoModal(Database* _database, Plot* _plot, bool FullCustomization = true);
+	int DoModal(Plot* _plot, bool FullCustomization = true);
 
 
 protected:

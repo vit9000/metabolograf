@@ -9,7 +9,7 @@ class VolumeErrorDialog : public CDialogEx
 	DECLARE_DYNAMIC(VolumeErrorDialog)
 
 public:
-	void Init(Database *database);
+	void Init();
 	VolumeErrorDialog(CWnd* pParent = NULL);   // standard constructor
 	virtual ~VolumeErrorDialog();
 	void Apply() { hist.Apply(); }

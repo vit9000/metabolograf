@@ -11,7 +11,7 @@ class BigPlot :
 public:
 	
 	BigPlot();
-	void Init(Plot* _plot, Database* _database, MyListCtrl* _main_list=nullptr, CurrentValues* _curValues=nullptr);
+	void Init(Plot* _plot, MyListCtrl* _main_list=nullptr, CurrentValues* _curValues=nullptr);
 	
 
 	~BigPlot();

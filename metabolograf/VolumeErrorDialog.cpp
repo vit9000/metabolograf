@@ -32,9 +32,9 @@ BEGIN_MESSAGE_MAP(VolumeErrorDialog, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO, &VolumeErrorDialog::OnCbnSelchangeCombo)
 END_MESSAGE_MAP()
 
-void VolumeErrorDialog::Init(Database* database)
+void VolumeErrorDialog::Init()
 {
-	hist.Init(database);
+	hist.Init();
 }
 BOOL VolumeErrorDialog::OnInitDialog()
 {
@@ -43,7 +43,7 @@ BOOL VolumeErrorDialog::OnInitDialog()
 	CRect rect;
 	GetClientRect(&rect);
 	DPIX dpix;
-	rect.bottom -= 30 * dpix;
+	rect.bottom -= 30 * (double)dpix;
 	hist.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, rect, this, IDC_BIG_PLOT);
 	hist.SetBounds();
 

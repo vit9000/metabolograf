@@ -12,7 +12,7 @@ class PatientDialog : public CDialogEx
 public:
 	PatientDialog(CWnd* pParent = NULL);   // стандартный конструктор
 	virtual ~PatientDialog();
-	void Init(Database* _database, bool _active);
+	void Init(bool _active);
 	BOOL OnInitDialog();
 	bool IsValid(CString str)
 	{

@@ -15,6 +15,7 @@ using namespace std;
 
 CChildView::CChildView()
 {
+	database = Database::getInstance();
 	Circle = 0;
 	timer = 0;
 	statusbar = nullptr;
@@ -159,17 +160,17 @@ void CChildView::Init(CMFCRibbonBar* _ribbonbar, CMFCRibbonStatusBar* _statusbar
 
 	if (ydata.Initialized && filename_from_commandline.IsEmpty())
 	{
-		database.hdata.PatientAge = ydata.PatientAge;
-		database.hdata.PatientSex = ydata.PatientSex;
-		database.hdata.PatientWeight = ydata.PatientWeight;
-		database.hdata.PatientHeight = ydata.PatientHeight;
-		sprintf(database.hdata.PatientName, "%s", ydata.FIO);
-		for (int i = strlen(database.hdata.PatientName) - 1; i >= 0; i--)
+		database->hdata.PatientAge = ydata.PatientAge;
+		database->hdata.PatientSex = ydata.PatientSex;
+		database->hdata.PatientWeight = ydata.PatientWeight;
+		database->hdata.PatientHeight = ydata.PatientHeight;
+		sprintf(database->hdata.PatientName, "%s", ydata.FIO);
+		for (int i = strlen(database->hdata.PatientName) - 1; i >= 0; i--)
 		{
-			if (database.hdata.PatientName[i] == ' ') database.hdata.PatientName[i] = '\0';
+			if (database->hdata.PatientName[i] == ' ') database->hdata.PatientName[i] = '\0';
 			else break;
 		}
-		sprintf(database.hdata.AdditionalInformation, "%s", ydata.Info);
+		sprintf(database->hdata.AdditionalInformation, "%s", ydata.Info);
 	}
 
 	playground.UpdateVariablesList();
@@ -215,18 +216,18 @@ int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	main_list.SetFocus();
 	main_list.ModifyStyle(LVS_LIST, LVS_REPORT, 0); //- ставим режим таблицы
 	main_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_CHECKBOXES);
-	main_list.Init(&database);
+	main_list.Init();
 
 	curValues.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, CRect(0, 0, 100, 100), this, IDC_CURRVALUES);
-	curValues.Init(&database);
+	curValues.Init();
 	curValues.ShowWindow((CurValuesVisible) ? SW_SHOW : SW_HIDE);
 
 	playground.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, CRect(0, 0, 100, 100), this, ID_PLAYGROUNDWINDOW);
-	playground.Init(&database);
+	playground.Init();
 	playground.ShowWindow(SW_HIDE);
 
 	main_plot.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, CRect(0, 0, 100, 100), this, ID_MAINPLOTWINDOW);
-	main_plot.Init(&database);
+	main_plot.Init();
 	main_plot.ribbonbar = ribbonbar;
 	main_plot.ShowWindow(SW_HIDE);
 
@@ -238,19 +239,19 @@ int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	plot.EnlargeUI();
 	//plot.SetBackgroundColor(225, 225, 225);
 	plot.DrawPlot();
-	listplot.Init(&plot, &database, &main_list, &curValues);
+	listplot.Init(&plot, &main_list, &curValues);
 	return 0;
 }
 //----------------------------------------------------------------------------------------------
 void CChildView::OnClose()
 {
 	playground.SaveWorkScript();
-	if (ydata.Initialized && database.getCount()>0)
+	if (ydata.Initialized && database->getCount()>0)
 	{
 		//if (filename_from_commandline.IsEmpty())
 		//filename_from_commandline = "rec.mbf";
 		int result = MessageBox("Сохранить изменения в базе данных?", "Подтверждение", MB_YESNO | MB_ICONQUESTION);
-		if (result == IDYES && database.getCount()>0)
+		if (result == IDYES && database->getCount()>0)
 		{				
 			SaveFile("rec.mbf");
 			if (ydata.Initialized)
@@ -263,10 +264,10 @@ void CChildView::OnClose()
 		}
 
 	}
-	else if(database.getCount()>0)
+	else if(database->getCount()>0)
 	{
 		int result = MessageBox("Сохранить изменения в файле \"" + filename + "\"?", "Подтверждение", MB_YESNO | MB_ICONQUESTION);
-		if (result == IDYES && database.getCount()>0)
+		if (result == IDYES && database->getCount()>0)
 		{
 			SaveFile(filename);
 		}
@@ -287,7 +288,7 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 	ScreenToClient(&rect);
 	rect.bottom -= rect.top;
 	rect.right -= rect.left;
-	DPIX dpiX;
+	double dpiX = (double)DPIX();
 
 	//Tab
 	::SetWindowPos(GetDlgItem(IDC_TABCTRL)->m_hWnd, HWND_TOP,
@@ -409,13 +410,13 @@ void CChildView::OnLvnItemchangedList(NMHDR *pNMHDR, LRESULT *pResult)
 	if (pNMLV->uChanged & LVIF_STATE) // item state has been changed
 	{
 		int i = pNMLV->iItem;
-		if (i >= 0 && i < database.getCount())
+		if (i >= 0 && i < database->getCount())
 		{
 			bool temp = main_list.GetCheck(i);
 		
-			if (database.checked[i] != temp)
+			if (database->getChecked(i) != temp)
 			{
-				database.checked[i] = temp;
+				database->setChecked(i,temp);
 				listplot.UpdateWithoutDraw();
 				listplot.SetTimeCursor(main_list.GetSelectedItem());
 			}
@@ -474,7 +475,7 @@ void CChildView::OpenFile(CString fname)
 	if (UnavailableMessage()) return;
 
 	filename = fname;
-	if (!database.OpenFile(fname.GetBuffer()))
+	if (!database->OpenFile(fname.GetBuffer()))
 	{
 		MessageBox("Ошибка открытия файла \""+fname + "\"", "Ошибка", MB_OK | MB_ICONERROR);
 		return;
@@ -496,7 +497,7 @@ void CChildView::OpenFile(CString fname)
 
 	}
 
-	timerWindow.Update(&database);
+	timerWindow.Update();
 }
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUpdateAllRibbonElements(CCmdUI* pCmdUI)
@@ -506,29 +507,29 @@ void CChildView::OnUpdateAllRibbonElements(CCmdUI* pCmdUI)
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUpdateUseExpiratoryVolume(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(database.hdata.UseExpiratoryVolume);
+	pCmdUI->SetCheck(database->hdata.UseExpiratoryVolume);
 
 }
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUpdateUseInspiratoryVolume(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(database.hdata.UseInspiratoryVolume);
+	pCmdUI->SetCheck(database->hdata.UseInspiratoryVolume);
 }
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUpdateUseMeanVolume(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(database.hdata.UseMeanVolume);
+	pCmdUI->SetCheck(database->hdata.UseMeanVolume);
 }
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUpdateFilterTVolume(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(database.hdata.Filter_TVolume);
+	pCmdUI->SetCheck(database->hdata.Filter_TVolume);
 
 }
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUpdateFilterBrKoef(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(database.hdata.Filter_BrKoef);
+	pCmdUI->SetCheck(database->hdata.Filter_BrKoef);
 
 }
 //----------------------------------------------------------------------------------------------
@@ -551,7 +552,7 @@ void CChildView::OnOpenFile()
 //----------------------------------------------------------------------------------------------
 void CChildView::OnSaveFile()
 {
-	if (database.getCount() == 0)
+	if (database->getCount() == 0)
 	{
 		MessageBox("Нет данных для сохранения)", "Внимание", MB_OK | MB_ICONINFORMATION);
 		return;
@@ -566,7 +567,7 @@ void CChildView::OnSaveFile()
 //----------------------------------------------------------------------------------------------
 void CChildView::OnSaveAsFile()
 {
-	if (database.getCount() == 0)
+	if (database->getCount() == 0)
 	{
 		MessageBox("Нет данных для сохранения)", "Внимание", MB_OK | MB_ICONINFORMATION);
 		return;
@@ -584,11 +585,11 @@ void CChildView::SaveFile(CString fname)
 {
 	if (UnavailableMessage()) return;
 
-	for (int i = 0; i < database.getCount(); i++)
+	for (int i = 0; i < database->getCount(); i++)
 	{
-		database.checked[i] = main_list.GetCheck(i);
+		database->setChecked(i, main_list.GetCheck(i));
 	}
-	if (database.SaveFile(fname.GetBuffer(fname.GetLength())))
+	if (database->SaveFile(fname.GetBuffer(fname.GetLength())))
 		filename = fname;
 	else
 		MessageBox("Ошибка сохранения файла", "Ошибка", MB_OK|MB_ICONERROR);	
@@ -596,7 +597,7 @@ void CChildView::SaveFile(CString fname)
 //----------------------------------------------------------------------------------------------
 void CChildView::LoadToList()
 {
-	for (int i = 0; i < database.getCount(); i++)
+	for (int i = 0; i < database->getCount(); i++)
 	{
 		main_list.AddToList(i);
 	}
@@ -642,19 +643,19 @@ bool CChildView::GetNewData()
 	tm *tmp = localtime(&t);
 	if (Circle == 0)
 	{
-		database.hdata.Year = tmp->tm_year + 1900;
-		database.hdata.Month = tmp->tm_mon + 1;
-		database.hdata.Day = tmp->tm_mday;
+		database->hdata.Year = tmp->tm_year + 1900;
+		database->hdata.Month = tmp->tm_mon + 1;
+		database->hdata.Day = tmp->tm_mday;
 	}
 
-	database.datetime.append(Datetime(tmp->tm_year + 1900, tmp->tm_mon + 1, tmp->tm_mday, tmp->tm_hour, tmp->tm_min, tmp->tm_sec));
-	database.variables["Vвдоха"].append(metab.Vol_insp);
-	database.variables["Vвыдоха"].append(metab.Vol_exsp);
-	database.variables["FiO2"].append(metab.FiO2);
-	database.variables["FetO2"].append(metab.FetO2);
-	database.variables["FiCO2"].append(metab.FiCO2 / 760. * 100.);
-	database.variables["FetCO2"].append(metab.FetCO2 / 760. * 100.);
-	database.variables["ЧД"].append(metab.RespRate);
+	database->datetime.append(Datetime(tmp->tm_year + 1900, tmp->tm_mon + 1, tmp->tm_mday, tmp->tm_hour, tmp->tm_min, tmp->tm_sec));
+	database->variables.at("Vвдоха").append(metab.Vol_insp);
+	database->variables.at("Vвыдоха").append(metab.Vol_exsp);
+	database->variables.at("FiO2").append(metab.FiO2);
+	database->variables.at("FetO2").append(metab.FetO2);
+	database->variables.at("FiCO2").append(metab.FiCO2 / 760. * 100.);
+	database->variables.at("FetCO2").append(metab.FetCO2 / 760. * 100.);
+	database->variables.at("ЧД").append(metab.RespRate);
 
 	
 	//database.variables["ЧД_old"].append(metab.RespRateOld);
@@ -663,22 +664,22 @@ bool CChildView::GetNewData()
 
 	if (metab.HR >= 0)
 	{
-		if (!database.hdata.HR)
+		if (!database->hdata.HR)
 		{
-			database.hdata.HR = true;
-			database.variable_names.push_back("ЧСС");
-			database.variable_names.push_back("RR");
-			database.variable_names.push_back("SD");
+			database->hdata.HR = true;
+			database->variable_names.push_back("ЧСС");
+			database->variable_names.push_back("RR");
+			database->variable_names.push_back("SD");
 		}
-		database.variables["ЧСС"].append(metab.HR);
+		database->variables["ЧСС"].append(metab.HR);
 
 	}
-	database.checked.append(true);	
+	database->checked.append(true);
 
 	//Filter(Circle);//Filter of the data
-	database.CalculateParameters(Circle);//пересчитываем все расчетные параметры
+	database->CalculateParameters(Circle);//пересчитываем все расчетные параметры
 	Circle++;
-	database.hdata.count = Circle;//обновляем размер массива
+	database->hdata.count = Circle;//обновляем размер массива
 	
 	playground.OnRunScript(true);//выполняем скрипт, там же обновляется лист переменных
 	main_plot.UpdatePlots();//обновляем графики
@@ -705,11 +706,11 @@ void CChildView::OnRecord()
 	else
 	{
 		PatientDialog pDlg;
-		pDlg.Init(&database, true);
+		pDlg.Init(true);
 		int result = pDlg.DoModal();
 		if (result == IDCANCEL)
 			return;
-		database.AddPatientParametersToVariables();
+		database->AddPatientParametersToVariables();
 		
 		if (!metab.Connect()) return;
 		timer = SetTimer((int)1, 1000, NULL);
@@ -746,7 +747,7 @@ void CChildView::OnTimer(UINT_PTR nIdEvent)
 	}
 	if (!GetNewData()) return;
 
-	int index = database.getCount() - 1;
+	int index = database->getCount() - 1;
 	main_list.AddToList(index);
 	main_list.SetCheck(index, true);
 	CWnd::OnTimer(nIdEvent);
@@ -800,7 +801,7 @@ void CChildView::OnScriptProtocol()
 void CChildView::OnProtocol1()
 {
 	if (!ProtolsAvailable()) return;
-	Export *fitnes_export = new Export(&database);
+	Export *fitnes_export = new Export(database);
 	fitnes_export->DietaExport();
 	delete  fitnes_export;
 	fitnes_export = NULL;
@@ -809,16 +810,16 @@ void CChildView::OnProtocol1()
 bool CChildView::ProtolsAvailable()
 {
 	bool checked = false;
-	for (int i = 0; i<database.hdata.count; i++)
+	for (int i = 0; i<database->hdata.count; i++)
 	{
-		if (database.checked[i] == true)
+		if (database->getChecked(i) == true)
 		{
 			checked = true;
 			break;
 		}
 	}
 
-	if (database.hdata.count <= 0 || !checked)
+	if (database->getCount() <= 0 || !checked)
 	{
 		MessageBox("Недостаточно данных для формирования протокола", "Внимание", MB_OK);
 		return false;
@@ -852,7 +853,7 @@ void CChildView::OnProtocol3()
 		if (calculator->database.hdata.PatientWrist<2) return;
 	}*/
 
-	Export *fitnes_export = new Export(&database);
+	Export *fitnes_export = new Export(database);
 	fitnes_export->StandartExport(false);
 	delete  fitnes_export;
 	fitnes_export = NULL;
@@ -861,7 +862,7 @@ void CChildView::OnProtocol3()
 void CChildView::OnProtocol4()
 {
 	if (!ProtolsAvailable()) return;
-	Export *fitnes_export = new Export(&database);
+	Export *fitnes_export = new Export(database);
 	fitnes_export->StandartExport(true);
 	delete  fitnes_export;
 	fitnes_export = NULL;
@@ -870,7 +871,7 @@ void CChildView::OnProtocol4()
 void CChildView::OnProtocolExcel()
 {
 	if (!ProtolsAvailable()) return;
-	Export *xls_export = new Export(&database);
+	Export *xls_export = new Export(database);
 	xls_export->ExportExcel();
 	delete  xls_export;
 	xls_export = NULL;
@@ -879,7 +880,7 @@ void CChildView::OnProtocolExcel()
 void CChildView::OnProtocolData()
 {
 	if (!ProtolsAvailable()) return;
-	Export *fexport = new Export(&database);
+	Export *fexport = new Export(database);
 	fexport->ExportDataString();
 	delete  fexport;
 	fexport = NULL;
@@ -887,21 +888,21 @@ void CChildView::OnProtocolData()
 //----------------------------------------------------------------------------------------------
 void CChildView::ChangeFilterStatus()
 {
-	for (int i = 0; i<database.getCount(); i++)
+	for (int i = 0; i<database->getCount(); i++)
 	{
-		database.Filter(i);
-		main_list.SetCheck(i, database.checked[i]);
+		database->Filter(i);
+		main_list.SetCheck(i, database->getChecked(i));
 	}
 }
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUseExpiratoryVolumeClick()
 {
-	database.hdata.UseExpiratoryVolume = !database.hdata.UseExpiratoryVolume;
-	database.hdata.UseInspiratoryVolume = false;
-	database.hdata.UseMeanVolume = false;
-	if (database.getCount() == 0) return;
+	database->hdata.UseExpiratoryVolume = !database->hdata.UseExpiratoryVolume;
+	database->hdata.UseInspiratoryVolume = false;
+	database->hdata.UseMeanVolume = false;
+	if (database->getCount() == 0) return;
 
-	database.CalculateParameters();
+	database->CalculateParameters();
 	main_list.Reload();
 	listplot.Update();
 	main_plot.UpdatePlots();
@@ -910,13 +911,13 @@ void CChildView::OnUseExpiratoryVolumeClick()
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUseInspiratoryVolumeClick()
 {
-	database.hdata.UseExpiratoryVolume = false;
-	database.hdata.UseInspiratoryVolume = !database.hdata.UseInspiratoryVolume;
-	database.hdata.UseMeanVolume = false;
+	database->hdata.UseExpiratoryVolume = false;
+	database->hdata.UseInspiratoryVolume = !database->hdata.UseInspiratoryVolume;
+	database->hdata.UseMeanVolume = false;
 
-	if (database.getCount() == 0) return;
+	if (database->getCount() == 0) return;
 
-	database.CalculateParameters();
+	database->CalculateParameters();
 	main_list.Reload();
 	listplot.Update();
 	main_plot.UpdatePlots();
@@ -925,13 +926,13 @@ void CChildView::OnUseInspiratoryVolumeClick()
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUseMeanVolumeClick()
 {
-	database.hdata.UseExpiratoryVolume = false;
-	database.hdata.UseInspiratoryVolume = false;
-	database.hdata.UseMeanVolume = !database.hdata.UseMeanVolume;
+	database->hdata.UseExpiratoryVolume = false;
+	database->hdata.UseInspiratoryVolume = false;
+	database->hdata.UseMeanVolume = !database->hdata.UseMeanVolume;
 
-	if (database.getCount() == 0) return;
+	if (database->getCount() == 0) return;
 
-	database.CalculateParameters();
+	database->CalculateParameters();
 	main_list.Reload();
 	listplot.Update();
 	main_plot.UpdatePlots();
@@ -942,8 +943,8 @@ void CChildView::OnUseMeanVolumeClick()
 
 void CChildView::OnFilterTVolumeClick()
 {
-	database.hdata.Filter_TVolume = !database.hdata.Filter_TVolume;
-	if (database.getCount() == 0) return;
+	database->hdata.Filter_TVolume = !database->hdata.Filter_TVolume;
+	if (database->getCount() == 0) return;
 	ChangeFilterStatus();
 	listplot.Update();
 	main_plot.UpdatePlots();
@@ -951,8 +952,8 @@ void CChildView::OnFilterTVolumeClick()
 //----------------------------------------------------------------------------------------------
 void CChildView::OnFilterBrkoefClick()
 {
-	database.hdata.Filter_BrKoef = !database.hdata.Filter_BrKoef;
-	if (database.getCount() == 0) return;
+	database->hdata.Filter_BrKoef = !database->hdata.Filter_BrKoef;
+	if (database->getCount() == 0) return;
 	ChangeFilterStatus();
 	listplot.Update();
 	main_plot.UpdatePlots();
@@ -964,11 +965,11 @@ void CChildView::OnPatientButtonClick()
 	PatientDialog pDlg;
 	bool active = true;
 	if (ydata.Initialized || !filename.IsEmpty()) active = false;
-	pDlg.Init(&database, active);
+	pDlg.Init(active);
 	int result = pDlg.DoModal();
 	if (result == IDOK)
 	{
-		database.CalculateParameters();
+		database->CalculateParameters();
 		main_list.Reload();
 	}
 }
@@ -980,7 +981,7 @@ void CChildView::UpdateStatusBar()
 	if (!statusbar || !ribbonbar) return;
 
 	CString age_lbl = "лет";
-	int age = static_cast<int>(database.hdata.PatientAge);
+	int age = static_cast<int>(database->hdata.PatientAge);
 	int ostatok = age - (age / 10) * 10;
 
 	if(age>10 && age<20) age_lbl = "лет";
@@ -989,9 +990,9 @@ void CChildView::UpdateStatusBar()
 
 
 	
-	CString st = "Пациент: " + CString(database.hdata.PatientName);
+	CString st = "Пациент: " + CString(database->hdata.PatientName);
 	st += " (" + CString(to_string(age).c_str()) +" "+ age_lbl + ")";
-	st += " | Дата исследования: " + CString(database.datetime[0].getDateStringNormal().c_str()); 
+	st += " | Дата исследования: " + CString(database->datetime[0].getDateStringNormal().c_str());
 
 	statusbar->GetElement(0)->SetText(st);
 	CRect sbrect = statusbar->GetElement(0)->GetRect();
@@ -1052,14 +1053,14 @@ void CChildView::OnEnlargePlotShowDialogButton()
 
 void CChildView::OnStartTestButton()
 {
-	if (database.hdata.StartTest <= 0)
+	if (database->hdata.StartTest <= 0)
 	{
 		
 		PowerStepDialog dlg;
 		dlg.DoModal();
-		database.hdata.PowerStep = (int8_t)dlg.getValue();
+		database->hdata.PowerStep = (int8_t)dlg.getValue();
 
-		database.hdata.StartTest = database.getCount() - 1;
+		database->hdata.StartTest = database->getCount() - 1;
 		OnSetExperienceMode();
 		CurValuesVisible = true;
 		curValues.ShowWindow(SW_SHOW);
@@ -1070,7 +1071,7 @@ void CChildView::OnStartTestButton()
 	}
 	else
 	{
-		database.hdata.EndTest = database.getCount() - 1;
+		database->hdata.EndTest = database->getCount() - 1;
 		timerWindow.StopTest();
 	}
 	ribbonbar->RecalcLayout();
@@ -1090,13 +1091,13 @@ void CChildView::OnUpdateRecordButton(CCmdUI* pCmdUI)
 	if (Recording)
 	{	
 		pCmdUI->SetText("Завершить исследование");
-		if(database.hdata.StartTest>0)//если проводится опыт
+		if(database->hdata.StartTest>0)//если проводится опыт
 		{
 			MTime curtime;
 			curtime.CurrentTime();
-			if(database.hdata.EndTest <= 0)// если вторая метка не выставлена, кнопка недоступна
+			if(database->hdata.EndTest <= 0)// если вторая метка не выставлена, кнопка недоступна
 				pCmdUI->Enable(false);
-			else if(curtime < (database.datetime[database.hdata.EndTest].getTime() + 120))//если вторую метку поставили, но нужно подождать 2 минуты
+			else if(curtime < (database->datetime[database->hdata.EndTest].getTime() + 120))//если вторую метку поставили, но нужно подождать 2 минуты
 				pCmdUI->Enable(false);
 			else//если прошло 120 сек после постановки второй метки
 				pCmdUI->Enable(true);
@@ -1106,7 +1107,7 @@ void CChildView::OnUpdateRecordButton(CCmdUI* pCmdUI)
 			pCmdUI->Enable(true);
 			
 	}
-	else if (database.getCount() > 0)//опыт уже проведет (recording false и количество записей больше 0)
+	else if (database->getCount() > 0)//опыт уже проведет (recording false и количество записей больше 0)
 	{
 		pCmdUI->SetText("Завершено");
 		pCmdUI->Enable(false);
@@ -1115,7 +1116,7 @@ void CChildView::OnUpdateRecordButton(CCmdUI* pCmdUI)
 	{
 		
 		pCmdUI->SetText("Начать    исследование");
-		pCmdUI->Enable(!database.getCount());
+		pCmdUI->Enable(!database->getCount());
 	}
 	
 
@@ -1125,16 +1126,16 @@ void CChildView::OnUpdateStartTestButton(CCmdUI* pCmdUI)
 {
 	bool status = false;
 
-	if (Recording && database.getCount() > 0)
+	if (Recording && database->getCount() > 0)
 	{
-		if ((MTime(true) - database.datetime[0].getTime()) > MTime(60))
+		if ((MTime(true) - database->datetime[0].getTime()) > MTime(60))
 			status = true;
 	}
 	
 	
-	if (database.hdata.StartTest <= 0) 
+	if (database->hdata.StartTest <= 0)
 		pCmdUI->SetText("Запустить тест");
-	else if (database.hdata.EndTest <= 0)
+	else if (database->hdata.EndTest <= 0)
 		pCmdUI->SetText("Завершить тест");
 	else
 	{
@@ -1165,7 +1166,7 @@ void CChildView::OnListPlotConfigButtonClick()
 	
 	PlotCustomization pltDlg;
 	
-	int result = pltDlg.DoModal(&database, &plot, false);
+	int result = pltDlg.DoModal(&plot, false);
 	if (result == IDOK)
 	{
 		main_plot.WritePlotToConfig(plot);
@@ -1182,7 +1183,7 @@ void CChildView::OnUpdateExperienceButton(CCmdUI *pCmdUI)
 		pCmdUI->SetText("Выкл. режим нагрузочного теста");
 	else 
 		pCmdUI->SetText("Вкл. режим нагрузочного  теста");
-	if (database.hdata.StartTest > 0 && database.hdata.EndTest > 0)
+	if (database->hdata.StartTest > 0 && database->hdata.EndTest > 0)
 		pCmdUI->Enable(true);
 	else pCmdUI->Enable(false);
 }
@@ -1207,7 +1208,6 @@ void CChildView::OnCustomNutritionButtonClick()
 {
 	if (!ProtolsAvailable()) return;
 	NutritionDialog nDlg;
-	nDlg.database = &database;
 	nDlg.DoModal();
 }
 
@@ -1215,20 +1215,20 @@ void CChildView::OnCustomNutritionButtonClick()
 void CChildView::OnProtocolMpk()
 {
 
-	if (database.getCount() == 0) return;
+	if (database->getCount() == 0) return;
 
-	if (database.hdata.StartTest <= 0 || database.hdata.EndTest <= 0)
+	if (database->hdata.StartTest <= 0 || database->hdata.EndTest <= 0)
 	{
 		MessageBoxA("Данный протокол доступен только для исследования с нагрузочным тестом", "Внимание", MB_OK | MB_ICONINFORMATION);
 		return;
 	}
 	
-	if (database.hdata.PowerStep > (int8_t)60 || database.hdata.PowerStep < (int8_t)20)
+	if (database->hdata.PowerStep > (int8_t)60 || database->hdata.PowerStep < (int8_t)20)
 	{
 
 		PowerStepDialog dlg;
 		dlg.DoModal();
-		database.hdata.PowerStep = (int8_t)dlg.getValue();
+		database->hdata.PowerStep = (int8_t)dlg.getValue();
 	}
 
 	BigPlotDialog bpDlg;
@@ -1236,13 +1236,13 @@ void CChildView::OnProtocolMpk()
 	plot.SetExperience(true);
 
 	string code = "график (осреднение = \"20 сек\", y = Вентиляционный_эквивалент_O2, легенда=\"Вент.эквивалент по O2\", y = ЧСС,  y = Потребление_O2_мл_кг_мин, легенда=\"Потребление O2 (мл/кг/мин)\",)";
-	plot.Run(&database, code);
+	plot.Run(database, code);
 
-	if (bpDlg.DoModal(&plot, &database, true) == IDOK && plot.IsExperience())
+	if (bpDlg.DoModal(&plot, true) == IDOK && plot.IsExperience())
 	{
-		database.hdata.AeT = bpDlg.getBigPlot().getValue(0);
-		database.hdata.AT = bpDlg.getBigPlot().getValue(1);
-		database.hdata.MCO = bpDlg.getBigPlot().getValue(2);
+		database->hdata.AeT = bpDlg.getBigPlot().getValue(0);
+		database->hdata.AT = bpDlg.getBigPlot().getValue(1);
+		database->hdata.MCO = bpDlg.getBigPlot().getValue(2);
 		main_plot.UpdatePlots();	
 	}
 }
@@ -1271,30 +1271,11 @@ void CChildView::OnBigPlotClick(int index)
 
 void CChildView::OnVolumeFilterButton()
 {
-	if (database.getCount() == 0) return;
+	if (database->getCount() == 0) return;
 
-	/*for (int i = 0; i < database.getCount(); ++i)
-	{
-		double& Vinsp = database.variables.at("Vвдоха")[i];
-		double& Vexp = database.variables.at("Vвыдоха")[i];
-		if (Vinsp == 0 || Vexp == 0)
-		{
-			database.checked[i] = false;
-			continue;
-		}
-		double result=0;
-		
-		result = (Vinsp - Vexp) / Vinsp * 100.;
-		if (result < 0) result = -result;
-		if (result > 5 && database.checked[i]) database.checked[i] = false;
-	}
-	main_list.Reload();
-	listplot.Update();
-	curValues.RedrawWindow();
-	main_plot.UpdatePlots();
-	*/
+	
 	VolumeErrorDialog dlg;
-	dlg.Init(&database);
+	dlg.Init();
 	if (dlg.DoModal() == IDOK)
 	{
 		//снимаем галки, обновляем все

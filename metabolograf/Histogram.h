@@ -15,7 +15,7 @@ class Histogram :
 public:
 
 	Histogram();
-	void Init(Database* _database);
+	void Init();
 	void SetBounds();
 	~Histogram();
 	void BuildTable(int count);

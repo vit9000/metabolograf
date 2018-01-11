@@ -16,7 +16,7 @@ public:
 	void StartTest();
 	void StopRec();
 	void StopTest();
-	void Update(Database * database);
+	void Update();
 
 protected:
 	UINT_PTR timer;

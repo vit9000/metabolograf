@@ -26,7 +26,7 @@ public:
 	PlaygroundView();
 	~PlaygroundView();
 
-	void Init(Database* _database) { database = _database; }
+	void Init() { database = Database::getInstance(); }
 	
 
 	void UpdateVariablesList();

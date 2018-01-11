@@ -18,9 +18,9 @@ CurrentValues::~CurrentValues()
 	DestroyWindow();
 }
 
-void CurrentValues::Init(Database* _database)
+void CurrentValues::Init()
 {
-	database = _database;
+	database = Database::getInstance();
 	SetBounds();
 	if (database->variable_names.size()==0) return;
 

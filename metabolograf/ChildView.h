@@ -42,7 +42,7 @@ public:
 
 	UINT_PTR timer;
 	int Circle;
-	Database database;
+	Database *database;
 	YuraDatabase ydata;
 	CMFCRibbonBar* ribbonbar;
 	CMFCRibbonStatusBar* statusbar;

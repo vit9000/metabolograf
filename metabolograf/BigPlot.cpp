@@ -25,10 +25,10 @@ BEGIN_MESSAGE_MAP(BigPlot, CWnd)
 END_MESSAGE_MAP()
 
 
-void BigPlot::Init(Plot* _plot, Database* _database, MyListCtrl* _main_list, CurrentValues* _curValues)
+void BigPlot::Init(Plot* _plot, MyListCtrl* _main_list, CurrentValues* _curValues)
 {
 
-	database = _database;
+	database = Database::getInstance();
 	plot = _plot;
 	main_list = _main_list;
 	curValues = _curValues;

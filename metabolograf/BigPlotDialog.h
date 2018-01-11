@@ -17,7 +17,7 @@ class BigPlotDialog : private CDialogEx
 public:
 	BigPlotDialog(CWnd* pParent = NULL);   
 	virtual ~BigPlotDialog();
-	int DoModal(Plot* _plot, Database* _database, bool Export = false);
+	int DoModal(Plot* _plot, bool Export = false);
 	const BigPlot& getBigPlot() { return bigPlot; }
 protected:
 	struct PrintOptions

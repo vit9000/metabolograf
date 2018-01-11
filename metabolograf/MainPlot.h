@@ -20,7 +20,7 @@ public:
 	CMFCRibbonBar* ribbonbar;
 	int selectedPlot;
 	void SetBounds();
-	void Init(Database* _database);
+	void Init();
 	void OnLButtonUp(UINT flags, CPoint point);
 	void OnLButtonDblClk(UINT flags, CPoint point);
 	void ShowCustomizationDialog();

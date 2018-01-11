@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Database.h"
 
+Database* Database::p_instance = 0;
+
 Database::Database()
 {
 	Ini ini("metabolograf_config.ini");

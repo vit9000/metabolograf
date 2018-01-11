@@ -32,9 +32,9 @@ public:
 	{
 		return param;
 	}
-	void Init(Database* database_, int CountScale_)
+	void Init(int CountScale_)
 	{
-		database = database_;
+		database = Database::getInstance();
 		CountScale = CountScale_;
 	}
 // Данные диалогового окна

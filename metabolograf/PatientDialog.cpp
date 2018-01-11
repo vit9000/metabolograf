@@ -38,9 +38,9 @@ BEGIN_MESSAGE_MAP(PatientDialog, CDialogEx)
 	ON_BN_CLICKED(IDC_UNLOCK_BUTTON, &PatientDialog::OnBnClickedUnlockButton)
 END_MESSAGE_MAP()
 
-void PatientDialog::Init(Database* _database, bool _active)
+void PatientDialog::Init(bool _active)
 {
-	database = _database;
+	database = Database::getInstance();
 	active = _active;
 
 }

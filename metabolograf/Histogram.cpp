@@ -4,7 +4,7 @@
 
 Histogram::Histogram()
 {
-	border = 20 * DPIX();
+	border = 20 * (double)DPIX();
 }
 
 
@@ -22,9 +22,9 @@ BEGIN_MESSAGE_MAP(Histogram, CWnd)
 END_MESSAGE_MAP()
 
 
-void Histogram::Init(Database* _database)
+void Histogram::Init()
 {
-	database = _database;
+	database = Database::getInstance();
 	if (database->getCount() == 0) return;
 	BuildErrVector();
 	BuildTable(20);
@@ -63,7 +63,7 @@ void Histogram::OnPaint()
 	int bitH = (Height - border*2) / maxHBits;
 	if (bitH <= 0) bitH = 1;
 	UGC ugc(GetDC(), Width, Height);
-	DPIX dpix;
+	double dpix = (double) DPIX();
 
 
 	ugc.SetAlign(ugc.CENTER);

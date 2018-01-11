@@ -103,9 +103,10 @@ void TimerWindow::StopTest()
 	start_test.Zero();
 }
 
-void TimerWindow::Update(Database * database)
+void TimerWindow::Update()
 {
 	Default();
+	Database * database = Database::getInstance();
 	if (database->getCount() == 0) return;
 
 	start_rec = database->datetime[0].getTime();

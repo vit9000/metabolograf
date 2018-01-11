@@ -39,12 +39,12 @@ BEGIN_MESSAGE_MAP(BigPlotDialog, CDialogEx)
 END_MESSAGE_MAP()
 
 
-int BigPlotDialog::DoModal(Plot* _plot, Database* _database, bool Export)
+int BigPlotDialog::DoModal(Plot* _plot, bool Export)
 {
 	if (!Export)
 		_Export = Export;
 	//MODE = mode;
-	database = _database;
+	database = Database::getInstance();
 	plot = _plot;
 	
 	bigPlot.LoadValues({ database->hdata.AeT , database->hdata.AT , database->hdata.MCO });
@@ -61,7 +61,7 @@ BOOL BigPlotDialog::OnInitDialog()
 	DPIX dpix;
 	rect.top += 30 * static_cast<int>(dpix);
 	bigPlot.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, rect, this, IDC_BIG_PLOT);
-	bigPlot.Init(plot, database);
+	bigPlot.Init(plot);
 
 	CButton *button1 = (CButton*)GetDlgItem(IDC_AET);
 	CButton *button2 = (CButton*)GetDlgItem(IDC_AT);

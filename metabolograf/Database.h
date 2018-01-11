@@ -19,7 +19,11 @@ using namespace std;
 
 class Database
 {
+
+private:
+	Database();
 public:
+
 	struct HeaderDatabase hdata;
 	Variable_<Datetime> datetime;
 	VariableBOOL checked;
@@ -31,7 +35,26 @@ public:
 	double Katch_MacArdle;
 	double ADS;//дополнительное мертвое пространство
 
-	Database();
+	
+	static Database * p_instance;
+	static Database* getInstance()
+	{
+		if (!p_instance)
+			p_instance = new Database();
+		return p_instance;
+	}
+
+	bool getChecked(int i)
+	{
+		return checked[i];
+	}
+
+	void setChecked(int i, bool status)
+	{
+		checked[i] = status;
+	}
+
+
 	virtual ~Database();
 	size_t getCount();
 	void Default();

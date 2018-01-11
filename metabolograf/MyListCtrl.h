@@ -29,14 +29,15 @@ public:
 	{
 		dpiX = DPIX();
 		busy = false;
+		
 	}
 	~MyListCtrl()
 	{}
 
 public:
-	void Init(Database* _database)
+	void Init()
 	{
-		database = _database;
+		database = Database::getInstance();
 		
 		LoadConfig();
 		SetHeadersInList();
