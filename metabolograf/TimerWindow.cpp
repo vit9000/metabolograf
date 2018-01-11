@@ -109,12 +109,12 @@ void TimerWindow::Update()
 	Database * database = Database::getInstance();
 	if (database->getCount() == 0) return;
 
-	start_rec = database->datetime[0].getTime();
-	rec = (database->datetime[database->getCount()-1].getTime() - start_rec).getStringAlt();
-	if (database->hdata.StartTest > 0 && database->hdata.EndTest > 0)
+	start_rec = database->getDatetime(0).getTime();
+	rec = (database->getDatetime(database->getCount()-1).getTime() - start_rec).getStringAlt();
+	if (database->getHeader().StartTest > 0 && database->getHeader().EndTest > 0)
 	{
-		start_test = database->datetime[database->hdata.StartTest].getTime();
-		test = (database->datetime[database->hdata.EndTest].getTime() - start_test).getStringAlt();
+		start_test = database->getDatetime(database->getHeader().StartTest).getTime();
+		test = (database->getDatetime(database->getHeader().EndTest).getTime() - start_test).getStringAlt();
 	}
 	RedrawWindow();
 }

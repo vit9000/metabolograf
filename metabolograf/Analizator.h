@@ -87,9 +87,9 @@ public:
 			string var = elements[0];
 			if(is_number(var))
 				output = ToString(var);
-			else if (database->variables.count(var) > 0)
+			else if (database->isVariableExists(var))
 			{
-				output = ToString(database->variables[var]);
+				output = ToString(database->getVariable(var));
 				string temp = output;
 			}
 			else
@@ -156,9 +156,9 @@ private:
         Variable result=0;
 		result = Computation(elements_copy);
 		string msg = "»нициализирована переменна€ '"+var+"' со значением ";
-		if (database->variables.count(var) > 0)
+		if (database->isVariableExists(var) > 0)
 			msg = "ѕеременна€ '"+var+"' равна ";
-		if(database->variables.count(var)>0 && database->variables[var].isConst())
+		if(database->isVariableExists(var) && database->getVariable(var).isConst())
 			throw runtime_error("Ќельз€ изменить константную переменную");
 
 		database->SetVariable(var, result);//database->variables[var] = result;//все хорошо, создаем новую запись в словаре переменных
@@ -268,11 +268,11 @@ private:
 	{
 
         if(!is_number(element)) {
-            if(database->variables.count(element)<=0)
+            if(database->isVariableExists(element))
 				throw runtime_error("ѕеременна€ '"+element+"' не найдена.");
 			else
 			{
-				return database->variables[element];
+				return database->getVariable(element);
 			}
 		}
 		else

@@ -15,15 +15,15 @@ private:
 public:
 	Datetime();
 	Datetime(int year, int month, int day, int hour, int minute, int second);
-	int getHour();
-	int getMinute();
-	int getSecond();
-	MTime getTime();
-	string getDateString();
-	string getDateStringRU();
-	string getDateStringNormal();
-	string getTimeString();
-	string getDatetimeString();
+	int getHour() const;
+	int getMinute() const;
+	int getSecond() const;
+	MTime getTime() const;
+	string getDateString() const;
+	string getDateStringRU() const;
+	string getDateStringNormal() const;
+	string getTimeString() const;
+	string getDatetimeString() const;
 };
 
 #endif

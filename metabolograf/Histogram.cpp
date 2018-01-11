@@ -141,8 +141,8 @@ void Histogram::BuildErrVector()
 	size_t i = 0;
 	for (auto& result : err_vector)
 	{
-		double& Vinsp = database->variables.at("Vвдоха")[i];
-		double& Vexp = database->variables.at("Vвыдоха")[i];
+		const double& Vinsp = database->getVariable("Vвдоха")[i];
+		const double& Vexp = database->getVariable("Vвыдоха")[i];
 
 		if (Vinsp > 0 && Vexp > 0)
 			result = (Vinsp - Vexp) / Vinsp * 100.;
@@ -181,7 +181,7 @@ void Histogram::Apply()
 	{
 		for (int j = 0; j < table[i].size(); ++j)
 		{
-			database->checked[table[i][j]] = column_status[i];
+			database->setChecked(table[i][j], column_status[i]);
 		}
 	}
 }

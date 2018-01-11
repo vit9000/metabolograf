@@ -25,7 +25,7 @@ void Export::ReplacePoint(char *buf, int length)
 
 void Export::ExportDataString()
 {
-	if (database->hdata.count<1)
+	if (database->getHeader().count<1)
 		return;
 	string t = "Данные базы данных";
 	FILE *file = CreateExportFile(t, "html");
@@ -45,26 +45,28 @@ void Export::ExportDataString()
 	sprintf(bbuf, "<tr>");
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
-	sprintf(bbuf, "<td>%s", database->hdata.PatientName);
+	sprintf(bbuf, "<td>%s", database->getHeader().PatientName);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
-	sprintf(bbuf, "<td>%d.%d.%d", database->hdata.Day, database->hdata.Month, database->hdata.Year);
+	sprintf(bbuf, "<td>%d.%d.%d", database->getHeader().Day, database->getHeader().Month, database->getHeader().Year);
 	fwrite(bbuf, strlen(bbuf), 1, file);
-	sprintf(bbuf, "<td>%d:%d-%d:%d", database->datetime[0].getHour(), database->datetime[0].getMinute(), database->datetime[database->getCount()-1].getHour(), database->datetime[database->getCount() - 1].getMinute());
-	fwrite(bbuf, strlen(bbuf), 1, file);
-
-
-
-	sprintf(bbuf, "<td>%d", database->hdata.PatientSex);
+	const auto& zero_datetime = database->getDatetime(0);
+	const auto& last_datetime = database->getDatetime(database->getCount() - 1);
+	sprintf(bbuf, "<td>%d:%d-%d:%d", zero_datetime.getHour(), zero_datetime.getMinute(), last_datetime.getHour(), last_datetime.getMinute());
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
-	sprintf(bbuf, "<td>%d", (int)database->hdata.PatientAge);
+
+
+	sprintf(bbuf, "<td>%d", database->getHeader().PatientSex);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
-	sprintf(bbuf, "<td>%d", database->hdata.PatientHeight);
+	sprintf(bbuf, "<td>%d", (int)database->getHeader().PatientAge);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
-	sprintf(bbuf, "<td>%d", database->hdata.PatientWeight);
+	sprintf(bbuf, "<td>%d", database->getHeader().PatientHeight);
+	fwrite(bbuf, strlen(bbuf), 1, file);
+
+	sprintf(bbuf, "<td>%d", database->getHeader().PatientWeight);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
 	CalculateMeanValues();
@@ -141,13 +143,13 @@ void Export::ExportDataString()
 
 	database->CalculateMetab();
 
-	sprintf(bbuf, "<td>%d", (int)database->Benedict);
+	sprintf(bbuf, "<td>%d", (int)database->getCalculatedMetab().Benedict);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
-	sprintf(bbuf, "<td>%d", (int)database->Muffin_Jeor);
+	sprintf(bbuf, "<td>%d", (int)database->getCalculatedMetab().Muffin_Jeor);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
-	sprintf(bbuf, "<td>%d", (int)database->Katch_MacArdle);
+	sprintf(bbuf, "<td>%d", (int)database->getCalculatedMetab().Katch_MacArdle);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
 
@@ -248,14 +250,14 @@ void Export::CalcPFCH_NBK (double *P, double *F, double *CH, double *p_body, dou
 //--------------------------------------------------------------------------
 void Export::CalcIdealWeight()
 		{
-			int h = database->hdata.PatientHeight;
-			if(database->hdata.PatientAge>=18)//adult
+			int h = database->getHeader().PatientHeight;
+			if(database->getHeader().PatientAge>=18)//adult
 			{
 				IdealWeight=  h * h * 0.00225;
 				return;
 			}
 			//child
-			if(database->hdata.PatientSex==1)//male
+			if(database->getHeader().PatientSex==1)//male
 			{
 				if(h<79)
 					IdealWeight = -16.1027+0.4475*h-0.0013*h*h;
@@ -292,21 +294,21 @@ FILE * Export::CreateExportFile(string type, string extension)
 	string path = curDir+string("files");
 	CreateDirectory(path.c_str(), NULL);
 	
-	file_name = path+string("\\")+string(database->hdata.PatientName);
+	file_name = path+string("\\")+string(database->getHeader().PatientName);
 	CreateDirectory(file_name.c_str(), NULL);
 	   
 	
 	for(int i=0; i<100; i++)
 	{
 		stringstream ss;
-		ss << path << "\\" << string(database->hdata.PatientName) + "\\";
+		ss << path << "\\" << string(database->getHeader().PatientName) + "\\";
 
 		ss << type << " "
-			<< database->hdata.Day << "_"
-			<< database->hdata.Month << "_"
-			<< database->hdata.Year << " ("
-			<< database->datetime[0].getTime().getHour() << "_"
-			<< database->datetime[0].getTime().getMinute() << ")";
+			<< database->getHeader().Day << "_"
+			<< database->getHeader().Month << "_"
+			<< database->getHeader().Year << " ("
+			<< database->getDatetime(0).getTime().getHour() << "_"
+			<< database->getDatetime(0).getTime().getMinute() << ")";
 		if(i>0)
 		{
 			ss << " (" << i << ")";
@@ -360,21 +362,23 @@ void  Export::WriteHeader(FILE *file)
 
 	sprintf(bbuf, "<tr><td width=25%%\%>Дата исследования:<td width=30%%><font size=4><b>");
 	fwrite(bbuf, strlen(bbuf), 1, file);
-	sprintf(bbuf, "%s %s-%s</b></font><td width=10%%>\n", database->datetime[0].getDateStringRU().c_str(), database->datetime[0].getTimeString().c_str(), database->datetime[database->getCount()-1].getTimeString().c_str());// database->getHour(0), database->getMinute(0), database->getHour(database->hdata.count - 1), database->getMinute(database->hdata.count - 1));
+	const auto& zero_dt = database->getDatetime(0);
+	const auto& last_dt = database->getDatetime(database->getCount() - 1);
+	sprintf(bbuf, "%s %s-%s</b></font><td width=10%%>\n", zero_dt.getDateStringRU().c_str(), zero_dt.getTimeString().c_str(), last_dt.getTimeString().c_str());// database->getHour(0), database->getMinute(0), database->getHour(database->getHeader().count - 1), database->getMinute(database->getHeader().count - 1));
 	fwrite(bbuf, strlen(bbuf), 1, file);
-	sprintf(bbuf, "<td width=25%%>Возраст:<td width=15%%><font size=4><b>%d лет</b></font>\n", (int)database->hdata.PatientAge);
+	sprintf(bbuf, "<td width=25%%>Возраст:<td width=15%%><font size=4><b>%d лет</b></font>\n", (int)database->getHeader().PatientAge);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 	//|
 
-	sprintf(bbuf, "<tr><td>ФИО:<td><font size=4><b>%s</b></font><td>\n", database->hdata.PatientName);
+	sprintf(bbuf, "<tr><td>ФИО:<td><font size=4><b>%s</b></font><td>\n", database->getHeader().PatientName);
 	fwrite(bbuf, strlen(bbuf), 1, file);
-	sprintf(bbuf, "<td>Вес:<td><font size=4><b>%d кг</b></font>\n", (int)database->hdata.PatientWeight);
-	fwrite(bbuf, strlen(bbuf), 1, file);
-
-	sprintf(bbuf, "<tr><td>Пол:<td><font size=4><b>%s</b></font><td>\n", database->hdata.PatientSex ? "мужской" : "женский");
+	sprintf(bbuf, "<td>Вес:<td><font size=4><b>%d кг</b></font>\n", (int)database->getHeader().PatientWeight);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
-	sprintf(bbuf, "<td>Рост:<td><font size=4><b>%d см</b></font>\n", (int)database->hdata.PatientHeight);
+	sprintf(bbuf, "<tr><td>Пол:<td><font size=4><b>%s</b></font><td>\n", database->getHeader().PatientSex ? "мужской" : "женский");
+	fwrite(bbuf, strlen(bbuf), 1, file);
+
+	sprintf(bbuf, "<td>Рост:<td><font size=4><b>%d см</b></font>\n", (int)database->getHeader().PatientHeight);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
 	//|
@@ -388,14 +392,14 @@ void  Export::WriteHeader(FILE *file)
 	sprintf(bbuf, "<br><table bordercolor=black border=0 ><tr><td colspan=4 align=center bgcolor=black><font size=4 color=white>Состав тела</font><tr><td>");
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
-	double bmi = (double)database->hdata.PatientWeight/(double)((database->hdata.PatientHeight/100.)*(database->hdata.PatientHeight/100.));
+	double bmi = (double)database->getHeader().PatientWeight/(double)((database->getHeader().PatientHeight/100.)*(database->getHeader().PatientHeight/100.));
 	double norma_l = 0;
 	double norma_h = 0;
 	char diagnos[1024];
-	if(database->hdata.PatientAge>18)
+	if(database->getHeader().PatientAge>18)
 	{
-		norma_l = (18.6 * (double)((database->hdata.PatientHeight/100.)*(database->hdata.PatientHeight/100.)));
-		norma_h = (24.9 * (double)((database->hdata.PatientHeight/100.)*(database->hdata.PatientHeight/100.)));
+		norma_l = (18.6 * (double)((database->getHeader().PatientHeight/100.)*(database->getHeader().PatientHeight/100.)));
+		norma_h = (24.9 * (double)((database->getHeader().PatientHeight/100.)*(database->getHeader().PatientHeight/100.)));
 
 		if(bmi>=40)
 			sprintf(diagnos,"<td width=35%% bgcolor=red align=center><font size=4 color=white>Ожирение III степени</font>");
@@ -413,7 +417,7 @@ void  Export::WriteHeader(FILE *file)
 			sprintf(diagnos,"<td width=35%% bgcolor=red align=center><font size=4 color=white>Выраженный дефицит массы</font>");
 
 	}
-	else if(database->hdata.PatientAge>=8)                 //children
+	else if(database->getHeader().PatientAge>=8)                 //children
 	{
 		double child_bmi[2][11][4]=
 		{
@@ -445,10 +449,10 @@ void  Export::WriteHeader(FILE *file)
 				{17.6, 18.6, 24.0, 26.8}
 			}
 		};
-		int age =  database->hdata.PatientAge-8;
-		int sex=  database->hdata.PatientSex;
-		norma_l = ((child_bmi[sex][age][0]+0.1) * (double)((database->hdata.PatientHeight/100.)*(database->hdata.PatientHeight/100.)));
-		norma_h = ((child_bmi[sex][age][1]-0.1) * (double)((database->hdata.PatientHeight/100.)*(database->hdata.PatientHeight/100.)));
+		int age =  database->getHeader().PatientAge-8;
+		int sex=  database->getHeader().PatientSex;
+		norma_l = ((child_bmi[sex][age][0]+0.1) * (double)((database->getHeader().PatientHeight/100.)*(database->getHeader().PatientHeight/100.)));
+		norma_h = ((child_bmi[sex][age][1]-0.1) * (double)((database->getHeader().PatientHeight/100.)*(database->getHeader().PatientHeight/100.)));
 
 		if(bmi >= child_bmi[sex][age][3])
 			sprintf(diagnos,"<td width=35%% bgcolor=red align=center><font size=4 color=white>Тяжелое ожирение</font>");
@@ -468,12 +472,12 @@ void  Export::WriteHeader(FILE *file)
 
 	//Lean body mass
 	double lbm;
-	if(database->hdata.PatientSex==1)
+	if(database->getHeader().PatientSex==1)
 	{
-		lbm = (1.1 * database->hdata.PatientWeight)-(128*((double)(database->hdata.PatientWeight*database->hdata.PatientWeight) / (double)(database->hdata.PatientHeight*database->hdata.PatientHeight)));
+		lbm = (1.1 * database->getHeader().PatientWeight)-(128*((double)(database->getHeader().PatientWeight*database->getHeader().PatientWeight) / (double)(database->getHeader().PatientHeight*database->getHeader().PatientHeight)));
 	}
 	else
-		lbm = ((1.07 * database->hdata.PatientWeight)-148*((double)(database->hdata.PatientWeight*database->hdata.PatientWeight) / (double)(database->hdata.PatientHeight*database->hdata.PatientHeight)));
+		lbm = ((1.07 * database->getHeader().PatientWeight)-148*((double)(database->getHeader().PatientWeight*database->getHeader().PatientWeight) / (double)(database->getHeader().PatientHeight*database->getHeader().PatientHeight)));
 	sprintf(bbuf, "<tr><td>Тощая масса тела:<td><font size=4><b>%.1lf кг</b></font><td>\n", lbm);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 	sprintf(bbuf, "<tr><td>Идеальная масса тела:<td><font size=4><b>%.1lf кг</b></font><td>\n", IdealWeight);
@@ -483,9 +487,9 @@ void  Export::WriteHeader(FILE *file)
 
 	//FAT
 	double fat =
-		64.5 - 848/bmi + 0.079*database->hdata.PatientAge
-		- 16.5*database->hdata.PatientSex + 0.05*database->hdata.PatientSex*database->hdata.PatientAge
-		+ 39.0*database->hdata.PatientSex/bmi;
+		64.5 - 848/bmi + 0.079*database->getHeader().PatientAge
+		- 16.5*database->getHeader().PatientSex + 0.05*database->getHeader().PatientSex*database->getHeader().PatientAge
+		+ 39.0*database->getHeader().PatientSex/bmi;
 
 	//(calculator->data.PatientWeight-lbm)/calculator->data.PatientWeight*100;
 	int ages[5][2]=
@@ -503,12 +507,12 @@ void  Export::WriteHeader(FILE *file)
 	int a=0;
 	//поиск возрастной группы
 	for(a=0; a<5; a++)
-		if(database->hdata.PatientAge>=ages[a][0] && database->hdata.PatientAge<=ages[a][1])
+		if(database->getHeader().PatientAge>=ages[a][0] && database->getHeader().PatientAge<=ages[a][1])
 			break;
 	
-	if(database->hdata.PatientAge>=18)
+	if(database->getHeader().PatientAge>=18)
 	{
-		if(database->hdata.PatientSex==1)
+		if(database->getHeader().PatientSex==1)
 		{
 			if(fat > male[a][1])
 				sprintf(diagnos,"<td bgcolor=red align=center><font size=4 color=white>Больше нормы");
@@ -534,26 +538,26 @@ void  Export::WriteHeader(FILE *file)
 	 else
 		sprintf(diagnos,"<td>");
 
-	double Height2 = (database->hdata.PatientHeight/100.);
+	double Height2 = (database->getHeader().PatientHeight/100.);
 	Height2*=Height2;
 	for(int i=0; i<2; i++)
 	{
-		if(database->hdata.PatientSex==1)
+		if(database->getHeader().PatientSex==1)
 		{
 			target[i] = 
-			(-848*Height2 + 39.*database->hdata.PatientSex*Height2) /
-			(male[a][i] - 64.5 - 0.079*database->hdata.PatientAge + 16.5*database->hdata.PatientSex - 0.05*database->hdata.PatientSex*database->hdata.PatientAge);
+			(-848*Height2 + 39.*database->getHeader().PatientSex*Height2) /
+			(male[a][i] - 64.5 - 0.079*database->getHeader().PatientAge + 16.5*database->getHeader().PatientSex - 0.05*database->getHeader().PatientSex*database->getHeader().PatientAge);
 		}
 		else
 		{
 			target[i] = 
-			(-848*Height2 + 39.*database->hdata.PatientSex*Height2) /
-			(female[a][i] - 64.5 - 0.079*database->hdata.PatientAge + 16.5*database->hdata.PatientSex - 0.05*database->hdata.PatientSex*database->hdata.PatientAge);
+			(-848*Height2 + 39.*database->getHeader().PatientSex*Height2) /
+			(female[a][i] - 64.5 - 0.079*database->getHeader().PatientAge + 16.5*database->getHeader().PatientSex - 0.05*database->getHeader().PatientSex*database->getHeader().PatientAge);
 		}
 	}
 
 	
-	if(database->hdata.PatientAge>=18)
+	if(database->getHeader().PatientAge>=18)
 	{
 		sprintf(bbuf, "<tr><td>Жировая масса:<td><font size=4><b>%.1lf%%</b></font>%s\n", fat, diagnos);
 		fwrite(bbuf, strlen(bbuf), 1, file);
@@ -561,16 +565,16 @@ void  Export::WriteHeader(FILE *file)
 		fwrite(bbuf, strlen(bbuf), 1, file);
 	}
 	//teloslozhenie=0;// 1-астеник 2-нормо 3-гипер
-	if(database->hdata.PatientSex==1) //Мужской пол
+	if(database->getHeader().PatientSex==1) //Мужской пол
 	{
-		if(database->hdata.PatientWrist<18) teloslozhenie=1;
-		else if(database->hdata.PatientWrist<=20) teloslozhenie=2;
+		if(database->getHeader().PatientWrist<18) teloslozhenie=1;
+		else if(database->getHeader().PatientWrist<=20) teloslozhenie=2;
 		else teloslozhenie=3;
 	}
 	else
 	{
-		if(database->hdata.PatientWrist<16) teloslozhenie=1;
-		else if(database->hdata.PatientWrist<=17) teloslozhenie=2;
+		if(database->getHeader().PatientWrist<16) teloslozhenie=1;
+		else if(database->getHeader().PatientWrist<=17) teloslozhenie=2;
 		else teloslozhenie=3;
 	}
 	switch(teloslozhenie)
@@ -585,7 +589,7 @@ void  Export::WriteHeader(FILE *file)
 			sprintf(diagnos,"<td bgcolor=gray align=center><font size=4 color=white>Гиперстеник");
 			break;
         }
-	sprintf(bbuf, "<tr><td>Окружность запястья:<td><font size=4><b>%.1lf см</b></font>%s<tr><td height=5></table>\n",database->hdata.PatientWrist, diagnos);
+	sprintf(bbuf, "<tr><td>Окружность запястья:<td><font size=4><b>%.1lf см</b></font>%s<tr><td height=5></table>\n",database->getHeader().PatientWrist, diagnos);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
 }
@@ -600,7 +604,7 @@ void Export::WriteCalcutatedMetab(FILE *file)
 	sprintf(bbuf, "<tr><td width=33%% align=center>Harris-Benedict\n<td width=33%% align=center>Muffin-Jeor\n<td width=33%% align=center>Katch-MacArdle");
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
-	sprintf(bbuf, "<tr><td align=center><font size=4>%d\n<td align=center><font size=4>%d\n<td align=center><font size=4>%d</font><tr><td height=5></table>", (int)database->Benedict, (int)database->Muffin_Jeor, (int)database->Katch_MacArdle);
+	sprintf(bbuf, "<tr><td align=center><font size=4>%d\n<td align=center><font size=4>%d\n<td align=center><font size=4>%d</font><tr><td height=5></table>", (int)database->getCalculatedMetab().Benedict, (int)database->getCalculatedMetab().Muffin_Jeor, (int)database->getCalculatedMetab().Katch_MacArdle);
 	fwrite(bbuf, strlen(bbuf), 1, file);
 }
 //-----------------------------------------------------------
@@ -615,21 +619,21 @@ void Export::CalculateMeanValues()
 	DMP=0.;
 	Vexp=0.;
 
-	Variable_<uint8_t>& checked =  database->checked;
-	tidalVol = database->variables["Vвдоха"].mean(checked);
-	Vexp = database->variables["Vвыдоха"].mean(checked);
-	RespRate = database->variables["ЧД"].mean(checked);
-	if(database->hdata.OsrednenieType2)
+	const Variable_<uint8_t>& checked =  database->getChecked();
+	tidalVol = database->getVariable("Vвдоха").mean(checked);
+	Vexp = database->getVariable("Vвыдоха").mean(checked);
+	RespRate = database->getVariable("ЧД").mean(checked);
+	if(database->getHeader().OsrednenieType2)
 	{
-		VO2 += database->variables["Потребление_O2"].mean(checked);
-		VCO2 += database->variables["Выделение_CO2"].mean(checked);
+		VO2 += database->getVariable("Потребление_O2").mean(checked);
+		VCO2 += database->getVariable("Выделение_CO2").mean(checked);
 		VO2*= RespRate;
 		VCO2*=RespRate;
 	}
 	else
 	{
-		VO2 += database->variables["Минутное_потребление_O2"].mean(checked);
-		VCO2 += database->variables["Минутное_выделение_CO2"].mean(checked);
+		VO2 += database->getVariable("Минутное_потребление_O2").mean(checked);
+		VCO2 += database->getVariable("Минутное_выделение_CO2").mean(checked);
 	}
 	MOP24 = VO2*60*24;
 	MCOP24 = VCO2*60*24;
@@ -684,7 +688,7 @@ void Export::WriteMesuredValues(FILE *file)
 //------------------------------------------
 void Export::StandartExport(bool fitness)
 {
-	if(database->hdata.count<1)
+	if(database->getHeader().count<1)
 		return;
 
 	string t = "Протокол питания по конституции пациента";
@@ -707,13 +711,13 @@ void Export::StandartExport(bool fitness)
 	double BrK=0;
 
 	CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, DUK, NBK, &BrK);
-        double bmi = (double)database->hdata.PatientWeight/(double)((database->hdata.PatientHeight/100.)*(database->hdata.PatientHeight/100.));
+        double bmi = (double)database->getHeader().PatientWeight/(double)((database->getHeader().PatientHeight/100.)*(database->getHeader().PatientHeight/100.));
 
 	//РЕКОМЕНДАЦИИ
 	sprintf(bbuf, "\n<br>\n<table bordercolor=black border=0><tr><td align=center bgcolor=black><font size=4 color=white>Рекомендации</font><tr><td>");
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
-	if(bmi>=25 && database->hdata.PatientAge>18 && fitness)   //ИЗБЫТОК МАССЫ ТЕЛА
+	if(bmi>=25 && database->getHeader().PatientAge>18 && fitness)   //ИЗБЫТОК МАССЫ ТЕЛА
 	{
 		sprintf(bbuf, "<tr><td style=\'text-align:justify\'><font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Для того, что бы снизить свою массу тела за счет <b>жировой прослойки</b> выполняйте следующие рекомендации.\n");
 		fwrite(bbuf, strlen(bbuf), 1, file);
@@ -724,7 +728,7 @@ void Export::StandartExport(bool fitness)
 		sprintf(bbuf, "&nbsp;&nbsp;&nbsp;&nbsp;Для выбора <b>потребляемых</b> соответствующих диете калорий Вам необходимо рассчитать <b>использованные калории</b> (суточную нагрузку) с учетом всех Ваших видов деятельности в течение дня. Количество <b>использованных калорий</b> в течение дня должны превышать <b>потребленные калории</b>.\n\n");
 		fwrite(bbuf, strlen(bbuf), 1, file);
 	}
-	else if(database->hdata.PatientAge>18)  //НОРМА И ДЕФИЦИТ МАССЫ ТЕЛА
+	else if(database->getHeader().PatientAge>18)  //НОРМА И ДЕФИЦИТ МАССЫ ТЕЛА
 	{
 		sprintf(bbuf, "<tr><td><font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Не рекомендуется снижение массы тела ниже <b>%d</b> кг\n", (int)(target[0]));
 		fwrite(bbuf, strlen(bbuf), 1, file);
@@ -735,7 +739,7 @@ void Export::StandartExport(bool fitness)
 	{
         //Диета 1
 		CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, 0.429, 6.15, &BrK);
-        if(bmi>=25  && database->hdata.PatientAge>18 && fitness)
+        if(bmi>=25  && database->getHeader().PatientAge>18 && fitness)
 	        sprintf(bbuf, "<br><font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Если избыток веса появляется при употреблении хлеба и сладостей, число <b>потребляемых</b> ккал не может превосходить <b>%d</b>, при соотношении белков : жиров : углеводов - 40&#37:30&#37:30&#37 ккал, что в граммах составляет: Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., расчетный дыхательный коэффициент %.1lf. \n", (int)p_body, (int)P, (int)F, (int)CH, BrK);
         else
 			sprintf(bbuf, "<br><font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Вы гиперстеник. Ваша диета содержит <b>%d</b> ккал, при соотношении белков : жиров : углеводов - 40&#37:30&#37:30&#37 ккал, что в граммах составляет: Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., расчетный дыхательный коэффициент %.1lf. \n", (int)p_body, (int)P, (int)F, (int)CH, BrK);
@@ -751,7 +755,7 @@ void Export::StandartExport(bool fitness)
 	else if(teloslozhenie==1)
 	{
 		CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, 1.5, 12.3, &BrK);
-        if(bmi>=25 && database->hdata.PatientAge>18 && fitness)
+        if(bmi>=25 && database->getHeader().PatientAge>18 && fitness)
 			sprintf(bbuf, "<br><font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Если избыток веса появляется при употреблении жирного мяса и рыбы, число <b>потребляемых</b> ккал не может превосходить <b>%d</b>, при соотношении белков : жиров : углеводов - 25&#37:15&#37:60&#37 ккал, что в граммах составляет: Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., расчетный дыхательный коэффициент %.1lf. \n", (int)p_body, (int)P, (int)F, (int)CH, BrK);
         else
 			sprintf(bbuf, "<br><font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Вы астеник. Ваша диета содержит <b>%d</b> ккал, при соотношении белков : жиров : углеводов - 25&#37:15&#37:60&#37 ккал, что в граммах составляет: Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., расчетный дыхательный коэффициент %.1lf. \n", (int)p_body, (int)P, (int)F, (int)CH, BrK);
@@ -768,7 +772,7 @@ void Export::StandartExport(bool fitness)
 	{
         //Диета 3
 		CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, 0.667, 6.15, &BrK);
-        if(bmi>=25 && database->hdata.PatientAge>18 && fitness)
+        if(bmi>=25 && database->getHeader().PatientAge>18 && fitness)
 			sprintf(bbuf, "<br><font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Если избыток веса появляется из-за малой подвижности и избытка потребляемой еды, число <b>потребляемых</b> ккал не может превосходить <b>%d</b>, при соотношении белков : жиров : углеводов - 40&#37:20&#37:40&#37 ккал, что в граммах составляет: Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., расчетный дыхательный коэффициент %.1lf. \n", (int)p_body, (int)P, (int)F, (int)CH, BrK);
         else
 			sprintf(bbuf, "<br><font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Вы нормостеник. Ваша диета содержит <b>%d</b> ккал, при соотношении белков : жиров : углеводов - 40&#37:20&#37:40&#37 ккал, что в граммах составляет: Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., расчетный дыхательный коэффициент %.1lf. \n", (int)p_body, (int)P, (int)F, (int)CH, BrK);
@@ -781,7 +785,7 @@ void Export::StandartExport(bool fitness)
         sprintf(bbuf, "Каждые 100 ккал должны примерно состоять из Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г. ",(int)(P*k_pbody), (int)(F*k_pbody), (int)(CH*k_pbody));
         fwrite(bbuf, strlen(bbuf), 1, file);
 	}
-	if(bmi>=25 && database->hdata.PatientAge>18 && fitness)
+	if(bmi>=25 && database->getHeader().PatientAge>18 && fitness)
 	{
 		sprintf(bbuf, "<br><font size=4><br>&nbsp;&nbsp;&nbsp;&nbsp;Из полученного диапазона <b>потребляемых</b> ккал, Вы выбираете суточную диету на <b>250-500 ккал меньше использованных</b> с необходимым для Вас соотношением белков:жиров:углеводов. Выбранная разница <b>использованных</b> и <b>потребленных</b> калорий соответствует <b>потерям 200 - 400 г</b>  жира в неделю. Не пытайтесь сбросить больше!\n");
 		fwrite(bbuf, strlen(bbuf), 1, file);
@@ -792,33 +796,33 @@ void Export::StandartExport(bool fitness)
 		sprintf(bbuf, "<br><font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Если сбрасывать <b>по 200 г жира в неделю</b>, то время достижения требуемой массы тела: \n");
 		fwrite(bbuf, strlen(bbuf), 1, file);
 
-		if(database->hdata.PatientWeight-target[1]>0)
-			sprintf(bbuf, "нижняя граница - <b>%d</b> нед., верхняя граница - <b>%d</b> нед.", (int)((database->hdata.PatientWeight-target[0])/0.2), (int)((database->hdata.PatientWeight-target[1])/0.2));
+		if(database->getHeader().PatientWeight-target[1]>0)
+			sprintf(bbuf, "нижняя граница - <b>%d</b> нед., верхняя граница - <b>%d</b> нед.", (int)((database->getHeader().PatientWeight-target[0])/0.2), (int)((database->getHeader().PatientWeight-target[1])/0.2));
 		else
-			sprintf(bbuf, "нижняя граница - <b>%d</b> нед., верхняя граница - <b>уже достигнута</b>.", (int)((database->hdata.PatientWeight-target[0])/0.2));
+			sprintf(bbuf, "нижняя граница - <b>%d</b> нед., верхняя граница - <b>уже достигнута</b>.", (int)((database->getHeader().PatientWeight-target[0])/0.2));
 		fwrite(bbuf, strlen(bbuf), 1, file);
 
 		sprintf(bbuf, "<br>&nbsp;&nbsp;&nbsp;&nbsp;Если сбрасывать <b>по 400 г жира в неделю</b>, то время достижения требуемой массы тела: \n");
 		fwrite(bbuf, strlen(bbuf), 1, file);
 
-		if(database->hdata.PatientWeight-target[1]>0)
-			sprintf(bbuf, "нижняя граница - <b>%d</b> нед., верхняя граница - <b>%d</b> нед.\n", (int)((database->hdata.PatientWeight-target[0])/0.4), (int)((database->hdata.PatientWeight-target[1])/0.4));
+		if(database->getHeader().PatientWeight-target[1]>0)
+			sprintf(bbuf, "нижняя граница - <b>%d</b> нед., верхняя граница - <b>%d</b> нед.\n", (int)((database->getHeader().PatientWeight-target[0])/0.4), (int)((database->getHeader().PatientWeight-target[1])/0.4));
 		else
-			sprintf(bbuf, "нижняя граница - <b>%d</b> нед., верхняя граница - <b>уже достигнута</b>.\n", (int)((database->hdata.PatientWeight-target[0])/0.4));
+			sprintf(bbuf, "нижняя граница - <b>%d</b> нед., верхняя граница - <b>уже достигнута</b>.\n", (int)((database->getHeader().PatientWeight-target[0])/0.4));
 		fwrite(bbuf, strlen(bbuf), 1, file);
 
-		if(database->hdata.PatientWeight-target[1]>0)
-			sprintf(bbuf, "<br>&nbsp;&nbsp;&nbsp;&nbsp;Скорость достижения <b>верхней границы целевой массы тела</b>: от <b>%d</b> до <b>%d</b> недель (в зависимости от дефицита потраченных калорий в сутки - от 250 до 500 ккал). ", (int)((database->hdata.PatientWeight-target[1])/0.4), (int)((database->hdata.PatientWeight-target[1])/0.2));
+		if(database->getHeader().PatientWeight-target[1]>0)
+			sprintf(bbuf, "<br>&nbsp;&nbsp;&nbsp;&nbsp;Скорость достижения <b>верхней границы целевой массы тела</b>: от <b>%d</b> до <b>%d</b> недель (в зависимости от дефицита потраченных калорий в сутки - от 250 до 500 ккал). ", (int)((database->getHeader().PatientWeight-target[1])/0.4), (int)((database->getHeader().PatientWeight-target[1])/0.2));
 		else
 			sprintf(bbuf, "<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>Верхняя граница целевой массы тела</b> уже достигнута. ");
 		fwrite(bbuf, strlen(bbuf), 1, file);
-		sprintf(bbuf, "<br>&nbsp;&nbsp;&nbsp;&nbsp;Скорость достижения <b>нижней границы целевой массы тела</b>: от <b>%d</b> до <b>%d</b> недель (в зависимости от дефицита потраченных калорий в сутки - от 250 до 500 ккал).  \n", (int)((database->hdata.PatientWeight-target[0])/0.4), (int)((database->hdata.PatientWeight-target[0])/0.2));
+		sprintf(bbuf, "<br>&nbsp;&nbsp;&nbsp;&nbsp;Скорость достижения <b>нижней границы целевой массы тела</b>: от <b>%d</b> до <b>%d</b> недель (в зависимости от дефицита потраченных калорий в сутки - от 250 до 500 ккал).  \n", (int)((database->getHeader().PatientWeight-target[0])/0.4), (int)((database->getHeader().PatientWeight-target[0])/0.2));
 		fwrite(bbuf, strlen(bbuf), 1, file);
 
 		sprintf(bbuf, "<br>&nbsp;&nbsp;&nbsp;&nbsp;Не злоупотребляйте пищей, вызывающей избыточное выделение желудочного сока. Употребляйте продукты с низким (10-40) гликемическим индексом (ГИ). Продукты со средним (40-70) ГИ употребляют ограниченными порциями. Продукты с высоким (свыше 70) ГИ необходимо ограничивать и сочетать с белками, жирами или другими углеводистыми продуктами с низким ГИ. Употребляйте белковую пищу и продукты с высоким ГИ в первые 20 минут после тренировок.");
 		fwrite(bbuf, strlen(bbuf), 1, file);
 
-		sprintf(bbuf, "<br><br>&nbsp;&nbsp;&nbsp;&nbsp;При использовании выбранной Вами диеты метаболизм, измеренный на метаболографе, должен повышаться, а дыхательный коэффициент быть меньше 0,8. Вместе с этим окружность Вашей талии должна достигнуть величины меньше половины Вашего роста - %d см.", database->hdata.PatientHeight/2);
+		sprintf(bbuf, "<br><br>&nbsp;&nbsp;&nbsp;&nbsp;При использовании выбранной Вами диеты метаболизм, измеренный на метаболографе, должен повышаться, а дыхательный коэффициент быть меньше 0,8. Вместе с этим окружность Вашей талии должна достигнуть величины меньше половины Вашего роста - %d см.", database->getHeader().PatientHeight/2);
 		fwrite(bbuf, strlen(bbuf), 1, file);
 
 		sprintf(bbuf, "<br><table width=100% bordercolor=white><tr><td bgcolor=blue ><CENTER><font size=4 color=white>Движение:</font></table>");
@@ -876,7 +880,7 @@ void Export::StandartExport(bool fitness)
 //------------------------------------------------------------------------------------
 void Export::DietaExport()
 {
-        if(database->hdata.count<1)
+        if(database->getHeader().count<1)
         return;
 
         FILE *file = CreateExportFile("Протоколы лечебного питания (приказы МЗ", "html");
@@ -991,7 +995,7 @@ void Export::DietaExport()
 //------------------------------------------------------------------------------------
 void Export::CustomDietaExport(double NBK, double DUK)
 {
-        if(database->hdata.count<1)
+        if(database->getHeader().count<1)
         return;
 
         FILE *file = CreateExportFile("Формируемый протокол питания", "html");
@@ -1041,7 +1045,7 @@ void Export::CustomDietaExport(double NBK, double DUK)
 //------------------------------------------------------------------------------------
 void Export::UreaDietaExport(double Urea, double koefficient)
 {
-        if(database->hdata.count<1)
+        if(database->getHeader().count<1)
         return;
 
 		FILE *file = CreateExportFile("Формируемый протокол питания", "html");
@@ -1086,22 +1090,22 @@ void Export::CloseFile(FILE *file)
 
         sprintf(bbuf, "<br><table bordercolor=white><tr><b>Включенные опции при формировании протокола:</b> ");
 	fwrite(bbuf, strlen(bbuf), 1, file);
-        if(database->hdata.UseExpiratoryVolume)
+        if(database->getHeader().UseExpiratoryVolume)
         {
                 sprintf(bbuf, "<tr><td>Использовать объем вдоха");
                 fwrite(bbuf, strlen(bbuf), 1, file);
         }
-        if(database->hdata.Filter_TVolume)
+        if(database->getHeader().Filter_TVolume)
         {
                 sprintf(bbuf, "<tr><td>Фильтр дыхательных объемов,");
                 fwrite(bbuf, strlen(bbuf), 1, file);
         }
-        if(database->hdata.Filter_BrKoef)
+        if(database->getHeader().Filter_BrKoef)
         {
                 sprintf(bbuf, "<tr><td>Фильтр дых.коэффициента");
                 fwrite(bbuf, strlen(bbuf), 1, file);
         }
-        if(database->hdata.OsrednenieType2)
+        if(database->getHeader().OsrednenieType2)
         {
                 sprintf(bbuf, "<tr><td>Осреднение тип 2.");
 	        fwrite(bbuf, strlen(bbuf), 1, file);
@@ -1128,15 +1132,15 @@ void Export::ExportExcel()
      FILE *file = CreateExportFile("Данные", "xls");
 
      char bbuf[1024];
-     sprintf(bbuf, "<html><meta http-equiv='content-type' content='text/html; charset=windows-1251' /><table><tr><td>Имя пациента<td align=center>%s", database->hdata.PatientName);
+     sprintf(bbuf, "<html><meta http-equiv='content-type' content='text/html; charset=windows-1251' /><table><tr><td>Имя пациента<td align=center>%s", database->getHeader().PatientName);
      fwrite(bbuf, strlen(bbuf), 1, file);
-     sprintf(bbuf, "<tr><td>Возраст пациента<td align=center>%d", (int)database->hdata.PatientAge);
+     sprintf(bbuf, "<tr><td>Возраст пациента<td align=center>%d", (int)database->getHeader().PatientAge);
      fwrite(bbuf, strlen(bbuf), 1, file);
-     sprintf(bbuf, "<tr><td>Пол пациента<td align=center>%s", (database->hdata.PatientSex==1)?"мужской":"женский");
+     sprintf(bbuf, "<tr><td>Пол пациента<td align=center>%s", (database->getHeader().PatientSex==1)?"мужской":"женский");
      fwrite(bbuf, strlen(bbuf), 1, file);
-     sprintf(bbuf, "<tr><td>Рост пациента<td align=center>%d", database->hdata.PatientHeight);
+     sprintf(bbuf, "<tr><td>Рост пациента<td align=center>%d", database->getHeader().PatientHeight);
      fwrite(bbuf, strlen(bbuf), 1, file);
-     sprintf(bbuf, "<tr><td>Вес пациента<td align=center>%d</table>", database->hdata.PatientWeight);
+     sprintf(bbuf, "<tr><td>Вес пациента<td align=center>%d</table>", database->getHeader().PatientWeight);
      fwrite(bbuf, strlen(bbuf), 1, file);
 
 
@@ -1144,24 +1148,24 @@ void Export::ExportExcel()
      sprintf(bbuf, "<table><tr><td>Время<td>Vвдоха (л)<td>Vвыдоха (л)<td>FiO2<td>FetO2<td>FiCO2<td>FetCO2<td>ЧД<td>Поглощение O2 (мл)<td>Выделение CO2 (мл)<td>ДМП<td>ДК");
      fwrite(bbuf, strlen(bbuf), 1, file);
 	 
-     for(int i=0; i<database->hdata.count; i++)
+     for(int i=0; i<database->getHeader().count; i++)
      {
-          if(database->checked[i])
+          if(database->getChecked(i))
           {
 			  stringstream ss;
 			  ss << fixed;
-			  ss << "<tr><td align = center>" << database->datetime[i].getTimeString().c_str()
-				  << "<td align=center>" << setprecision(3) << database->variables["Vвдоха"][i]
-				  << "<td align=center>" << setprecision(3) << database->variables["Vвыдоха"][i]
-				  << "<td align=center>" << setprecision(3) << database->variables["FiO2"][i]
-				  << "<td align=center>" << setprecision(3) << database->variables["FetO2"][i]
-				  << "<td align=center>" << setprecision(3) << database->variables["FiCO2"][i]*100.
-				  << "<td align=center>" << setprecision(3) << database->variables["FetCO2"][i]*100.
-				  << "<td align=center>" << setprecision(3) << database->variables["ЧД"][i]
-				  << "<td align=center>" << setprecision(3) << database->variables["Потребление_O2"][i]
-				  << "<td align=center>" << setprecision(3) << database->variables["Выделение_CO2"][i]
-				  << "<td align=center>" << setprecision(3) << static_cast<int>(database->variables["ДМП"][i])
-				  << "<td align=center>" << setprecision(3) << database->variables["Дыхательный_коэффициент"][i]
+			  ss << "<tr><td align = center>" << database->getDatetime(i).getTimeString().c_str()
+				  << "<td align=center>" << setprecision(3) << database->getVariable("Vвдоха")[i]
+				  << "<td align=center>" << setprecision(3) << database->getVariable("Vвыдоха")[i]
+				  << "<td align=center>" << setprecision(3) << database->getVariable("FiO2")[i]
+				  << "<td align=center>" << setprecision(3) << database->getVariable("FetO2")[i]
+				  << "<td align=center>" << setprecision(3) << database->getVariable("FiCO2")[i]*100.
+				  << "<td align=center>" << setprecision(3) << database->getVariable("FetCO2")[i]*100.
+				  << "<td align=center>" << setprecision(3) << database->getVariable("ЧД")[i]
+				  << "<td align=center>" << setprecision(3) << database->getVariable("Потребление_O2")[i]
+				  << "<td align=center>" << setprecision(3) << database->getVariable("Выделение_CO2")[i]
+				  << "<td align=center>" << setprecision(3) << static_cast<int>(database->getVariable("ДМП")[i])
+				  << "<td align=center>" << setprecision(3) << database->getVariable("Дыхательный_коэффициент")[i]
 				  << endl;
 
 			  string temp = ss.str();

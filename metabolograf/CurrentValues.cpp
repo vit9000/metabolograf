@@ -22,7 +22,7 @@ void CurrentValues::Init()
 {
 	database = Database::getInstance();
 	SetBounds();
-	if (database->variable_names.size()==0) return;
+	if (database->getVariableNames().size()==0) return;
 
 	//varnames.push_back("Время исследования");
 
@@ -104,7 +104,7 @@ void CurrentValues::OnPaint()
 	for (int i = 0; i < variable_names.size(); i++)
 	{
 		string& vname = variable_names[i];
-		if (vname=="ЧСС" && database->variables.count(vname) == 0) continue;//если чсс не учитывается и нет такой переменной то рисовать не надо
+		if (vname=="ЧСС" && !database->isVariableExists(vname)) continue;//если чсс не учитывается и нет такой переменной то рисовать не надо
 		
 		int yi = i / 2;
 		yi *= (space * 2.7);
@@ -129,7 +129,7 @@ void CurrentValues::OnPaint()
 		
 		double value = 0;
 		if (selected != -1)
-			value = database->variables[vname][selected];
+			value = database->getVariable(vname)[selected];
 		ugc.SetDrawColor(235, 235, 235);
 		//ugc.FillRectangle(xi + 2 * dpiX, yi+space, w / 2 - 4 * dpiX, space);
 		ugc.SetDrawColor(0, 0, 0);
@@ -177,10 +177,10 @@ double CurrentValues::CalculateErr()
 	int count = 0;
 	for (int i = 0; i < database->getCount(); ++i)
 	{
-		if (database->checked[i])
+		if (database->getChecked(i))
 		{
-			double &Vim = database->variables["Vвдоха"][i];
-			double &Vex = database->variables["Vвыдоха"][i];
+			const double &Vim = database->getVariable("Vвдоха")[i];
+			const double &Vex = database->getVariable("Vвыдоха")[i];
 			if (Vim != 0 && Vex !=0)
 			{
 				result += (Vim - Vex) / Vim * 100.;

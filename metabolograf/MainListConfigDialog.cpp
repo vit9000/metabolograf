@@ -35,7 +35,7 @@ BOOL MainListConfigDialog::OnInitDialog()
 	//checklist.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES| WS_BORDER);
 	CFont* pFont = new CFont;
 	VERIFY(pFont->CreateFont(
-		14 * DPIX(),                        // nHeight
+		14 * (double)DPIX(),                        // nHeight
 		0,                         // nWidth
 		0,                         // nEscapement
 		0,                         // nOrientation
@@ -76,7 +76,7 @@ BOOL MainListConfigDialog::OnInitDialog()
 	ScreenToClient(&rect);
 	rect.bottom -= rect.top;
 	rect.right -= rect.left;
-	DPIX dpix;
+	double dpix = (double) DPIX();
 	::SetWindowPos(checklist.m_hWnd,HWND_TOP,
 	10* dpix, 10* dpix, rect.right-35* dpix,
 	rect.bottom - 80* dpix, NULL);

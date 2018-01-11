@@ -14,7 +14,7 @@ IMPLEMENT_DYNAMIC(SplashScreen, CDialogEx)
 SplashScreen::SplashScreen(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_SPLASH, pParent)
 {
-
+	dpiX = (double)DPIX();
 }
 
 SplashScreen::~SplashScreen()

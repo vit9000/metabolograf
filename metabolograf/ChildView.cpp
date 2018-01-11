@@ -160,17 +160,17 @@ void CChildView::Init(CMFCRibbonBar* _ribbonbar, CMFCRibbonStatusBar* _statusbar
 
 	if (ydata.Initialized && filename_from_commandline.IsEmpty())
 	{
-		database->hdata.PatientAge = ydata.PatientAge;
-		database->hdata.PatientSex = ydata.PatientSex;
-		database->hdata.PatientWeight = ydata.PatientWeight;
-		database->hdata.PatientHeight = ydata.PatientHeight;
-		sprintf(database->hdata.PatientName, "%s", ydata.FIO);
-		for (int i = strlen(database->hdata.PatientName) - 1; i >= 0; i--)
+		database->getHeader().PatientAge = ydata.PatientAge;
+		database->getHeader().PatientSex = ydata.PatientSex;
+		database->getHeader().PatientWeight = ydata.PatientWeight;
+		database->getHeader().PatientHeight = ydata.PatientHeight;
+		sprintf(database->getHeader().PatientName, "%s", ydata.FIO);
+		for (int i = strlen(database->getHeader().PatientName) - 1; i >= 0; i--)
 		{
-			if (database->hdata.PatientName[i] == ' ') database->hdata.PatientName[i] = '\0';
+			if (database->getHeader().PatientName[i] == ' ') database->getHeader().PatientName[i] = '\0';
 			else break;
 		}
-		sprintf(database->hdata.AdditionalInformation, "%s", ydata.Info);
+		sprintf(database->getHeader().AdditionalInformation, "%s", ydata.Info);
 	}
 
 	playground.UpdateVariablesList();
@@ -507,29 +507,29 @@ void CChildView::OnUpdateAllRibbonElements(CCmdUI* pCmdUI)
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUpdateUseExpiratoryVolume(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(database->hdata.UseExpiratoryVolume);
+	pCmdUI->SetCheck(database->getHeader().UseExpiratoryVolume);
 
 }
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUpdateUseInspiratoryVolume(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(database->hdata.UseInspiratoryVolume);
+	pCmdUI->SetCheck(database->getHeader().UseInspiratoryVolume);
 }
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUpdateUseMeanVolume(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(database->hdata.UseMeanVolume);
+	pCmdUI->SetCheck(database->getHeader().UseMeanVolume);
 }
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUpdateFilterTVolume(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(database->hdata.Filter_TVolume);
+	pCmdUI->SetCheck(database->getHeader().Filter_TVolume);
 
 }
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUpdateFilterBrKoef(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(database->hdata.Filter_BrKoef);
+	pCmdUI->SetCheck(database->getHeader().Filter_BrKoef);
 
 }
 //----------------------------------------------------------------------------------------------
@@ -643,19 +643,19 @@ bool CChildView::GetNewData()
 	tm *tmp = localtime(&t);
 	if (Circle == 0)
 	{
-		database->hdata.Year = tmp->tm_year + 1900;
-		database->hdata.Month = tmp->tm_mon + 1;
-		database->hdata.Day = tmp->tm_mday;
+		database->getHeader().Year = tmp->tm_year + 1900;
+		database->getHeader().Month = tmp->tm_mon + 1;
+		database->getHeader().Day = tmp->tm_mday;
 	}
 
-	database->datetime.append(Datetime(tmp->tm_year + 1900, tmp->tm_mon + 1, tmp->tm_mday, tmp->tm_hour, tmp->tm_min, tmp->tm_sec));
-	database->variables.at("Vвдоха").append(metab.Vol_insp);
-	database->variables.at("Vвыдоха").append(metab.Vol_exsp);
-	database->variables.at("FiO2").append(metab.FiO2);
-	database->variables.at("FetO2").append(metab.FetO2);
-	database->variables.at("FiCO2").append(metab.FiCO2 / 760. * 100.);
-	database->variables.at("FetCO2").append(metab.FetCO2 / 760. * 100.);
-	database->variables.at("ЧД").append(metab.RespRate);
+	database->Append(Datetime(tmp->tm_year + 1900, tmp->tm_mon + 1, tmp->tm_mday, tmp->tm_hour, tmp->tm_min, tmp->tm_sec));
+	database->Append("Vвдоха", metab.Vol_insp);
+	database->Append("Vвыдоха", metab.Vol_exsp);
+	database->Append("FiO2", metab.FiO2);
+	database->Append("FetO2", metab.FetO2);
+	database->Append("FiCO2", metab.FiCO2 / 760. * 100.);
+	database->Append("FetCO2", metab.FetCO2 / 760. * 100.);
+	database->Append("ЧД", metab.RespRate);
 
 	
 	//database.variables["ЧД_old"].append(metab.RespRateOld);
@@ -664,22 +664,22 @@ bool CChildView::GetNewData()
 
 	if (metab.HR >= 0)
 	{
-		if (!database->hdata.HR)
+		if (!database->getHeader().HR)
 		{
-			database->hdata.HR = true;
-			database->variable_names.push_back("ЧСС");
-			database->variable_names.push_back("RR");
-			database->variable_names.push_back("SD");
+			database->getHeader().HR = true;
+			database->AddVariable("ЧСС");
+			database->AddVariable("RR");
+			database->AddVariable("SD");
 		}
-		database->variables["ЧСС"].append(metab.HR);
+		database->Append("ЧСС", metab.HR);
 
 	}
-	database->checked.append(true);
+	database->Append(true);
 
 	//Filter(Circle);//Filter of the data
 	database->CalculateParameters(Circle);//пересчитываем все расчетные параметры
 	Circle++;
-	database->hdata.count = Circle;//обновляем размер массива
+	database->getHeader().count = Circle;//обновляем размер массива
 	
 	playground.OnRunScript(true);//выполняем скрипт, там же обновляется лист переменных
 	main_plot.UpdatePlots();//обновляем графики
@@ -810,7 +810,7 @@ void CChildView::OnProtocol1()
 bool CChildView::ProtolsAvailable()
 {
 	bool checked = false;
-	for (int i = 0; i<database->hdata.count; i++)
+	for (int i = 0; i<database->getHeader().count; i++)
 	{
 		if (database->getChecked(i) == true)
 		{
@@ -897,9 +897,9 @@ void CChildView::ChangeFilterStatus()
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUseExpiratoryVolumeClick()
 {
-	database->hdata.UseExpiratoryVolume = !database->hdata.UseExpiratoryVolume;
-	database->hdata.UseInspiratoryVolume = false;
-	database->hdata.UseMeanVolume = false;
+	database->getHeader().UseExpiratoryVolume = !database->getHeader().UseExpiratoryVolume;
+	database->getHeader().UseInspiratoryVolume = false;
+	database->getHeader().UseMeanVolume = false;
 	if (database->getCount() == 0) return;
 
 	database->CalculateParameters();
@@ -911,9 +911,9 @@ void CChildView::OnUseExpiratoryVolumeClick()
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUseInspiratoryVolumeClick()
 {
-	database->hdata.UseExpiratoryVolume = false;
-	database->hdata.UseInspiratoryVolume = !database->hdata.UseInspiratoryVolume;
-	database->hdata.UseMeanVolume = false;
+	database->getHeader().UseExpiratoryVolume = false;
+	database->getHeader().UseInspiratoryVolume = !database->getHeader().UseInspiratoryVolume;
+	database->getHeader().UseMeanVolume = false;
 
 	if (database->getCount() == 0) return;
 
@@ -926,9 +926,9 @@ void CChildView::OnUseInspiratoryVolumeClick()
 //----------------------------------------------------------------------------------------------
 void CChildView::OnUseMeanVolumeClick()
 {
-	database->hdata.UseExpiratoryVolume = false;
-	database->hdata.UseInspiratoryVolume = false;
-	database->hdata.UseMeanVolume = !database->hdata.UseMeanVolume;
+	database->getHeader().UseExpiratoryVolume = false;
+	database->getHeader().UseInspiratoryVolume = false;
+	database->getHeader().UseMeanVolume = !database->getHeader().UseMeanVolume;
 
 	if (database->getCount() == 0) return;
 
@@ -943,7 +943,7 @@ void CChildView::OnUseMeanVolumeClick()
 
 void CChildView::OnFilterTVolumeClick()
 {
-	database->hdata.Filter_TVolume = !database->hdata.Filter_TVolume;
+	database->getHeader().Filter_TVolume = !database->getHeader().Filter_TVolume;
 	if (database->getCount() == 0) return;
 	ChangeFilterStatus();
 	listplot.Update();
@@ -952,7 +952,7 @@ void CChildView::OnFilterTVolumeClick()
 //----------------------------------------------------------------------------------------------
 void CChildView::OnFilterBrkoefClick()
 {
-	database->hdata.Filter_BrKoef = !database->hdata.Filter_BrKoef;
+	database->getHeader().Filter_BrKoef = !database->getHeader().Filter_BrKoef;
 	if (database->getCount() == 0) return;
 	ChangeFilterStatus();
 	listplot.Update();
@@ -981,7 +981,7 @@ void CChildView::UpdateStatusBar()
 	if (!statusbar || !ribbonbar) return;
 
 	CString age_lbl = "лет";
-	int age = static_cast<int>(database->hdata.PatientAge);
+	int age = static_cast<int>(database->getHeader().PatientAge);
 	int ostatok = age - (age / 10) * 10;
 
 	if(age>10 && age<20) age_lbl = "лет";
@@ -990,9 +990,9 @@ void CChildView::UpdateStatusBar()
 
 
 	
-	CString st = "Пациент: " + CString(database->hdata.PatientName);
+	CString st = "Пациент: " + CString(database->getHeader().PatientName);
 	st += " (" + CString(to_string(age).c_str()) +" "+ age_lbl + ")";
-	st += " | Дата исследования: " + CString(database->datetime[0].getDateStringNormal().c_str());
+	st += " | Дата исследования: " + CString(database->getDatetime(0).getDateStringNormal().c_str());
 
 	statusbar->GetElement(0)->SetText(st);
 	CRect sbrect = statusbar->GetElement(0)->GetRect();
@@ -1053,14 +1053,14 @@ void CChildView::OnEnlargePlotShowDialogButton()
 
 void CChildView::OnStartTestButton()
 {
-	if (database->hdata.StartTest <= 0)
+	if (database->getHeader().StartTest <= 0)
 	{
 		
 		PowerStepDialog dlg;
 		dlg.DoModal();
-		database->hdata.PowerStep = (int8_t)dlg.getValue();
+		database->getHeader().PowerStep = (int8_t)dlg.getValue();
 
-		database->hdata.StartTest = database->getCount() - 1;
+		database->getHeader().StartTest = database->getCount() - 1;
 		OnSetExperienceMode();
 		CurValuesVisible = true;
 		curValues.ShowWindow(SW_SHOW);
@@ -1071,7 +1071,7 @@ void CChildView::OnStartTestButton()
 	}
 	else
 	{
-		database->hdata.EndTest = database->getCount() - 1;
+		database->getHeader().EndTest = database->getCount() - 1;
 		timerWindow.StopTest();
 	}
 	ribbonbar->RecalcLayout();
@@ -1091,13 +1091,13 @@ void CChildView::OnUpdateRecordButton(CCmdUI* pCmdUI)
 	if (Recording)
 	{	
 		pCmdUI->SetText("Завершить исследование");
-		if(database->hdata.StartTest>0)//если проводится опыт
+		if(database->getHeader().StartTest>0)//если проводится опыт
 		{
 			MTime curtime;
 			curtime.CurrentTime();
-			if(database->hdata.EndTest <= 0)// если вторая метка не выставлена, кнопка недоступна
+			if(database->getHeader().EndTest <= 0)// если вторая метка не выставлена, кнопка недоступна
 				pCmdUI->Enable(false);
-			else if(curtime < (database->datetime[database->hdata.EndTest].getTime() + 120))//если вторую метку поставили, но нужно подождать 2 минуты
+			else if(curtime < (database->getDatetime(database->getHeader().EndTest).getTime() + 120))//если вторую метку поставили, но нужно подождать 2 минуты
 				pCmdUI->Enable(false);
 			else//если прошло 120 сек после постановки второй метки
 				pCmdUI->Enable(true);
@@ -1128,14 +1128,14 @@ void CChildView::OnUpdateStartTestButton(CCmdUI* pCmdUI)
 
 	if (Recording && database->getCount() > 0)
 	{
-		if ((MTime(true) - database->datetime[0].getTime()) > MTime(60))
+		if ((MTime(true) - database->getDatetime(0).getTime()) > MTime(60))
 			status = true;
 	}
 	
 	
-	if (database->hdata.StartTest <= 0)
+	if (database->getHeader().StartTest <= 0)
 		pCmdUI->SetText("Запустить тест");
-	else if (database->hdata.EndTest <= 0)
+	else if (database->getHeader().EndTest <= 0)
 		pCmdUI->SetText("Завершить тест");
 	else
 	{
@@ -1183,7 +1183,7 @@ void CChildView::OnUpdateExperienceButton(CCmdUI *pCmdUI)
 		pCmdUI->SetText("Выкл. режим нагрузочного теста");
 	else 
 		pCmdUI->SetText("Вкл. режим нагрузочного  теста");
-	if (database->hdata.StartTest > 0 && database->hdata.EndTest > 0)
+	if (database->getHeader().StartTest > 0 && database->getHeader().EndTest > 0)
 		pCmdUI->Enable(true);
 	else pCmdUI->Enable(false);
 }
@@ -1217,18 +1217,18 @@ void CChildView::OnProtocolMpk()
 
 	if (database->getCount() == 0) return;
 
-	if (database->hdata.StartTest <= 0 || database->hdata.EndTest <= 0)
+	if (database->getHeader().StartTest <= 0 || database->getHeader().EndTest <= 0)
 	{
 		MessageBoxA("Данный протокол доступен только для исследования с нагрузочным тестом", "Внимание", MB_OK | MB_ICONINFORMATION);
 		return;
 	}
 	
-	if (database->hdata.PowerStep > (int8_t)60 || database->hdata.PowerStep < (int8_t)20)
+	if (database->getHeader().PowerStep > (int8_t)60 || database->getHeader().PowerStep < (int8_t)20)
 	{
 
 		PowerStepDialog dlg;
 		dlg.DoModal();
-		database->hdata.PowerStep = (int8_t)dlg.getValue();
+		database->getHeader().PowerStep = (int8_t)dlg.getValue();
 	}
 
 	BigPlotDialog bpDlg;
@@ -1240,9 +1240,9 @@ void CChildView::OnProtocolMpk()
 
 	if (bpDlg.DoModal(&plot, true) == IDOK && plot.IsExperience())
 	{
-		database->hdata.AeT = bpDlg.getBigPlot().getValue(0);
-		database->hdata.AT = bpDlg.getBigPlot().getValue(1);
-		database->hdata.MCO = bpDlg.getBigPlot().getValue(2);
+		database->getHeader().AeT = bpDlg.getBigPlot().getValue(0);
+		database->getHeader().AT = bpDlg.getBigPlot().getValue(1);
+		database->getHeader().MCO = bpDlg.getBigPlot().getValue(2);
 		main_plot.UpdatePlots();	
 	}
 }

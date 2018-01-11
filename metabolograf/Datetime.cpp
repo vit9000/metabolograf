@@ -16,47 +16,47 @@ Datetime::Datetime(int year, int month, int day, int hour, int minute, int secon
 	time = MTime(hour, minute, second);
 
 }
-int Datetime::getHour()
+int Datetime::getHour() const
 {
 	return time.getHour();
 }
-int Datetime::getMinute()
+int Datetime::getMinute() const
 {
 	return time.getMinute();
 }
-int Datetime::getSecond()
+int Datetime::getSecond() const
 {
 	return time.getSecond();
 }
 
-MTime Datetime::getTime()
+MTime Datetime::getTime() const
 {
 	return time;
 }
 //--------------------------------------------------------------------------
-string Datetime::getDateString()
+string Datetime::getDateString() const
 {
 	string str = ToString(Year, 4) + "-" + ToString(Month, 2) + "-" + ToString(Day, 2);
 	return str;
 }
-string Datetime::getDateStringRU()
+string Datetime::getDateStringRU() const
 {
 	string str = ToString(Day, 2) + "." + ToString(Month, 2) + "." + ToString(Year, 4);
 	return str;
 }
-string Datetime::getDateStringNormal()
+string Datetime::getDateStringNormal() const
 {
 	string str = ToString(Day, 2) + "." + ToString(Month, 2) + "." + ToString(Year, 4);
 	return str;
 }
 //--------------------------------------------------------------------------
-string Datetime::getTimeString()
+string Datetime::getTimeString() const
 {
 
 	return time.getString();
 }
 //--------------------------------------------------------------------------
-string Datetime::getDatetimeString()
+string Datetime::getDatetimeString() const
 {
 	return  getDateString() + " " + getTimeString();
 }

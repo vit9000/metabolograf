@@ -94,7 +94,7 @@ public:
 	}
 
 
-	V& operator[](int i)
+	V& operator[](size_t i)
 	{
 		if (i<0)
 			throw exception();
@@ -105,6 +105,11 @@ public:
 
 		V& val = (values[i]);
 		return val;
+	}
+
+	const V& operator[](size_t i) const
+	{
+		return values.at(i);
 	}
 	//--------------------------------------------------------------------------
 	
@@ -168,7 +173,7 @@ public:
 	friend Variable_ operator/(const T& a, const Variable_& b)
 	{
 		Variable_ result;
-		for (int i = 0; i<b.values.size(); i++)
+		for (size_t i = 0; i<b.values.size(); i++)
 		{
 			if (a == 0)
 				result.values.push_back(0);
@@ -308,13 +313,18 @@ public:
         values.erase(values.begin()+index);
 	}
 	//--------------------------------------------------------------------------
-	V mean(Variable_<uint8_t>& var)
+	const V& at(size_t i) const
+	{
+		return values.at(i);
+	}
+	//--------------------------------------------------------------------------
+	V mean(const Variable_<uint8_t>& var) const
 	{
 	   V mean=0;
 	   int count=0;
 	   for(int i=0; i<size(); i++)
 	   {
-			if(var[i] )
+			if(var.at(i) )
 			{
 				mean += values[i];
 				count++;
@@ -324,20 +334,20 @@ public:
 	   return mean;
 	}
     //--------------------------------------------------------------------------
-	V mean()
+	V mean() const
 	{
 	   V mean=0;
 	   int count=0;
 	   for(int i=0; i<size(); i++)
 	   {
-			mean += values[i];
+			mean += values.at(i);
 			count++;
 	   }
 	   mean /= count;
 	   return mean;
 	}
 	//--------------------------------------------------------------------------
-	Variable_<V> getWithoutUnchecked(Variable_<uint8_t>& checked)
+	Variable_<V> getWithoutUnchecked(const Variable_<uint8_t>& checked) const
 	{
 		Variable_<V> var;
 		for (int i = 0; i < values.size(); i++)
@@ -379,7 +389,7 @@ public:
 		return var;
 	}
 #include <cmath>
-	V SD(int start, int end)
+	V SD(size_t start, size_t end) const
 	{
 		
 		V temp = 0;
@@ -387,9 +397,9 @@ public:
 
 		V Mean = mean(start, end);
 		
-		if (end >= (int)size())
+		if (end >= size())
 			end = size() - 1;
-		for (int i = start; i <= end; i++)
+		for (size_t i = start; i <= end; i++)
 		{
 			
 			V t = values[i] - Mean;
@@ -405,12 +415,12 @@ public:
 	}
 	//--------------------------------------------------------------------------
 	//--------------------------------------------------------------------------
-	V mean(int start, int end) 
+	V mean(size_t start, size_t end) const
 	{
-		int count=0;
+		size_t count=0;
 		V temp=0;
 		
-		for (int i = start; i <= end; i++)
+		for (size_t i = start; i <= end; i++)
 		{
 			if (i >= size()) break;
 			count++;

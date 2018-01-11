@@ -112,7 +112,7 @@ void BigPlot::OnPaint()
 void BigPlot::OnLButtonUp(UINT flags, CPoint point)
 {
 	//if (!plot->experience) return;
-	//if (database->hdata.StartTest <= 0) return;
+	//if (database->getHeader().StartTest <= 0) return;
 	int x = point.x;
 	int y = point.y;
 	cursor = -1;
@@ -159,8 +159,8 @@ void BigPlot::SetTimeCursor(int selectedItem)//выставляем метку по времени
 		return;
 	}
 
-	MTime time = database->datetime[selectedItem].getTime();
-	MTime starttime = database->datetime[0].getTime();
+	MTime time = database->getDatetime(selectedItem).getTime();
+	MTime starttime = database->getDatetime(0).getTime();
 
 	time = time - starttime;
 	
@@ -174,7 +174,7 @@ void BigPlot::SetTimeCursor(int selectedItem)//выставляем метку по времени
 void BigPlot::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (!plot->IsExperience()) return;
-	if (database->hdata.StartTest <= 0) return;
+	if (database->getHeader().StartTest <= 0) return;
 	int x = point.x;
 	int y = point.y;
 

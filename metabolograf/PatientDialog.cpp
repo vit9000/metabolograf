@@ -48,15 +48,15 @@ void PatientDialog::Init(bool _active)
 BOOL PatientDialog::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-	m_FIO_Edit.SetWindowTextA(database->hdata.PatientName);
-	m_Age_Edit.SetWindowTextA(to_string((int)database->hdata.PatientAge).c_str());
-	m_Weight_Edit.SetWindowTextA(to_string((int)database->hdata.PatientWeight).c_str());
-	m_Height_Edit.SetWindowTextA(to_string((int)database->hdata.PatientHeight).c_str());
-	m_Wrist_Edit.SetWindowTextA(to_string((int)database->hdata.PatientWrist).c_str());
+	m_FIO_Edit.SetWindowTextA(database->getHeader().PatientName);
+	m_Age_Edit.SetWindowTextA(to_string((int)database->getHeader().PatientAge).c_str());
+	m_Weight_Edit.SetWindowTextA(to_string((int)database->getHeader().PatientWeight).c_str());
+	m_Height_Edit.SetWindowTextA(to_string((int)database->getHeader().PatientHeight).c_str());
+	m_Wrist_Edit.SetWindowTextA(to_string((int)database->getHeader().PatientWrist).c_str());
 
 	m_Sex_Combo.AddString("Женский");
 	m_Sex_Combo.AddString("Мужской");
-	m_Sex_Combo.SetCurSel(database->hdata.PatientSex);
+	m_Sex_Combo.SetCurSel(database->getHeader().PatientSex);
 
 	m_FIO_Edit.EnableWindow(active);
 	m_Age_Edit.EnableWindow(active);
@@ -96,12 +96,12 @@ void PatientDialog::OnBnClickedOk()
 	m_FIO_Edit.GetWindowText(temp);
 	if (!IsValid(temp)) return;
 
-	sprintf(database->hdata.PatientName, "%s", temp.GetBuffer());
-	database->hdata.PatientAge = Age;
-	database->hdata.PatientWeight = Weight;
-	database->hdata.PatientHeight = Height;
-	database->hdata.PatientWrist = Wrist;
-	database->hdata.PatientSex = Sex;
+	sprintf(database->getHeader().PatientName, "%s", temp.GetBuffer());
+	database->getHeader().PatientAge = Age;
+	database->getHeader().PatientWeight = Weight;
+	database->getHeader().PatientHeight = Height;
+	database->getHeader().PatientWrist = Wrist;
+	database->getHeader().PatientSex = Sex;
 
 	// TODO: добавьте свой код обработчика уведомлений
 	CDialogEx::OnOK();

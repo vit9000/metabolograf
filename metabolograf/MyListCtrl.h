@@ -49,7 +49,7 @@ public:
 		marks.clear();
 		errmarks.clear();
 		DeleteAllItems();
-		for (int i = 0; i<database->variable_names.size()+2; i++)
+		for (size_t i = 0; i<database->getVariableNames().size()+2; i++)
 		{
 			DeleteColumn(0);
 		}
@@ -132,15 +132,15 @@ public:
 		int Count = GetItemCount();
 		int index = InsertItem(LVIF_TEXT, Count, to_string(i).c_str(), 0, 0, 0, NULL);
 
-		SetItemText(index, 1, database->datetime[i].getTimeString().c_str());//time
+		SetItemText(index, 1, database->getDatetime(i).getTimeString().c_str());//time
 		int column = 2;
 		int col=0;
 		for (auto& varname : show_parameters)
 		{
-			int size = database->variables[varname].size();
+			int size = database->getCount();//database->variables[varname].size();
 			if (i < size)
 			{
-				double value = database->variables[varname][i];
+				double value = database->getVariable(varname)[i];
 				string str = ToString(varname, value);//to_string(database->variables[varname][i]);
 				if (str == "ÍÄ")
 					errmarks.insert({ index, column });
@@ -153,7 +153,7 @@ public:
 			
 		}
 
-		SetCheck(i, database->checked[i]);
+		SetCheck(i, database->getChecked(i));
 		busy = false;
 	}
 	//-------------------------------------------------------------------------------------------
@@ -220,10 +220,10 @@ public:
 			return;
 		}
 
-		for (int i = 0; i<database->variable_names.size(); i++)
+		for (size_t i = 0; i<database->getVariableNames().size(); i++)
 		{
 			int defaultVal = 0;
-			string& varname = database->variable_names[i];
+			const string& varname = database->getVariableNames()[i];
 
 			int temp = (bool)ini.Read<int>("Variable_names", varname.c_str(), defaultVal);
 			if (temp == 1)
@@ -235,9 +235,9 @@ public:
 	{
 		MainListConfigDialog cfDlg;
 		vector<string> varnames;
-		for (auto& varname : database->variable_names)
+		for (const auto& varname : database->getVariableNames())
 		{
-			if (database->variables[varname].GetType() == Vector)
+			if (database->getVariable(varname).GetType() == Vector)
 				varnames.push_back(varname);
 		}
 		//&database->variable_names
@@ -295,8 +295,8 @@ public:
 
 			if(marks.count({ line_index , pLVCD->iSubItem })!=0)
 				crText = RGB(255, 0, 0);
-			else if ((database->hdata.StartTest!=0 && database->hdata.EndTest!=0 && line_index >= database->hdata.StartTest && line_index <= database->hdata.EndTest) ||
-				(database->hdata.StartTest != 0 && database->hdata.EndTest == 0 && line_index >= database->hdata.StartTest))
+			else if ((database->getHeader().StartTest!=0 && database->getHeader().EndTest!=0 && line_index >= database->getHeader().StartTest && line_index <= database->getHeader().EndTest) ||
+				(database->getHeader().StartTest != 0 && database->getHeader().EndTest == 0 && line_index >= database->getHeader().StartTest))
 				crText = RGB(15, 135, 0);
 			else
 				crText = RGB(0, 0, 0);

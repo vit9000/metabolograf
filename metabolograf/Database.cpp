@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Database.h"
 
-Database* Database::p_instance = 0;
 
 Database::Database()
 {
@@ -134,14 +133,14 @@ void Database::CalculateMetab()
 	else k = 1.0;
 
 	//oo= (oo+(oo*0.4))*k;
-	Benedict = oo;
+	calculatedMetab.Benedict = oo;
 
 
 	double koef = -161;
 	if (hdata.PatientSex == 0)
 		koef = 5;
 	oo = 9.99 * hdata.PatientWeight + 6.25 * hdata.PatientHeight - 4.92 * hdata.PatientAge + koef;
-	Muffin_Jeor = oo;
+	calculatedMetab.Muffin_Jeor = oo;
 
 
 	double LBM = 0.0;
@@ -151,7 +150,7 @@ void Database::CalculateMetab()
 		LBM = (1.07 * hdata.PatientWeight) - 148 * hdata.PatientWeight*hdata.PatientWeight / (100 * hdata.PatientHeight*hdata.PatientHeight);
 	//Hallynck TH Soep HH et al. Should clearance be normalised to body surface or to lean body mass? Br J Clin Pharmacol. 1981; 11: 523-526.
 	oo = 370 + 21.6 * LBM;
-	Katch_MacArdle = oo;
+	calculatedMetab.Katch_MacArdle = oo;
 }
 //---------------------------------------------------------------------
 int Database::getHour(int index)

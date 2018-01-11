@@ -342,7 +342,7 @@ void NutritionDialog::OnBnClickedInfo()
 		break;
 	case 1:
 	{
-		double PatientAge = Database::getInstance()->hdata.PatientAge;
+		double PatientAge = Database::getInstance()->getHeader().PatientAge;
 		if (PatientAge >= 0.01 && PatientAge<0.06)
 			msg = "Норма мочевины: 10-17 ммоль/сут";
 		if (PatientAge >= 0.06 && PatientAge<1)

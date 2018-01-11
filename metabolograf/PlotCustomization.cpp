@@ -98,7 +98,7 @@ BOOL PlotCustomization::OnInitDialog()
 
 
 		PlotParameter& varY = plot->var_Y[0];
-		for (const auto& varname : database->variable_names)
+		for (const auto& varname : database->getVariableNames())
 		{
 			if (varY.getVarname(0) == varname)
 				m_onevarlist.SetWindowTextA(varname.c_str());

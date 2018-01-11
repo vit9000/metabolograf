@@ -120,14 +120,14 @@ void MainPlot::ShowPlotWindow()
 
 	if (bpDlg.DoModal(&plot, database) == IDOK && plot.IsExperience())
 	{
-		database->hdata.AeT = bpDlg.getBigPlot().getValue(0);
-		database->hdata.AT = bpDlg.getBigPlot().getValue(1);
-		database->hdata.MCO = bpDlg.getBigPlot().getValue(2);
+		database->getHeader().AeT = bpDlg.getBigPlot().getValue(0);
+		database->getHeader().AT = bpDlg.getBigPlot().getValue(1);
+		database->getHeader().MCO = bpDlg.getBigPlot().getValue(2);
 		for (auto& plot : plots)
 		{
-			plot->SetMarkPosByTableIndex(database, 0, database->hdata.AeT);
-			plot->SetMarkPosByTableIndex(database, 1, database->hdata.AT);
-			plot->SetMarkPosByTableIndex(database, 2, database->hdata.MCO);
+			plot->SetMarkPosByTableIndex(database, 0, database->getHeader().AeT);
+			plot->SetMarkPosByTableIndex(database, 1, database->getHeader().AT);
+			plot->SetMarkPosByTableIndex(database, 2, database->getHeader().MCO);
 			plot->DrawPlot();
 		}
 		RedrawWindow();

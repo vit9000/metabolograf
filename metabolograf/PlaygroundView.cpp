@@ -155,7 +155,7 @@ void PlaygroundView::OnLButtonDblClk(UINT flags, CPoint point)
 void PlaygroundView::UpdateVariablesList()
 {
 	VariablesList.ResetContent();
-	for (auto& it : database->variables)
+	for (const auto& it : database->getVariables())
 	{
 		/*string type = (it.second.GetType()) ? "" : "Scalar - ";
 		type += it.first.c_str();

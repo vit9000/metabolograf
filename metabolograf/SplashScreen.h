@@ -19,7 +19,7 @@ public:
 #endif
 
 protected:
-	DPIX dpiX;
+	double dpiX;
 	Gdiplus::Bitmap *bmp;
 	Gdiplus::Bitmap *ResourceToBitmap(const HINSTANCE hInstance, const int id);
 	afx_msg void OnPaint();

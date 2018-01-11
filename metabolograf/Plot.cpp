@@ -116,21 +116,21 @@ void Plot::SetMarkPosByTableIndex(Database* database, int type, int pos)
 //-------------------------------------------------------------------------------------------------------
 int Plot::FromTableIndexToPlotIndex(Database* database, int type, int pos)//конвертер индекса строки таблицы в индекс графика
 {
-	int start = database->hdata.StartTest;
+	int start = database->getHeader().StartTest;
 	if (!experience) start = 0;
 	if (start < 0 || start >= database->getCount()) return -1;
 
-	MTime starttime = database->datetime[start].getTime();
+	MTime starttime = database->getDatetime(start).getTime();
 
 	int value;
-	if (type == 0) value = database->hdata.AeT;
-	else if (type == 1) value = database->hdata.AT;
-	else /*if(type==2)*/ value = database->hdata.MCO;
+	if (type == 0) value = database->getHeader().AeT;
+	else if (type == 1) value = database->getHeader().AT;
+	else /*if(type==2)*/ value = database->getHeader().MCO;
 
 	if (value < 0 || value >= database->getCount())
 		return -1;
 
-	MTime time = database->datetime[value].getTime();
+	MTime time = database->getDatetime(value).getTime();
 	time = time - starttime;
 
 	int result = -1;
@@ -161,14 +161,14 @@ int Plot::FromPlotIndexToTableIndex(int type, Database* database)//возвращем инд
 	if (p < 0 || p >= varTime.size())
 		return -1;
 	int start = 0;
-	if (experience) start = database->hdata.StartTest;
+	if (experience) start = database->getHeader().StartTest;
 	MTime& vt = varTime[p];
-	MTime tt = database->datetime[start].getTime();
-	MTime time = vt + tt;//database->datetime[start].getTime();
+	MTime tt = database->getDatetime(start).getTime();
+	MTime time = vt + tt;
 
 	for (int i = 0; i < database->getCount(); i++)
 	{
-		MTime& temptime = database->datetime[i].getTime();
+		MTime& temptime = database->getDatetime(i).getTime();
 		if (temptime > time)
 		{
 			return i - 1;
@@ -246,24 +246,24 @@ void Plot::Run(Database* database, const vector<string>& str)
 {
 	Default();
 	int zerotime_index = 0;
-	VariableBOOL checked = database->checked;
+	VariableBOOL checked(database->getChecked());
 
 
 	//если проводим эксперимент
 	if (experience)
 	{
-		if (database->hdata.StartTest != 0)
+		if (database->getHeader().StartTest != 0)
 		{
-			zerotime_index = database->hdata.StartTest;//устанавливаем нулевую отметку на графиках
-			for (int i = 0; i < database->hdata.StartTest; i++)
+			zerotime_index = database->getHeader().StartTest;//устанавливаем нулевую отметку на графиках
+			for (int i = 0; i < database->getHeader().StartTest; i++)
 				checked[i] = false;// снимаем галки до начала опыта
 		}
 		else
 			experience = false;
 
-		if (database->hdata.EndTest != 0)
+		if (database->getHeader().EndTest != 0)
 		{
-			for (int i = database->hdata.EndTest + 1; i < database->getCount(); i++)
+			for (int i = database->getHeader().EndTest + 1; i < database->getCount(); i++)
 				checked[i] = false;//снимаем галки после конца опыта
 		}
 
@@ -320,11 +320,11 @@ void Plot::Run(Database* database, const vector<string>& str)
 				for (j; j<end; j += 2)
 				{
 					string p_value2 = str[j];
-					if (database->variables.count(p_value2) == 0)//если нет такой переменной
+					if (!database->isVariableExists(p_value2))//если нет такой переменной
 						continue;
 					//throw runtime_error("√рафик: переменна€ '" + p_value2 + "' не найдена.");
 					//создаем переменную без сн€тых галок
-					Variable varT = database->variables[p_value2].getWithoutUnchecked(checked);
+					Variable varT = database->getVariable(p_value2).getWithoutUnchecked(checked);
 					//сохран€ем переменную с дополнительными параметрами
 					if (tick == 0)
 						var->push_back(PlotParameter(p_value2, intervals, varT));
@@ -362,9 +362,9 @@ void Plot::Run(Database* database, const vector<string>& str)
 
 	if (experience)
 	{
-		SetMarkPosByTableIndex(database, 0, database->hdata.AeT);
-		SetMarkPosByTableIndex(database, 1, database->hdata.AT);
-		SetMarkPosByTableIndex(database, 2, database->hdata.MCO);
+		SetMarkPosByTableIndex(database, 0, database->getHeader().AeT);
+		SetMarkPosByTableIndex(database, 1, database->getHeader().AT);
+		SetMarkPosByTableIndex(database, 2, database->getHeader().MCO);
 	}
 	CheckData();
 }

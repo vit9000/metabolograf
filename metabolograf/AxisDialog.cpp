@@ -51,9 +51,9 @@ BOOL AxisDialog::OnInitDialog()
 
 	int index = -1;
 	int counter = 0;
-	for (const auto& varname : database->variable_names)
+	for (const auto& varname : database->getVariableNames())
 	{
-		if (database->variables[varname].GetType() == Vector)
+		if (database->getVariable(varname).GetType() == Vector)
 		{
 			m_VarCombo.AddString(varname.c_str());
 			if (param.varname == varname)
