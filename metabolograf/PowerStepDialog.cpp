@@ -13,15 +13,6 @@
 
 IMPLEMENT_DYNAMIC(PowerStepDialog, CDialogEx)
 
-PowerStepDialog::PowerStepDialog(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_POWER_STEP_DIALOG, pParent)
-{
-
-}
-
-PowerStepDialog::~PowerStepDialog()
-{
-}
 
 void PowerStepDialog::DoDataExchange(CDataExchange* pDX)
 {

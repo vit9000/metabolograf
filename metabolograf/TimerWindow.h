@@ -18,7 +18,7 @@ public:
 	void StopTest();
 	void Update();
 
-protected:
+private:
 	UINT_PTR timer;
 	int Width;
 	int Height;

@@ -6,6 +6,10 @@
 
 class VolumeErrorDialog : public CDialogEx
 {
+	// Dialog Data
+	#ifdef AFX_DESIGN_TIME
+		enum { IDD = undefined };
+	#endif
 	DECLARE_DYNAMIC(VolumeErrorDialog)
 
 public:
@@ -14,18 +18,13 @@ public:
 	virtual ~VolumeErrorDialog();
 	void Apply() { hist.Apply(); }
 
-// Dialog Data
-#ifdef AFX_DESIGN_TIME
-	enum { IDD = undefined };
-#endif
-
-protected:
+private:
 	CComboBox combo;
 	Histogram hist;
+
 	BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-	DECLARE_MESSAGE_MAP()
-public:
 	afx_msg void OnCbnSelchangeCombo();
+	DECLARE_MESSAGE_MAP()
+
 };

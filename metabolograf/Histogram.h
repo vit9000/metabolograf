@@ -15,13 +15,14 @@ class Histogram :
 public:
 
 	Histogram();
+	~Histogram();
+
 	void Init();
 	void SetBounds();
-	~Histogram();
 	void BuildTable(int count);
 	void Apply();
 	
-protected:
+private:
 	//variables
 	int Width;
 	int Height;

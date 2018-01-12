@@ -9,29 +9,28 @@ using namespace std;
 class MainListConfigDialog : public CDialogEx
 {
 	DECLARE_DYNAMIC(MainListConfigDialog)
+// Данные диалогового окна
+#ifdef AFX_DESIGN_TIME
+	enum { IDD = IDD_MAINLIST_CONFIG_DIALOG };
+#endif
 
 public:
 	MainListConfigDialog(CWnd* pParent = NULL);   // стандартный конструктор
 	virtual ~MainListConfigDialog();
-
 	
-	CCheckListBox checklist;
 	void Init(vector<string>* _checked, vector<string>* _names)
 	{
 		checked = _checked;
 		names = _names;
 	}
 	
-// Данные диалогового окна
-#ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_MAINLIST_CONFIG_DIALOG };
-#endif
+
 
 private:
+	CCheckListBox checklist;
 	vector<string>* checked;
 	vector<string>* names;
 
-protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // поддержка DDX/DDV
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	virtual BOOL OnInitDialog();

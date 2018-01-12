@@ -28,7 +28,6 @@ private:
 	string DoubleToString(double val); 
 	string ToString(string var_name, double value);
 	double CalculateErr();
-protected:
 	void SetBounds();
 	void OnSize(UINT nType, int cx, int cy);
 	void OnPaint();

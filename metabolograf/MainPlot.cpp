@@ -134,22 +134,8 @@ void MainPlot::ShowPlotWindow()
 	}
 
 }
-int MainPlot::GetScreenDPI()
-{
-	HDC hdcScreen = ::GetDC(NULL);
-	int iDPI = -1; // assume failure
-	if (hdcScreen) {
-		iDPI = ::GetDeviceCaps(hdcScreen, LOGPIXELSX);
-		::ReleaseDC(NULL, hdcScreen);
-	}
-	return iDPI;
-}
-
-
 
 //------------------------------------------------------
-
-
 void MainPlot::Clear()
 {
 	selectedPlot = -1;

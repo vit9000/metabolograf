@@ -29,8 +29,9 @@ public:
 		RedrawWindow();
 	}
 
-	vector<int> values;
+	
 protected:
+	vector<int> values;
 	//variables
 	int Width;
 	int Height;

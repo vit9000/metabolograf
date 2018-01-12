@@ -18,7 +18,7 @@ public:
 	~MainPlot();
 public:
 	CMFCRibbonBar* ribbonbar;
-	int selectedPlot;
+	
 	void SetBounds();
 	void Init();
 	void OnLButtonUp(UINT flags, CPoint point);
@@ -30,7 +30,6 @@ public:
 	bool AddPlot(string plot_string, int width, int height);
 	int size() { return plots.size(); }
 	void UpdatePlots(bool reload=true);
-	int GetScreenDPI();
 	bool IsLarge() { return LargeMode; }
 	void WritePlotToConfig(const Plot& plot);
 	void LoadPlotFromConfig(Plot& plot);
@@ -39,15 +38,19 @@ public:
 	void ShowContextMenu();
 	bool GetExperienceStatus();
 	void SetExperienceMode();
+	afx_msg void OnPlotConfigButton();
+	afx_msg void OnEnlargePlotButton();
+	afx_msg void OnClearPlot();
+	afx_msg void OnDefaultPlotButton();
 private:
 	vector<string> defaultVal;
-	
+	int selectedPlot;
 	vector<Plot*> plots;
 	Database* database;
 	int Width;
 	int Height;
 	bool LargeMode;
-protected:
+
 	int getIndex(int x, int y);
 	int getGridWidth();
 	int getMinWidth(CRect& rect, int count);
@@ -55,11 +58,8 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 	DECLARE_MESSAGE_MAP();
-public:
-	afx_msg void OnPlotConfigButton();
-	afx_msg void OnEnlargePlotButton();
-	afx_msg void OnClearPlot();
-	afx_msg void OnDefaultPlotButton();
+
+	
 
 };
 
