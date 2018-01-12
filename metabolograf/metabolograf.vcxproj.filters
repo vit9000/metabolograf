@@ -29,9 +29,6 @@
     <Filter Include="Исходники\Окна\MainListConfigDialog">
       <UniqueIdentifier>{bd34ac2b-2cb1-4a01-814d-fa34acff0143}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходники\MyControls">
-      <UniqueIdentifier>{d6f355c1-0a69-402c-8e6e-7e44be53fd22}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходники\Окна\PlaygroundView">
       <UniqueIdentifier>{406b54d7-7b04-4218-9fb5-13bb55bdf14e}</UniqueIdentifier>
     </Filter>
@@ -80,6 +77,15 @@
     <Filter Include="Исходники\Окна\VolumeErrorDialog">
       <UniqueIdentifier>{cb91c091-cb2b-4883-af97-6f1e5484ce9c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходники\Controls">
+      <UniqueIdentifier>{d6f355c1-0a69-402c-8e6e-7e44be53fd22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Controls\Canvas">
+      <UniqueIdentifier>{9d150a45-dc45-49fa-bc61-fda75a07c2bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\Controls\MyListCtrl">
+      <UniqueIdentifier>{676180c9-c678-48e8-8527-26f5b7da6f3e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -115,20 +121,14 @@
     <ClInclude Include="MainListConfigDialog.h">
       <Filter>Исходники\Окна\MainListConfigDialog</Filter>
     </ClInclude>
-    <ClInclude Include="MyListCtrl.h">
-      <Filter>Исходники\MyControls</Filter>
-    </ClInclude>
     <ClInclude Include="metabolograf.h">
       <Filter>Исходники\sys</Filter>
     </ClInclude>
     <ClInclude Include="Analizator.h">
-      <Filter>Исходники\MyControls</Filter>
-    </ClInclude>
-    <ClInclude Include="Canvas.h">
-      <Filter>Исходники\MyControls</Filter>
+      <Filter>Исходники\Controls</Filter>
     </ClInclude>
     <ClInclude Include="Highlighter.h">
-      <Filter>Исходники\MyControls</Filter>
+      <Filter>Исходники\Controls</Filter>
     </ClInclude>
     <ClInclude Include="Export.h">
       <Filter>Исходники\metab</Filter>
@@ -214,6 +214,12 @@
     <ClInclude Include="Histogram.h">
       <Filter>Исходники\Окна\VolumeErrorDialog</Filter>
     </ClInclude>
+    <ClInclude Include="Canvas.h">
+      <Filter>Исходники\Controls\Canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="MyListCtrl.h">
+      <Filter>Исходники\Controls\MyListCtrl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainFrm.cpp">
@@ -230,9 +236,6 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Исходники\sys</Filter>
-    </ClCompile>
-    <ClCompile Include="Canvas.cpp">
-      <Filter>Исходники\MyControls</Filter>
     </ClCompile>
     <ClCompile Include="Export.cpp">
       <Filter>Исходники\metab</Filter>
@@ -290,6 +293,12 @@
     </ClCompile>
     <ClCompile Include="Histogram.cpp">
       <Filter>Исходники\Окна\VolumeErrorDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Canvas.cpp">
+      <Filter>Исходники\Controls\Canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="MyListCtrl.cpp">
+      <Filter>Исходники\Controls\MyListCtrl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

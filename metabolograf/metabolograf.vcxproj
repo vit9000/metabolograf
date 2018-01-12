@@ -244,6 +244,7 @@
     <ClCompile Include="MainPlot.cpp" />
     <ClCompile Include="metabolograf.cpp" />
     <ClCompile Include="MTime.cpp" />
+    <ClCompile Include="MyListCtrl.cpp" />
     <ClCompile Include="NutritionDialog.cpp" />
     <ClCompile Include="PatientDialog.cpp" />
     <ClCompile Include="PlaygroundView.cpp" />
