@@ -147,7 +147,8 @@ void BigPlotDialog::ExportButtonClick()
 	FILE *file = pictexport->CreateExportFile(header, "html");
 	if (file <= 0) return;
 
-	string dir= pictexport->file_name.substr(0, pictexport->file_name.length()-5);
+	string file_name(pictexport->getFileName());
+	string dir= file_name.substr(0, file_name.length()-5);
 	CreateDirectory(dir.c_str(), NULL);
 
 	vector<string> code;
@@ -184,7 +185,7 @@ void BigPlotDialog::ExportButtonClick()
 		plot.DrawPlot();
 		image.Attach(plot.getHBITMAP());
 		image.Save(pictname.c_str(), ImageFormatPNG);
-		sprintf(bbuf, "<br><table bordercolor=white >\n <tr><td><img src='%s' width=%d></table>\n", pictname.c_str(), pictexport->page_width);
+		sprintf(bbuf, "<br><table bordercolor=white >\n <tr><td><img src='%s' width=%d></table>\n", pictname.c_str(), pictexport->getPageWidth());
 		fwrite(bbuf, strlen(bbuf), 1, file);
 	}
 

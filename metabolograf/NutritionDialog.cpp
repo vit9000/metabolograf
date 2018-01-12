@@ -188,7 +188,7 @@ void NutritionDialog::Calculate(bool save)
 		{
 			double BK = 0;
 			double p_body = 0;
-			dietexport->CalcPFCH(&P, &F, &CH, &p_body, &BK, dietexport->MOP24, DUK, NBK, &BrK);
+			dietexport->CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
 			char bbuf[1000];
 			sprintf(bbuf, "Энергетическая ценность %d ккал", (int)p_body);
 			CString t(bbuf);
@@ -225,13 +225,13 @@ void NutritionDialog::Calculate(bool save)
 			double F = 0;
 			double BK = 0;
 			double p_body = 0;
-			dietexport->CalcPFCHUrea(&P, &F, &CH, &p_body, dietexport->MOP24, dietexport->MCOP24, u, k);
+			dietexport->CalcPFCHUrea(&P, &F, &CH, &p_body, u, k);
 			char bbuf[100];
 
 
 			if (CH <= 0 || F <= 0)
 			{
-				sprintf(bbuf, "Дых. коэффициент: %.1lf", dietexport->breathK_sredn);
+				sprintf(bbuf, "Дых. коэффициент: %.1lf", dietexport->getBrK());
 				CString t(bbuf);
 				preview1.SetWindowTextA(t);
 				preview2.SetWindowTextA("используйте вкладку БЖУ");
@@ -275,11 +275,11 @@ void NutritionDialog::Calculate(bool save)
 			double F = 0;
 
 			double p_body = 0;
-			dietexport->CalcPFCH_NBK(&P, &F, &CH, &p_body, dietexport->MOP24, dietexport->MCOP24, NBK);
+			dietexport->CalcPFCH_NBK(&P, &F, &CH, &p_body, NBK);
 			char bbuf[100];
 			if (CH <= 0 || F <= 0)
 			{
-				sprintf(bbuf, "Дых. коэффициент: %.1lf", dietexport->breathK_sredn);
+				sprintf(bbuf, "Дых. коэффициент: %.1lf", dietexport->getBrK());
 				CString t(bbuf);
 				preview1.SetWindowTextA(t);
 				preview2.SetWindowTextA("используйте вкладку БЖУ");

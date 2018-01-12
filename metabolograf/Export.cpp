@@ -119,11 +119,11 @@ void Export::ExportDataString()
 	double BrK = 0;
 	double k_pbody = 1;
 	//РЕКОМЕНДАЦИИ
-	CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, DUK, NBK, &BrK);
+	CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
 	//Диета 1
 	NBK = 22.86207;
 	DUK = 1.2251;
-	CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, DUK, NBK, &BrK);
+	CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
 
 	sprintf(bbuf, "<td>%d", (int)p_body);
 	fwrite(bbuf, strlen(bbuf), 1, file);
@@ -165,7 +165,7 @@ void Export::ExportDataString()
 	
 }
 //-------------------------------------------------------------
-void Export::CalcPFCH(double *P, double *F, double *CH, double *p_body, double *BK, double MOP24, double DUK, double NBK, double *BrK)
+void Export::CalcPFCH(double *P, double *F, double *CH, double *p_body, double *BK, double DUK, double NBK, double *BrK)
 {
 
 	*P = MOP24 / 
@@ -201,7 +201,8 @@ void Export::CalcPFCH(double *P, double *F, double *CH, double *p_body, double *
 
 }
 //--------------------------------------------------------------------------
-void Export::CalcPFCHUrea(double *P, double *F, double *CH, double *p_body, double MOP24, double MCOP24, double urea, double koefficient)
+//void Export::CalcPFCHUrea(double *P, double *F, double *CH, double *p_body, double MOP24, double MCOP24, double urea, double koefficient)
+void Export::CalcPFCHUrea(double *P, double *F, double *CH, double *p_body, double urea, double koefficient)
 {
        //urea mmol
 
@@ -228,7 +229,8 @@ void Export::CalcPFCHUrea(double *P, double *F, double *CH, double *p_body, doub
         //x=0;
 }
 //--------------------------------------------------------------------------
-void Export::CalcPFCH_NBK (double *P, double *F, double *CH, double *p_body, double MOP24, double MCOP24, double NBK)
+//void Export::CalcPFCH_NBK (double *P, double *F, double *CH, double *p_body, double MOP24, double MCOP24, double NBK)
+void Export::CalcPFCH_NBK(double *P, double *F, double *CH, double *p_body, double NBK)
 {
        //*p_body = MOP24 * (5.047-0.312/0.282) + MCOP24 * (0.312/0.282); // KKAL - O2+CO2
        double y = 1/(1-0.718) * ((4.735-5.047*0.718)*MOP24 + (5.047-4.735)*MCOP24) / ((4.463/4.1)*(NBK/6.25) + (1-0.718)*((1-0.802)*4.735 +5.047*(0.802-0.718)));
@@ -710,7 +712,7 @@ void Export::StandartExport(bool fitness)
 	double BK = 0;
 	double BrK=0;
 
-	CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, DUK, NBK, &BrK);
+	CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
         double bmi = (double)database->getHeader().PatientWeight/(double)((database->getHeader().PatientHeight/100.)*(database->getHeader().PatientHeight/100.));
 
 	//РЕКОМЕНДАЦИИ
@@ -738,7 +740,7 @@ void Export::StandartExport(bool fitness)
 	if(teloslozhenie==3)
 	{
         //Диета 1
-		CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, 0.429, 6.15, &BrK);
+		CalcPFCH(&P, &F, &CH, &p_body, &BK, 0.429, 6.15, &BrK);
         if(bmi>=25  && database->getHeader().PatientAge>18 && fitness)
 	        sprintf(bbuf, "<br><font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Если избыток веса появляется при употреблении хлеба и сладостей, число <b>потребляемых</b> ккал не может превосходить <b>%d</b>, при соотношении белков : жиров : углеводов - 40&#37:30&#37:30&#37 ккал, что в граммах составляет: Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., расчетный дыхательный коэффициент %.1lf. \n", (int)p_body, (int)P, (int)F, (int)CH, BrK);
         else
@@ -754,7 +756,7 @@ void Export::StandartExport(bool fitness)
 	//Диета 2
 	else if(teloslozhenie==1)
 	{
-		CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, 1.5, 12.3, &BrK);
+		CalcPFCH(&P, &F, &CH, &p_body, &BK, 1.5, 12.3, &BrK);
         if(bmi>=25 && database->getHeader().PatientAge>18 && fitness)
 			sprintf(bbuf, "<br><font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Если избыток веса появляется при употреблении жирного мяса и рыбы, число <b>потребляемых</b> ккал не может превосходить <b>%d</b>, при соотношении белков : жиров : углеводов - 25&#37:15&#37:60&#37 ккал, что в граммах составляет: Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., расчетный дыхательный коэффициент %.1lf. \n", (int)p_body, (int)P, (int)F, (int)CH, BrK);
         else
@@ -771,7 +773,7 @@ void Export::StandartExport(bool fitness)
 	else if(teloslozhenie==2)
 	{
         //Диета 3
-		CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, 0.667, 6.15, &BrK);
+		CalcPFCH(&P, &F, &CH, &p_body, &BK, 0.667, 6.15, &BrK);
         if(bmi>=25 && database->getHeader().PatientAge>18 && fitness)
 			sprintf(bbuf, "<br><font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Если избыток веса появляется из-за малой подвижности и избытка потребляемой еды, число <b>потребляемых</b> ккал не может превосходить <b>%d</b>, при соотношении белков : жиров : углеводов - 40&#37:20&#37:40&#37 ккал, что в граммах составляет: Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., расчетный дыхательный коэффициент %.1lf. \n", (int)p_body, (int)P, (int)F, (int)CH, BrK);
         else
@@ -904,11 +906,11 @@ void Export::DietaExport()
 
 
 
-        CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, DUK, NBK, &BrK);
+        CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
         //Диета 1
         NBK = 22.86207;
         DUK = 1.2251;
-        CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, DUK, NBK, &BrK);
+        CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
 	//CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, 1.2251,  22.86207);
         sprintf(bbuf, "<font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Основной вариант стандартной диеты (диеты 1, 2, 3, 5, 6, 7, 9, 10, 12,13,14, 15)<br>Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., энергетическая ценность <b>%d</b> ккал., расчетный дыхательный коэффициент %.1lf. \n", (int)P, (int)F, (int)CH, (int)p_body, BrK);
         fwrite(bbuf, strlen(bbuf), 1, file);
@@ -919,7 +921,7 @@ void Export::DietaExport()
         //Диета 2
         NBK = 23.33333;
         DUK = 1.263992;
-	CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, DUK, NBK, &BrK);
+	CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
         sprintf(bbuf, "<font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Вариант диеты с механическим и химическим щажением (диеты 1б, 4б, 4в, 5п [I вариант])<br>Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., энергетическая ценность <b>%d</b> ккал., расчетный дыхательный коэффициент %.1lf. \n", (int)P, (int)F, (int)CH, (int)p_body, BrK);
         fwrite(bbuf, strlen(bbuf), 1, file);
         k_pbody=100/p_body;
@@ -929,7 +931,7 @@ void Export::DietaExport()
         //Диета 3
         NBK = 17.56957;
         DUK = 0.974643;
-	CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, DUK, NBK, &BrK);
+	CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
         sprintf(bbuf, "<font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Вариант диеты с повышенным количеством белка (диеты 4э, 4аг, 5п [II вариант], 7в, 7г, 9б, 10б, 11, R-I, R-II)<br>Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., энергетическая ценность <b>%d</b> ккал., расчетный дыхательный коэффициент %.1lf. \n", (int)P, (int)F, (int)CH, (int)p_body, BrK);
         fwrite(bbuf, strlen(bbuf), 1, file);
         k_pbody=100/p_body;
@@ -939,7 +941,7 @@ void Export::DietaExport()
         //Диета 4
         NBK = 58.2;
         DUK = 1.610791;
-	CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, DUK, NBK, &BrK);
+	CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
         sprintf(bbuf, "<font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Вариант диеты с пониженным количеством белка (диеты 7б, 7а)<br>Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., энергетическая ценность <b>%d</b> ккал., расчетный дыхательный коэффициент %.1lf. \n", (int)P, (int)F, (int)CH, (int)p_body, BrK);
         fwrite(bbuf, strlen(bbuf), 1, file);
         k_pbody=100/p_body;
@@ -949,7 +951,7 @@ void Export::DietaExport()
         //Диета 5
         NBK = 15.71333;
         DUK = 0.629386;
-	CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, DUK, NBK, &BrK);
+	CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
         P *= 0.618;
         F *= 0.618;
         CH*= 0.618;
@@ -963,7 +965,7 @@ void Export::DietaExport()
         //Диета 6
         NBK = 21.58889;
         DUK = 1.136784;
-	CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, DUK, NBK, &BrK);
+	CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
         P *=1.429;
         F *=1.429;
         CH*=1.429;
@@ -1019,12 +1021,12 @@ void Export::CustomDietaExport(double NBK, double DUK)
 
         if(DUK==0)
         {
-                CalcPFCH_NBK(&P, &F, &CH, &p_body, MOP24, MCOP24, NBK);
+                CalcPFCH_NBK(&P, &F, &CH, &p_body, NBK);
                 sprintf(bbuf, "<font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Ваша диета содержит <b>%d</b> ккал, что в граммах составляет: Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г. \n", (int)p_body, (int)P, (int)F, (int)CH);
         }
         else
         {
-                CalcPFCH(&P, &F, &CH, &p_body, &BK, MOP24, DUK, NBK, &BrK);
+                CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
                 sprintf(bbuf, "<font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Ваша диета содержит <b>%d</b> ккал, что в граммах составляет: Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., расчетный дыхательный коэффициент %.1lf. \n", (int)p_body, (int)P, (int)F, (int)CH, BrK);
         }
 	//sprintf(bbuf, "<font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Рекомендуемая диета<br>Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г., энергетическая ценность <b>%d</b> ккал.\n", (int)P, (int)F, (int)CH, (int)p_body);
@@ -1067,7 +1069,7 @@ void Export::UreaDietaExport(double Urea, double koefficient)
 	fwrite(bbuf, strlen(bbuf), 1, file);
 
 
-        CalcPFCHUrea(&P, &F, &CH, &p_body, MOP24, MCOP24, Urea, koefficient);
+        CalcPFCHUrea(&P, &F, &CH, &p_body, Urea, koefficient);
 
 	sprintf(bbuf, "<font size=4>&nbsp;&nbsp;&nbsp;&nbsp;Ваша диета содержит <b>%d</b> ккал, что в граммах составляет: Б = <b>%d</b> г, Ж = <b>%d</b> г, У= <b>%d</b> г.\n", (int)p_body, (int)P, (int)F, (int)CH);
         fwrite(bbuf, strlen(bbuf), 1, file);

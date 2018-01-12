@@ -23,9 +23,9 @@ public:
     void DietaExport();
     void CustomDietaExport(double NBK, double DUK);
     void UreaDietaExport(double Urea, double koefficient);
-    void CalcPFCH(double *P, double *F, double *CH, double *p_body, double *BK, double MOP24, double DUK, double NBK, double *BrK);
-    void CalcPFCHUrea(double *P, double *F, double *CH, double *p_body, double MOP24, double MCOP24, double urea, double koefficient);
-    void CalcPFCH_NBK (double *P, double *F, double *CH, double *p_body, double MOP24, double MCOP24, double NBK);
+    void CalcPFCH(double *P, double *F, double *CH, double *p_body, double *BK, double DUK, double NBK, double *BrK);
+    void CalcPFCHUrea(double *P, double *F, double *CH, double *p_body, double urea, double koefficient);
+    void CalcPFCH_NBK (double *P, double *F, double *CH, double *p_body, double NBK);
 
     void CalcIdealWeight();
     void ReplacePoint(char *buf, int length);
@@ -39,6 +39,11 @@ public:
     void ExportExcel();
     void ReplaceSymbols(char *str, char a, char b);
 	void ReplaceSymbols(string& str, char a, char b);
+
+	const string& getFileName() const { return file_name; }
+	int getPageWidth() const { return page_width; }
+	double getBrK() const { return breathK_sredn;}
+private:
 
     int page_width;
     string file_name;
