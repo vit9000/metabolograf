@@ -96,7 +96,7 @@ void CCanvas::OnPaint()
 	GetClientRect(&rect);
 	UGC ugc(GetDC(), rect.Width(), rect.Height());
 	
-	ugc.g->Clear(Color(255, 255, 255));
+	ugc.getGraphics()->Clear(Color(255, 255, 255));
 	
 	
 	
@@ -105,11 +105,11 @@ void CCanvas::OnPaint()
 	{
 		int w = rect.Width();
 		if (w > rect.Height()) w = rect.Height();
-		ugc.g->DrawImage(plots[active_plot]->getBitmap(), (rect.Width()-w)/2, (rect.Height()-w)/2, w, w);
+		ugc.getGraphics()->DrawImage(plots[active_plot]->getBitmap(), (rect.Width()-w)/2, (rect.Height()-w)/2, w, w);
 	}
 	else
 	{
-		ugc.SetAlign(ugc.CENTER);
+		ugc.SetAlign(Align::CENTER);
 		ugc.SetDrawColor(0, 0, 0);
 		ugc.SetTextSize(12);
 		ugc.DrawString("Нет изображения", rect.Width() / 2, rect.Height() / 2 - 8);

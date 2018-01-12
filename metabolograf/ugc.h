@@ -25,9 +25,8 @@ using Gdiplus::PointF;
 
 
 
-class UInput
+struct UInput
 {
-public:
     int x;
     int y;
     int pressedX;
@@ -39,19 +38,24 @@ public:
     int scrollY;
 };
 
+enum class Align { CENTER, LEFT, RIGHT };
+enum class Form { PAUSE, NO_CHANGE, ARROWUP, ARROWDOWN, BOLUS};
 
 
 class UGC
 {
-public:
+public: 
+	
+	/*int CENTER;
+	int LEFT;
+	int RIGHT;*/
+private:
 	int WIDTH, HEIGHT;
 	int TextSize;
 	int RealTextSize;
-	int align;
+	Align align;
 
-	int CENTER;
-	int LEFT;
-	int RIGHT;
+	
 
 	bool Bold;
 
@@ -67,7 +71,7 @@ public:
 	HDC Memhdc;
 	HBITMAP Membitmap;
 public:
-	
+	Gdiplus::Graphics *getGraphics() { return g; };
 
 	UGC(Bitmap* bitmap)//, int width, int height)
 	{
@@ -114,10 +118,10 @@ public:
 		HEIGHT = height;
 		TextSize = 12;
 		RealTextSize = 12;
-		CENTER = 0;;
-		LEFT = 1;//Qt::AlignLeft;
-		RIGHT = 2;//Qt::AlignRight;
-		align = LEFT;
+		//CENTER = 0;;
+		//LEFT = 1;//Qt::AlignLeft;
+		//RIGHT = 2;//Qt::AlignRight;
+		align = Align::LEFT;
 		//FontName = L"Times New Roman";
 		FontName = L"Calibri";
 	}
@@ -128,7 +132,8 @@ public:
 		
 	}
 	//----------------------------------------
-	
+	int getWidth() const { return WIDTH; }
+	int getHeight() const { return HEIGHT; }
 private:
 	void StartDraw()
 	{
@@ -232,14 +237,10 @@ public:
 	};
 	//---------------------------------------
 
-#define PAUSE 0
-#define NO_CHANGE 1
-#define ARROWUP 2
-#define ARROWDOWN 3
-#define BOLUS 4
 
 
-	void DrawForm(int x, int y, int width, int height, int form)
+
+	void DrawForm(int x, int y, int width, int height, Form form)
 	{
 		
 		//0 - pause, 1 - no change, 2 - up, 3 - down
@@ -248,23 +249,23 @@ public:
 
 		switch(form)
 		{
-			case PAUSE:
+			case Form::PAUSE:
 				FillRectangle(x, y, width/3, height);
 				FillRectangle(x+width, y, -width/3, height);
 				break;
-			case NO_CHANGE:
+			case Form::NO_CHANGE:
 				FillRectangle(x, y, width, height/3);
 				FillRectangle(x, y+height, width, -height/3);
 				break;
-			case ARROWUP:
+			case Form::ARROWUP:
 				FillRectangle(x+temp, y+height/2, width-temp*2, height/2);
 				FillTriangle(x, y+height/2, x+width, y+height/2, x+width/2, y);
 				break;
-			case ARROWDOWN:
+			case Form::ARROWDOWN:
 				FillRectangle(x+temp, y, width-temp*2, height/2);
 				FillTriangle(x, y+height/2, x+width, y+height/2, x+width/2, y+height);
 				break;
-			case BOLUS:
+			case Form::BOLUS:
 				FillTriangle(x, y, x+width, y, x+width/2, y+height/2);
 				FillTriangle(x, y+height/2, x+width, y+height/2, x+width/2, y+height);
 				break;
@@ -406,9 +407,9 @@ public:
 		//Font font(L"Helvetica", TextSize, FontStyleBold);
 		g->SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);//SetTextRenderingHint(TextRenderingHintAntiAlias);
 		Gdiplus::SolidBrush brush(color);
-		if (align == RIGHT)
+		if (align == Align::RIGHT)
 			x -= GetTextWidth(mstring);
-		else if (align == CENTER)
+		else if (align == Align::CENTER)
 			x -= GetTextWidth(mstring) / 2;
 		int length = static_cast<int>(mstring.length());
 		g->DrawString(StringToWString(mstring).c_str(), length, &font, Gdiplus::PointF(x, y), &brush);
@@ -490,9 +491,13 @@ public:
 			return str;
 	}
 	//-------------------------------------------------------
-	void SetAlign(int _align)
+	void SetAlign(Align _align)
 	{
 		align = _align;
+	}
+	void SetBold(bool status)
+	{
+		Bold = status;
 	}
 	//-------------------------------------------------------
 	void FillForm(int x, int y, int width, int height, int b=10)

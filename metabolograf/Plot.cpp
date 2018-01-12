@@ -236,9 +236,9 @@ void Plot::ErrorMsg(const string& msg)
 	ugc.SetDrawColor(0, 0, 0);
 	int textsize = 20 * Height / 400.;
 	ugc.SetTextSize(textsize);
-	ugc.SetAlign(ugc.CENTER);
+	ugc.SetAlign(Align::CENTER);
 	ugc.DrawString(msg, Width / 2, Height / 2 - ugc.GetTextHeight() / 2);
-	ugc.SetAlign(ugc.LEFT);
+	ugc.SetAlign(Align::LEFT);
 	throw runtime_error(msg);
 }
 //-------------------------------------------------------------------------------------------------------
@@ -407,9 +407,9 @@ int Plot::DrawHeader(UGC& ugc)
 	{
 		ugc.SetTextSize(TextSizeHeader);
 		ugc.SetDrawColor(0, 0, 0);
-		ugc.SetAlign(ugc.CENTER);
+		ugc.SetAlign(Align::CENTER);
 		ugc.DrawString(header, Width / 2, 2);
-		ugc.SetAlign(ugc.LEFT);
+		ugc.SetAlign(Align::LEFT);
 		return ugc.GetTextHeight(TextSizeHeader);//borderY;
 	}
 	return 0;
@@ -479,7 +479,7 @@ void Plot::DrawTimePlot()
 	ugc.SetDrawColor(125, 125, 125);
 	ugc.DrawRectangle(plotRect.x - 2, plotRect.y - plotRect.height - 2, plotRect.width + 4, plotRect.height + 4);
 
-	ugc.SetAlign(ugc.RIGHT);
+	ugc.SetAlign(Align::RIGHT);
 	int countPlots = 0;
 	vector<string> legends;
 	for (int i = 0; i < variables.size(); i++)
@@ -554,13 +554,13 @@ void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, const int& position, con
 	int space = 4;
 	if (position % 2 == 0)//четный график - начиная с 0. Ось рисуется слева
 	{
-		ugc.SetAlign(ugc.RIGHT);
+		ugc.SetAlign(Align::RIGHT);
 		x = plotRect.x - borderX*(position / 2) - 3;
 		space = -4;
 	}
 	else//нечетный график. Ось рисуется справа
 	{
-		ugc.SetAlign(ugc.LEFT);
+		ugc.SetAlign(Align::LEFT);
 		x = plotRect.x + borderX*(position / 2) + plotRect.width + 3;
 		space = 4;
 	}
@@ -587,7 +587,7 @@ void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, const int& position, con
 
 	ugc.SetTextSize(TextSizeLegend);
 	string text = "";
-	ugc.SetAlign(ugc.CENTER);
+	ugc.SetAlign(Align::CENTER);
 	for (int i = 0; i < variable.count(); i++)
 	{
 		text += variable.getLegend(i);
@@ -605,7 +605,7 @@ void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, const int& position, con
 
 	//ugc.FillRectangle(x, plotRect.y - plotRect.height / 2, 1, 20);
 	ugc.DrawVerticalString(text, x, plotRect.y - plotRect.height / 2);
-	ugc.SetAlign(ugc.LEFT);
+	ugc.SetAlign(Align::LEFT);
 }
 //-------------------------------------------------------------------------------------------------------
 void Plot::DrawAxisX(UGC& ugc, PlotParameter& variable, const int& position, const VitLib::Bounds& plotRect)
@@ -619,7 +619,7 @@ void Plot::DrawAxisX(UGC& ugc, PlotParameter& variable, const int& position, con
 	double start = variable.getStart();
 	ugc.SetTextSize(TextSizeAxis);
 	int textHeight = ugc.GetTextHeight()*1.3;
-	ugc.SetAlign(ugc.CENTER);
+	ugc.SetAlign(Align::CENTER);
 	for (int i = 0; i < countPointsInAxis; i++)
 	{
 		double number = (range / (double)countPointsInAxis)*(double)i;
@@ -629,7 +629,7 @@ void Plot::DrawAxisX(UGC& ugc, PlotParameter& variable, const int& position, con
 	}
 	ugc.SetTextSize(TextSizeLegend);
 	string text = "";
-	//ugc.SetAlign(ugc.CENTER);
+	//ugc.SetAlign(Align::CENTER);
 	for (int i = 0; i < variable.count(); i++)
 	{
 		text += variable.getLegend(i);
@@ -637,7 +637,7 @@ void Plot::DrawAxisX(UGC& ugc, PlotParameter& variable, const int& position, con
 			text += " & ";
 	}
 	ugc.DrawString(text, x + plotRect.width / 2, y + textHeight);
-	ugc.SetAlign(ugc.LEFT);
+	ugc.SetAlign(Align::LEFT);
 }
 //-------------------------------------------------------------------------------------------------------
 void Plot::DrawAxisTime(UGC& ugc, const VitLib::Bounds& plotRect)
@@ -657,7 +657,7 @@ void Plot::DrawAxisTime(UGC& ugc, const VitLib::Bounds& plotRect)
 
 	ugc.SetDrawColor(0, 0, 0);
 
-	ugc.SetAlign(ugc.RIGHT);
+	ugc.SetAlign(Align::RIGHT);
 	for (int i = 0; i < plotRect.width; i += countPointsInAxis)
 	{
 		if (i >= varTime.size()) break;
@@ -666,14 +666,14 @@ void Plot::DrawAxisTime(UGC& ugc, const VitLib::Bounds& plotRect)
 		ugc.DrawVerticalString(time, x + i*x_step - ugc.GetTextHeight() / 2, y + TextSizeAxis);
 		ugc.DrawLine(x + i*x_step, y + 2, x + i*x_step, y + 4);
 	}
-	ugc.SetAlign(ugc.LEFT);
+	ugc.SetAlign(Align::LEFT);
 }
 //-------------------------------------------------------------------------------------------------------
 void Plot::DrawLegend(UGC& ugc, vector<string> var_Y, const VitLib::Bounds& rect)
 {
 	int y = rect.y - rect.height;
 	int x = rect.x;
-	ugc.SetAlign(ugc.LEFT);
+	ugc.SetAlign(Align::LEFT);
 	ugc.SetTextSize(TextSizeLegend);
 	int textheight = ugc.GetTextHeight(TextSizeLegend + 1);
 	for (int i = 0; i < var_Y.size(); i++)
@@ -682,7 +682,7 @@ void Plot::DrawLegend(UGC& ugc, vector<string> var_Y, const VitLib::Bounds& rect
 		int yi = (var_Y.size() - i) * textheight;
 		ugc.DrawLine(x, y - yi, x + borderX, y - yi, 3);
 		ugc.SetDrawColor(50, 50, 50);
-		yi += ugc.TextSize * 3 / 4;
+		yi += ugc.GetTextHeight() * 3 / 4;
 		string temp = var_Y[i];
 		for (char& c : temp)
 			if (c == '_') c = ' ';
@@ -735,7 +735,7 @@ void Plot::DrawTwoParamPlot()
 	ugc.SetDrawColor(125, 125, 125);
 	ugc.DrawRectangle(plotRect.x - 2, plotRect.y - plotRect.height - 2, plotRect.width + 4, plotRect.height + 4);
 
-	ugc.SetAlign(ugc.RIGHT);
+	ugc.SetAlign(Align::RIGHT);
 	int countPlots = 0;
 	vector<string> legends;
 	Bitmap temp_bitmap(plotRect.width, plotRect.height);
@@ -794,7 +794,7 @@ void Plot::DrawTwoParamPlot()
 				y += point / 2;
 
 				//temp_ugc.FillRectangle(x, temp_ugc.HEIGHT-y, point, point);
-				temp_ugc.FillEllipse(x, temp_ugc.HEIGHT - y, point);
+				temp_ugc.FillEllipse(x, temp_ugc.getHeight() - y, point);
 			}
 			countPlots++;
 		}

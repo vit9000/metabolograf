@@ -66,7 +66,7 @@ void Histogram::OnPaint()
 	double dpix = (double) DPIX();
 
 
-	ugc.SetAlign(ugc.CENTER);
+	ugc.SetAlign(Align::CENTER);
 	ugc.SetTextSize(8 * dpix);
 	for (int i = 0; i < table_size; ++i)
 	{

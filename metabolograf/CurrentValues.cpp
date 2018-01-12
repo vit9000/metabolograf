@@ -80,14 +80,14 @@ void CurrentValues::OnPaint()
 	GetClientRect(&rect);
 	UGC ugc(GetDC(), rect.Width(), rect.Height());
 
-	ugc.g->Clear(Color(225, 225, 225));
+	ugc.getGraphics()->Clear(Color(225, 225, 225));
 
 
 	//ugc.SetDrawColor(100, 100, 100);
 	//ugc.FillRectangle(0, 0, Width, 20 * dpiX);
 
 	ugc.SetTextSize(10*dpiX);
-	ugc.SetAlign(ugc.CENTER);
+	ugc.SetAlign(Align::CENTER);
 
 	//ugc.SetDrawColor(255, 255, 255);
 	//ugc.DrawString("Выбранные значения", Width/2, 0);
@@ -134,9 +134,9 @@ void CurrentValues::OnPaint()
 		//ugc.FillRectangle(xi + 2 * dpiX, yi+space, w / 2 - 4 * dpiX, space);
 		ugc.SetDrawColor(0, 0, 0);
 
-		ugc.Bold = true;
+		ugc.SetBold(true);
 		ugc.DrawString(ToString(vname,value), xi+w/4, yi+space*0.6);
-		ugc.Bold = false;
+		ugc.SetBold(false);
 	}
 
 	
@@ -164,10 +164,10 @@ void CurrentValues::OnPaint()
 	ugc.SetDrawColor(0, 0, 0);
 
 	
-	ugc.Bold = true;
+	ugc.SetBold(true);
 	ugc.DrawString(DoubleToString(CalculateErr()), xi + w / 4, yi + space*0.6);
-	ugc.Bold = false;
-	ugc.SetAlign(ugc.LEFT);
+	ugc.SetBold(false);
+	ugc.SetAlign(Align::LEFT);
 }
 //------------------------------------------------------
 double CurrentValues::CalculateErr()

@@ -49,34 +49,34 @@ void TimerWindow::OnPaint()
 	int dpix = ugc.getDPIX();
 	
 
-	ugc.g->Clear(Color(225, 225, 225));
+	ugc.getGraphics()->Clear(Color(225, 225, 225));
 	
 	ugc.SetDrawColor(50, 50, 50);
 
 	
 	int x = Width / 2;
 	int y = 0;
-	ugc.SetAlign(ugc.CENTER);
+	ugc.SetAlign(Align::CENTER);
 
 	ugc.SetTextSize((FontSize - 1)*dpix);
 	ugc.DrawString("Время исследования", x, y);
-	y += ugc.TextSize*1.5;
+	y += ugc.GetTextHeight()*1.5;
 	ugc.SetTextSize((FontSize+2)*dpix);
 	ugc.DrawString(rec, x, y);
-	y += ugc.TextSize*1.7;
+	y += ugc.GetTextHeight()*1.7;
 
 	
 	if (!test.empty())
 	{
 		ugc.SetTextSize((FontSize - 1)*dpix);
 		ugc.DrawString("Время теста", x, y);
-		y += ugc.TextSize*1.5;
+		y += ugc.GetTextHeight()*1.5;
 		ugc.SetTextSize((FontSize + 2)*dpix);
 		ugc.DrawString(test, x, y);
 	}
 
 
-	ugc.SetAlign(ugc.LEFT);
+	ugc.SetAlign(Align::LEFT);
 	CWnd::OnPaint();
 }
 
