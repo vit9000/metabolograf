@@ -89,14 +89,20 @@
     <Filter Include="Исходники\metab\Export">
       <UniqueIdentifier>{1d9374db-e953-4434-b83f-ebf474dee97a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходники\sys\metabolograf">
+      <UniqueIdentifier>{494eb7e9-af5a-4ac4-bea2-e9b9a7522767}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\sys\stdafx">
+      <UniqueIdentifier>{5f4d226b-7587-40a6-9ccc-edc41f8043c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходники\metab\Metab">
+      <UniqueIdentifier>{da170583-19fa-4b91-8309-d324bcaae8e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Metab.h">
-      <Filter>Исходники\metab</Filter>
-    </ClInclude>
     <ClInclude Include="metabdata.h">
       <Filter>Исходники\metab</Filter>
     </ClInclude>
@@ -115,17 +121,11 @@
     <ClInclude Include="Resource.h">
       <Filter>Исходники\sys</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Исходники\sys</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Исходники\sys</Filter>
     </ClInclude>
     <ClInclude Include="MainListConfigDialog.h">
       <Filter>Исходники\Окна\MainListConfigDialog</Filter>
-    </ClInclude>
-    <ClInclude Include="metabolograf.h">
-      <Filter>Исходники\sys</Filter>
     </ClInclude>
     <ClInclude Include="Analizator.h">
       <Filter>Исходники\Controls</Filter>
@@ -223,6 +223,15 @@
     <ClInclude Include="Export.h">
       <Filter>Исходники\metab\Export</Filter>
     </ClInclude>
+    <ClInclude Include="metabolograf.h">
+      <Filter>Исходники\sys\metabolograf</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Исходники\sys\stdafx</Filter>
+    </ClInclude>
+    <ClInclude Include="Metab.h">
+      <Filter>Исходники\metab\Metab</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainFrm.cpp">
@@ -233,12 +242,6 @@
     </ClCompile>
     <ClCompile Include="MainListConfigDialog.cpp">
       <Filter>Исходники\Окна\MainListConfigDialog</Filter>
-    </ClCompile>
-    <ClCompile Include="metabolograf.cpp">
-      <Filter>Исходники\sys</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Исходники\sys</Filter>
     </ClCompile>
     <ClCompile Include="PlaygroundView.cpp">
       <Filter>Исходники\Окна\PlaygroundView</Filter>
@@ -302,6 +305,15 @@
     </ClCompile>
     <ClCompile Include="Export.cpp">
       <Filter>Исходники\metab\Export</Filter>
+    </ClCompile>
+    <ClCompile Include="metabolograf.cpp">
+      <Filter>Исходники\sys\metabolograf</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Исходники\sys\stdafx</Filter>
+    </ClCompile>
+    <ClCompile Include="Metab.cpp">
+      <Filter>Исходники\metab\Metab</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

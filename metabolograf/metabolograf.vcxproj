@@ -242,6 +242,7 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MainListConfigDialog.cpp" />
     <ClCompile Include="MainPlot.cpp" />
+    <ClCompile Include="Metab.cpp" />
     <ClCompile Include="metabolograf.cpp" />
     <ClCompile Include="MTime.cpp" />
     <ClCompile Include="MyListCtrl.cpp" />

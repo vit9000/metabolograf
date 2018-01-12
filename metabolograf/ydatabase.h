@@ -4,7 +4,6 @@
 typedef unsigned char BYTE;
 typedef long LONG;
 typedef double DATE;
-//typedef wchar_t TCHAR;
 
 typedef struct
 {

@@ -635,9 +635,9 @@ bool CChildView::GetNewData()
 {
 	metab.ReadData();
 
-	if (!metab.NewDataRecieved) return false;//если новые данные не получили, то пропускаем
+	if (!metab.IsNewDataRecieved()) return false;//если новые данные не получили, то пропускаем
 	if (metab.RespRate == 0 || metab.RespRate>100) return false;
-	metab.NewDataRecieved = false;//если данные получили, тогда обнуляемся сразу
+	metab.NewDataReaded();//если данные получили
 
 	time_t t = time(NULL);
 	tm *tmp = localtime(&t);
