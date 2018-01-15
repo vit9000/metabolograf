@@ -25,7 +25,7 @@ int PlotCustomization::DoModal(Plot* _plot, bool FullCustomization)
 {
 	database = Database::getInstance(); 
 	plot = _plot; 
-	plot_code_reserv = plot->plot_code; 
+	plot_code_reserv = plot->getPlotCode();
 	fullCustomization = FullCustomization;
 	return CDialogEx::DoModal();
 };
@@ -77,38 +77,38 @@ BOOL PlotCustomization::OnInitDialog()
 	//m_plotMean.SetWindowTextA(plot->meanTime.c_str());
 
 	type1 = false;
-	if (plot->var_X.size() == 0)
+	if (plot->get_var_X().size() == 0)
 		type1 = true;
 	SetView();
 
-	if (plot->plot_code.empty()) return TRUE;
+	if (plot->getPlotCode().empty()) return TRUE;
 	
 
-	vector<PlotParameter>* var_XY;
+	const vector<PlotParameter>* var_XY;
 
 	if (type1)// x - one-time, y - multi
 	{
-		var_XY = &plot->var_Y;
+		var_XY = &plot->get_var_Y();
 		if (var_XY->size() == 0) return TRUE;
 	}
 	else // x - multi, y -one
 	{
-		var_XY = &plot->var_X;
+		var_XY = &plot->get_var_X();
 		if (var_XY->size() == 0) return TRUE;
 
 
-		PlotParameter& varY = plot->var_Y[0];
+		const PlotParameter& varY = plot->get_var_Y()[0];
 		for (const auto& varname : database->getVariableNames())
 		{
 			if (varY.getVarname(0) == varname)
 				m_onevarlist.SetWindowTextA(varname.c_str());
 		}
 		double start = -1;
-		if (!varY.autoStart)
+		if (!varY.getAutoStart())
 			start = varY.getStart();
 
 		double end = -1;
-		if (!varY.autoEnd)
+		if (!varY.getAutoEnd())
 			end = varY.getEnd();
 
 		Parameter p = { varY.getVarname(0), varY.getLegend(0), start, end, 0 };
@@ -116,18 +116,18 @@ BOOL PlotCustomization::OnInitDialog()
 	}
 	//загрузка данных
 	int axis_number = 0;
-	for (auto& var : (*var_XY))
+	for (const auto& var : (*var_XY))
 	{
 		Parameter p;
 		int count = var.count();
 		for (int i = 0; i < count; i++)
 		{
 			double start = -1;
-			if (!var.autoStart)
+			if (!var.getAutoStart())
 				start = var.getStart();
 
 			double end = -1;
-			if (!var.autoEnd)
+			if (!var.getAutoEnd())
 				end = var.getEnd();
 
 			multiAxis->push_back({ var.getVarname(i), var.getLegend(i), start, end,  axis_number });

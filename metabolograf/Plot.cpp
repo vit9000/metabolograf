@@ -383,6 +383,7 @@ void Plot::Clear()
 	UGC ugc(bitmap);
 	ugc.SetDrawColor(bgColor);
 	ugc.Clear();
+	plot_code.clear();
 }
 //-------------------------------------------------------------------------------------------------------
 int Plot::even(int number)

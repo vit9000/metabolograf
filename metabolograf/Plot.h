@@ -28,7 +28,7 @@ namespace VitLib
 
 class Plot
 {
-protected:   
+private:   
 	int borderX;
 	int borderY;
 	int Width;
@@ -50,17 +50,21 @@ protected:
 	bool experience;
 	vector<int> marks;
 	VitLib::Bounds plotRect;
-public:
-	
+
 	vector<PlotParameter> var_Y;
 	vector<PlotParameter> var_X;
 	string plot_code;
-	
 
+	
+	
 private:// удаленные конструктор копирования и оператор присваивания
-	Plot(const Plot& plot) {};
+	Plot(const Plot& plot) = delete;
 	Plot& operator=(const Plot& plot) { return *this; };
 public:
+	const vector<PlotParameter>& get_var_Y() const { return var_Y; }
+	const vector<PlotParameter>& get_var_X() const { return var_X; }
+	const string& getPlotCode() const { return plot_code; }
+
 	void ClearMarks() 
 	{
 		for (auto& m : marks) m = -1;

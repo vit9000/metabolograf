@@ -6,6 +6,7 @@
 
 class MTime
 {
+private:
 	int Hour;
 	int Minute;
 	int Second;

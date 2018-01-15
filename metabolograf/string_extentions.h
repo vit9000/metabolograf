@@ -1,5 +1,5 @@
-#ifndef string_extentions_hpp
-#define string_extentions_hpp
+#ifndef string_extentions_h
+#define string_extentions_h
 
 #include <iostream>
 #include <sstream>
@@ -29,14 +29,5 @@ string ToString(const T& value, int count=0)
 
 
 
-/*double _ToDouble(string str)
-{
-    stringstream ss(str);
-    double temp=0;
-    ss >> temp;
-    return temp;
-}*/
 
-
-
-#endif /* string_extentions_hpp */
+#endif /* string_extentions_h */

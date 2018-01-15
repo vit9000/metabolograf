@@ -9,9 +9,8 @@
 #define _variable 3
 #define _function 4
 
-class Dictionary
+struct Dictionary
 {
-public:
 	Dictionary()
 	{
 		operators["\""] = _keyword;

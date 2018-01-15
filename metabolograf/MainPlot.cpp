@@ -116,7 +116,7 @@ void MainPlot::ShowPlotWindow()
 	BigPlotDialog bpDlg;
 	Plot plot;
 	plot.SetExperience(plots[selectedPlot]->IsExperience());
-	plot.Run(database, plots[selectedPlot]->plot_code);
+	plot.Run(database, plots[selectedPlot]->getPlotCode());
 
 	if (bpDlg.DoModal(&plot, database) == IDOK && plot.IsExperience())
 	{
@@ -280,7 +280,7 @@ void MainPlot::WritePlotToConfig(const Plot& plot)// PLOT_LIST on TABLE screen
 {
 	
 	Ini ini("metabolograf_config.ini");
-	ini.Write("Plots", "plot_list", plot.plot_code);
+	ini.Write("Plots", "plot_list", plot.getPlotCode());
 }
 
 void MainPlot::LoadPlotFromConfig(Plot& plot) //PLOT_LIST on TABLE screen
@@ -304,7 +304,7 @@ void MainPlot::WriteConfig()
 	for (int i = 0; i<plots.size(); i++)
 	{
 		string param = string("plot_") + to_string(i);
-		ini.Write("Plots", param.c_str(), plots[i]->plot_code);
+		ini.Write("Plots", param.c_str(), plots[i]->getPlotCode());
 	}
 }
 //-------------------------------------------------------------------------------------------
@@ -343,7 +343,6 @@ void MainPlot::OnClearPlot()
 {
 	if (selectedPlot < 0) return;
 	plots[selectedPlot]->Clear();
-	plots[selectedPlot]->plot_code = "";
 	RedrawWindow();
 	WriteConfig();
 }

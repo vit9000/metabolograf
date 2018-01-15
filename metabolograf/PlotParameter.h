@@ -11,6 +11,7 @@ using namespace std;
 
 class PlotParameter
 {
+private:
 	double start;
 	double end;
 	vector<string> legend;
@@ -19,9 +20,11 @@ class PlotParameter
 	vector<Variable> varY;
 	int legendcount;
 
-public:
 	bool autoStart;
 	bool autoEnd;
+
+public:
+	
 
 	PlotParameter()
 	{
@@ -39,6 +42,9 @@ public:
 		// формируем оси Х и Y
 		AddVariable(varname, intervals, _varY);
 	}
+
+	bool getAutoStart() const { return autoStart; }
+	bool getAutoEnd() const { return autoEnd; }
 
 	void AddVariable(string varname, vector<int>& intervals, Variable& _varY)
 	{
@@ -107,7 +113,7 @@ public:
 	}
 	
 
-	string getLegend(int index)
+	const string& getLegend(int index) const
 	{
 		if (index >= varY.size())
 		{
@@ -115,7 +121,7 @@ public:
 		}
 		return legend[index];
 	}
-	string getVarname(int index)
+	const string& getVarname(int index) const
 	{
 		if (index >= varnames.size())
 		{
@@ -124,7 +130,7 @@ public:
 		return varnames[index];
 	}
 
-	size_t count()
+	size_t count() const
 	{
 		return varY.size();
 	}
@@ -138,11 +144,11 @@ public:
 		return varY[index].size();
 	}
 
-	double getStart()
+	double getStart() const
 	{
 		return start;
 	}
-	double getEnd()
+	double getEnd() const
 	{
 		return end;
 	}
