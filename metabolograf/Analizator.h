@@ -1,5 +1,6 @@
 #ifndef Analizator_h
 #define Analizator_h
+
 #include "Database.h"
 #include <exception>
 
@@ -237,7 +238,7 @@ private:
         for(int i=0; i<count_operations; i++)
         {
 
-			int pos = *max_element(operators.begin(), operators.end());
+			int pos = max_element(operators.begin(), operators.end()) - operators.begin();
             cout << operands[pos] << str_operators[pos] << operands[pos+1];
 
             try {
@@ -268,7 +269,7 @@ private:
 	{
 
         if(!is_number(element)) {
-            if(database->isVariableExists(element))
+            if(!database->isVariableExists(element))
 				throw runtime_error("Переменная '"+element+"' не найдена.");
 			else
 			{

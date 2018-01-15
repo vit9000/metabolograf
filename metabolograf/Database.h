@@ -50,7 +50,7 @@ public:
 	const vector<string>& getVariableNames() const { return variable_names; }
 	const Variable& getVariable(string var_name) const { return variables.at(var_name); };
 	const map<string, Variable>& getVariables() const { return variables; };
-	bool isVariableExists(string var_name) { return static_cast<bool>(variables.count(var_name)); }
+	bool isVariableExists(string var_name) { return variables.count(var_name) > 0; }
 
 	const CalculatedMetab& getCalculatedMetab() const { return calculatedMetab;}
 	const VariableBOOL& getChecked() { return checked; }

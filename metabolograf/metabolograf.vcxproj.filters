@@ -127,9 +127,6 @@
     <ClInclude Include="MainListConfigDialog.h">
       <Filter>Исходники\Окна\MainListConfigDialog</Filter>
     </ClInclude>
-    <ClInclude Include="Analizator.h">
-      <Filter>Исходники\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="Highlighter.h">
       <Filter>Исходники\Controls</Filter>
     </ClInclude>
@@ -231,6 +228,9 @@
     </ClInclude>
     <ClInclude Include="Metab.h">
       <Filter>Исходники\metab\Metab</Filter>
+    </ClInclude>
+    <ClInclude Include="Analizator.h">
+      <Filter>Исходники\VitLib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
