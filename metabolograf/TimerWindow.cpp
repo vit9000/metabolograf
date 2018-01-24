@@ -60,17 +60,17 @@ void TimerWindow::OnPaint()
 
 	ugc.SetTextSize((FontSize - 1)*dpix);
 	ugc.DrawString("Время исследования", x, y);
-	y += ugc.GetTextHeight()*1.5;
+	y += ugc.GetTextHeight();
 	ugc.SetTextSize((FontSize+2)*dpix);
 	ugc.DrawString(rec, x, y);
-	y += ugc.GetTextHeight()*1.7;
+	y += ugc.GetTextHeight();
 
 	
 	if (!test.empty())
 	{
 		ugc.SetTextSize((FontSize - 1)*dpix);
 		ugc.DrawString("Время теста", x, y);
-		y += ugc.GetTextHeight()*1.5;
+		y += ugc.GetTextHeight();
 		ugc.SetTextSize((FontSize + 2)*dpix);
 		ugc.DrawString(test, x, y);
 	}
