@@ -165,9 +165,28 @@ void CurrentValues::OnPaint()
 
 	
 	ugc.SetBold(true);
-	ugc.DrawString(DoubleToString(CalculateErr()), xi + w / 4, yi + space*0.6);
+	//ugc.DrawString(DoubleToString(CalculateErr()), xi + w / 4, yi + space*0.6);
+	//ugc.SetTextSize(18 * dpiX);
+	ugc.DrawString(DoubleToString(CalculateErr()), xi + w / 8, yi + space*0.6);
+	ugc.SetDrawColor(140, 140, 140);
+	
+	ugc.DrawString(DoubleToString(OldCalculateErr()), xi + w * 3 / 8, yi + space*0.6);
 	ugc.SetBold(false);
 	ugc.SetAlign(Align::LEFT);
+}
+//------------------------------------------------------
+double CurrentValues::OldCalculateErr()
+{
+	if (database->getCount() == 0) return 0;
+	double result = 0;
+	
+	double Vim = database->getVariable("Vвдоха").getWithoutUnchecked(database->getChecked()).mean();
+	double Vex = database->getVariable("Vвыдоха").getWithoutUnchecked(database->getChecked()).mean();
+
+	if (Vim != 0)
+		result = (Vim - Vex) / Vim * 100.;
+
+	return result;
 }
 //------------------------------------------------------
 double CurrentValues::CalculateErr()
