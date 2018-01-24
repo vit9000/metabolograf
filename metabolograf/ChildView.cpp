@@ -296,7 +296,7 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 		rect.bottom, NULL);
 
 	int curWidth = (CurValuesVisible) ? 240 * (double)dpiX : 0;
-	int timerHeight = 90 * dpiX;
+	int timerHeight = 100 * dpiX;
 	//
 	::SetWindowPos(GetDlgItem(IDC_CURRVALUES)->m_hWnd, HWND_TOP,
 		0,
