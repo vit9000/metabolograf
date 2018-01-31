@@ -886,7 +886,7 @@ void CChildView::OnProtocolExcel()
 {
 	if (!ProtolsAvailable()) return;
 	Export *xls_export = new Export(database);
-	xls_export->ExportExcel();
+	xls_export->ExportExcel(main_list.getShowParameters());
 	delete  xls_export;
 	xls_export = NULL;
 }

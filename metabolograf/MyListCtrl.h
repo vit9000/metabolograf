@@ -48,6 +48,11 @@ public:
 	void ShowConfigDialog();
 	void Reload();
 	void Clear();
+
+	inline const vector<string>& getShowParameters() const 
+	{
+		return show_parameters;
+	}
 	
 	
 };

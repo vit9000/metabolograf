@@ -1128,11 +1128,11 @@ void Export::CloseFile(FILE *file)
 	ShellExecute(0, NULL, file_name.c_str(), NULL, NULL, SW_RESTORE);
 }
 //------------------------------------------------------------------------------------
-void Export::ExportExcel()
+void Export::ExportExcel(const vector<string>& parameters)
 {
 
      FILE *file = CreateExportFile("Данные", "xls");
-
+	
      char bbuf[1024];
      sprintf(bbuf, "<html><meta http-equiv='content-type' content='text/html; charset=windows-1251' /><table><tr><td>Имя пациента<td align=center>%s", database->getHeader().PatientName);
      fwrite(bbuf, strlen(bbuf), 1, file);
@@ -1145,9 +1145,39 @@ void Export::ExportExcel()
      sprintf(bbuf, "<tr><td>Вес пациента<td align=center>%d</table>", database->getHeader().PatientWeight);
      fwrite(bbuf, strlen(bbuf), 1, file);
 
+	 sprintf(bbuf, "<table border=1><tr><td>Время аст.<td>Время");
+	 fwrite(bbuf, strlen(bbuf), 1, file);
+	 for (const string& param : parameters)
+	 {
+		 string temp = string("<td>") + param;
+		 sprintf(bbuf, temp.c_str());
+		 fwrite(bbuf, strlen(bbuf), 1, file);
+	 }
+
+	 for (int i = 0; i<database->getHeader().count; i++)
+	 {
+		 if (database->getChecked(i))
+		 {
+			 stringstream ss;
+			 ss << fixed;
+			 ss << "<tr><td align = center>" << database->getDatetime(i).getTimeString().c_str();
+			 ss << "<td align = center>" << (database->getDatetime(i).getTime()-database->getDatetime(0).getTime()).getString().c_str();
+
+			 for (const string& param : parameters)
+			 {
+				 ss << "<td align=center>" << setprecision(3) << database->getVariable(param)[i];
+			 }
+			 ss << endl;
+				
+
+			 string temp = ss.str();
+			 ReplaceSymbols(temp, '.', ',');
+			 fwrite(temp.c_str(), temp.length(), 1, file);
+		 }
+	 }
 
 
-     sprintf(bbuf, "<table><tr><td>Время<td>Vвдоха (л)<td>Vвыдоха (л)<td>FiO2<td>FetO2<td>FiCO2<td>FetCO2<td>ЧД<td>Поглощение O2 (мл)<td>Выделение CO2 (мл)<td>ДМП<td>ДК");
+     /*sprintf(bbuf, "<table><tr><td>Время<td>Vвдоха (л)<td>Vвыдоха (л)<td>FiO2<td>FetO2<td>FiCO2<td>FetCO2<td>ЧД<td>Поглощение O2 (мл)<td>Выделение CO2 (мл)<td>ДМП<td>ДК");
      fwrite(bbuf, strlen(bbuf), 1, file);
 	 
      for(int i=0; i<database->getHeader().count; i++)
@@ -1161,8 +1191,8 @@ void Export::ExportExcel()
 				  << "<td align=center>" << setprecision(3) << database->getVariable("Vвыдоха")[i]
 				  << "<td align=center>" << setprecision(3) << database->getVariable("FiO2")[i]
 				  << "<td align=center>" << setprecision(3) << database->getVariable("FetO2")[i]
-				  << "<td align=center>" << setprecision(3) << database->getVariable("FiCO2")[i]*100.
-				  << "<td align=center>" << setprecision(3) << database->getVariable("FetCO2")[i]*100.
+				  << "<td align=center>" << setprecision(3) << database->getVariable("FiCO2")[i].
+				  << "<td align=center>" << setprecision(3) << database->getVariable("FetCO2")[i].
 				  << "<td align=center>" << setprecision(3) << database->getVariable("ЧД")[i]
 				  << "<td align=center>" << setprecision(3) << database->getVariable("Потребление_O2")[i]
 				  << "<td align=center>" << setprecision(3) << database->getVariable("Выделение_CO2")[i]
@@ -1175,7 +1205,7 @@ void Export::ExportExcel()
 			  fwrite(temp.c_str(), temp.length(), 1, file);
           }
      }
-
+	 */
      sprintf(bbuf, "</table>");
      fwrite(bbuf, strlen(bbuf), 1, file);
 	 CloseFile(file);  

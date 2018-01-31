@@ -6,7 +6,10 @@
 #include <sstream>
 #include <iomanip>
 #include "Shlwapi.h"
+#include <vector>
+#include <string>
 
+using namespace std;
 
 
 class Export
@@ -36,7 +39,7 @@ public:
     void WriteMesuredValues(FILE *file);
     void CloseFile(FILE *file);
 
-    void ExportExcel();
+    void ExportExcel(const vector<string>& parameters);
     void ReplaceSymbols(char *str, char a, char b);
 	void ReplaceSymbols(string& str, char a, char b);
 
