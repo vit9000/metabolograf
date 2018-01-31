@@ -413,12 +413,26 @@ void CChildView::OnLvnItemchangedList(NMHDR *pNMHDR, LRESULT *pResult)
 		if (i >= 0 && i < database->getCount())
 		{
 			bool temp = main_list.GetCheck(i);
-		
+			auto pos = main_list.GetSelectedItems();
+			// проверяем, нажата галка в выделенном диапазоне или нет.
+			if (i < pos.first || i >= pos.second) // если не в выделенном диапазоне, тогда изменения должны коснуться только той галки, на которую нажали
+			{
+				pos.first = i;
+				pos.second = i + 1;
+			}
+			//если внутри выделенного диапазона, тогда изменения коснутя всех, что внутри диапазона
+
 			if (database->getChecked(i) != temp)
 			{
-				database->setChecked(i,temp);
+				//getSelectedItems
+				
+				for (int j = pos.first; j < pos.second; ++j)
+				{
+					database->setChecked(j, temp);
+					main_list.SetCheck(j, temp);
+				}
 				listplot.UpdateWithoutDraw();
-				listplot.SetTimeCursor(main_list.GetSelectedItem());
+				listplot.SetTimeCursor(pos.first);
 			}
 			
 

@@ -74,6 +74,30 @@ void MyListCtrl::UnSelectCurrentItem()
 		//			RedrawItems(old, old);
 	}
 }
+
+pair<int, int> MyListCtrl::GetSelectedItems() const
+{
+	int start = -1;
+	int end = -1;
+	POSITION pos = this->GetFirstSelectedItemPosition();
+	if (pos != NULL)
+	{
+		while (pos)
+		{
+			int nItem = this->GetNextSelectedItem(pos);
+			if (start == -1)
+			{
+				start = nItem;
+				continue;
+			}
+			end = nItem + 1;
+		}
+	}
+	
+
+	return make_pair(start, end);
+}
+
 int MyListCtrl::GetSelectedItem() const
 {
 	return GetNextItem(-1, LVNI_FOCUSED);;

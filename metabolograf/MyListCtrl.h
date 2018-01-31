@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iomanip>
 #include <set>
+#include <utility>
 #include "DPIX.h"
 #include "Ini.h"
 #include "IExperienceStatusTracker.h"
@@ -39,6 +40,7 @@ public:
 	void SetSelectedItem(int index);
 	void UnSelectCurrentItem();
 	int GetSelectedItem() const;
+	pair<int, int> GetSelectedItems() const;
 	void SetHeadersInList();
 	void AddToList(int i);
 	void LoadConfig();
