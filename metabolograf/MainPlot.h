@@ -9,9 +9,12 @@
 #include "PlotCustomization.h"
 #include "BigPlotDialog.h"
 #include "Ini.h"
+#include "IExperienceStatusTracker.h"
+
 
 class MainPlot :
-	public CWnd
+	public CWnd, 
+	public IExperienceStatusTracker
 {
 public:
 	MainPlot();
@@ -36,8 +39,8 @@ public:
 	void WriteConfig();
 	void LoadConfig();
 	void ShowContextMenu();
-	bool GetExperienceStatus();
-	void SetExperienceMode();
+	virtual bool GetExperienceStatus();
+	virtual void SetExperienceMode();
 	afx_msg void OnPlotConfigButton();
 	afx_msg void OnEnlargePlotButton();
 	afx_msg void OnClearPlot();

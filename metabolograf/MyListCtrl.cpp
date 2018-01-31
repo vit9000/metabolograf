@@ -5,13 +5,13 @@ MyListCtrl::MyListCtrl()
 {
 	dpiX = DPIX();
 	busy = false;
-
+	experienceStatusTracker = nullptr;
 }
 //-------------------------------------------------------------------------------------------
-void MyListCtrl::Init()
+void MyListCtrl::Init(IExperienceStatusTracker* ExperienceStatusTracker)
 {
 	database = Database::getInstance();
-
+	experienceStatusTracker = ExperienceStatusTracker;
 	LoadConfig();
 	SetHeadersInList();
 }
@@ -105,7 +105,24 @@ void MyListCtrl::AddToList(int i)
 	int Count = GetItemCount();
 	int index = InsertItem(LVIF_TEXT, Count, to_string(i).c_str(), 0, 0, 0, NULL);
 
-	SetItemText(index, 1, database->getDatetime(i).getTimeString().c_str());//time
+	
+	
+	int start = 0;
+	if (experienceStatusTracker && experienceStatusTracker->GetExperienceStatus())
+	{
+		start = database->getHeader().StartTest;
+	}
+
+	string time;
+	if (start > i)
+	{
+		time = string("-") + (database->getDatetime(start).getTime() - database->getDatetime(i).getTime()).getString();
+	}
+	else
+		time = (database->getDatetime(i).getTime() - database->getDatetime(start).getTime()).getString();
+	
+
+	SetItemText(index, 1, time.c_str());//time
 	int column = 2;
 	int col = 0;
 	for (auto& varname : show_parameters)

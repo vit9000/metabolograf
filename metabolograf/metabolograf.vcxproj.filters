@@ -232,6 +232,9 @@
     <ClInclude Include="Analizator.h">
       <Filter>Исходники\VitLib</Filter>
     </ClInclude>
+    <ClInclude Include="IExperienceStatusTracker.h">
+      <Filter>Исходники\Окна\MainPlot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainFrm.cpp">

@@ -196,6 +196,7 @@
     <ClInclude Include="Datetime.h" />
     <ClInclude Include="Dictionary.h" />
     <ClInclude Include="DPIX.h" />
+    <ClInclude Include="IExperienceStatusTracker.h" />
     <ClInclude Include="Export.h" />
     <ClInclude Include="Highlighter.h" />
     <ClInclude Include="Histogram.h" />

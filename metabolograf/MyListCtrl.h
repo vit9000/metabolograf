@@ -10,6 +10,7 @@
 #include <set>
 #include "DPIX.h"
 #include "Ini.h"
+#include "IExperienceStatusTracker.h"
 using namespace std;
 
 
@@ -22,7 +23,7 @@ protected:
 	set<vector<int>> errmarks;
 	bool busy;
 	double dpiX;
-
+	IExperienceStatusTracker* experienceStatusTracker;
 
 	string ToString(string var_name, double value);
 	void WriteConfig() const;
@@ -31,7 +32,7 @@ protected:
 public:
 	MyListCtrl();
 	virtual ~MyListCtrl(){}
-	void Init();
+	void Init(IExperienceStatusTracker* ExperienceStatusTracker);
 	bool IsBusy() const { return busy; }
 	void InsertParameter(string param, int pos);
 	void InsertParameterAfter(string param, string prevparam);

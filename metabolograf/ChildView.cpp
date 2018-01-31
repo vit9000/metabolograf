@@ -216,7 +216,7 @@ int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	main_list.SetFocus();
 	main_list.ModifyStyle(LVS_LIST, LVS_REPORT, 0); //- ставим режим таблицы
 	main_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_CHECKBOXES);
-	main_list.Init();
+	main_list.Init(&main_plot);
 
 	curValues.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, CRect(0, 0, 100, 100), this, IDC_CURRVALUES);
 	curValues.Init();
@@ -1158,6 +1158,7 @@ void CChildView::OnUpdateEndTestButton(CCmdUI* pCmdUI)
 void CChildView::OnSetExperienceMode()
 {
 	main_plot.SetExperienceMode();
+	main_list.Reload();
 }
 
 
