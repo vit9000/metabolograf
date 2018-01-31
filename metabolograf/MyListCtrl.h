@@ -40,7 +40,7 @@ public:
 	void SetSelectedItem(int index);
 	void UnSelectCurrentItem();
 	int GetSelectedItem() const;
-	pair<int, int> GetSelectedItems() const;
+	vector<int> GetSelectedItems() const;
 	void SetHeadersInList();
 	void AddToList(int i);
 	void LoadConfig();

@@ -75,27 +75,22 @@ void MyListCtrl::UnSelectCurrentItem()
 	}
 }
 
-pair<int, int> MyListCtrl::GetSelectedItems() const
+vector<int> MyListCtrl::GetSelectedItems() const
 {
-	int start = -1;
-	int end = -1;
+	vector<int> v;
 	POSITION pos = this->GetFirstSelectedItemPosition();
 	if (pos != NULL)
 	{
 		while (pos)
 		{
 			int nItem = this->GetNextSelectedItem(pos);
-			if (start == -1)
-			{
-				start = nItem;
-				continue;
-			}
-			end = nItem + 1;
+			
+			v.push_back(nItem);
 		}
 	}
 	
 
-	return make_pair(start, end);
+	return v;
 }
 
 int MyListCtrl::GetSelectedItem() const
