@@ -137,7 +137,7 @@ void Database::CalculateMetab()
 
 
 	double koef = -161;
-	if (hdata.PatientSex == 0)
+	if (hdata.PatientSex == 1)
 		koef = 5;
 	oo = 9.99 * hdata.PatientWeight + 6.25 * hdata.PatientHeight - 4.92 * hdata.PatientAge + koef;
 	calculatedMetab.Muffin_Jeor = oo;
