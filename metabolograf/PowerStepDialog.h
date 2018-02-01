@@ -7,14 +7,19 @@
 
 class PowerStepDialog : public CDialogEx
 {
+	DECLARE_DYNAMIC(PowerStepDialog)
 	// Dialog Data
 	#ifdef AFX_DESIGN_TIME
 		enum { IDD = IDD_POWER_STEP_DIALOG };
 	#endif
-	DECLARE_DYNAMIC(PowerStepDialog)
+	
 
 public:
-	PowerStepDialog(CWnd* pParent = NULL) { pos = 0; }   // standard constructor
+	PowerStepDialog(CWnd* pParent = NULL)
+		: CDialogEx(IDD_POWER_STEP_DIALOG, pParent)
+	{ 
+		pos = 0; 
+	}  
 	virtual ~PowerStepDialog() {}
 	BOOL OnInitDialog();
 
@@ -33,7 +38,7 @@ public:
 protected:
 	CEdit edit;
 	CSliderCtrl slider;
-	int pos=0;
+	int pos;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // поддержка DDX/DDV
 	DECLARE_MESSAGE_MAP()
