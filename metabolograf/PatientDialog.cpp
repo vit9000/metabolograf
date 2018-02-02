@@ -30,6 +30,7 @@ void PatientDialog::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_HEIGHT_EDIT, m_Height_Edit);
 	DDX_Control(pDX, IDC_SEX_COMBO, m_Sex_Combo);
 	DDX_Control(pDX, IDC_WRIST_EDIT, m_Wrist_Edit);
+	DDX_Control(pDX, IDC_MASKCOMBO, m_MaskCombo);
 }
 
 
@@ -64,6 +65,19 @@ BOOL PatientDialog::OnInitDialog()
 	m_Height_Edit.EnableWindow(active);
 	m_Sex_Combo.EnableWindow(active);
 
+	Masks masks;
+	for (size_t i = 0; i < masks.count(); ++i)
+	{
+		try 
+		{
+			m_MaskCombo.AddString(masks.getMask(i).name.c_str());
+		}
+		catch (invalid_argument& ex)
+		{
+			break;
+		}
+	}
+	m_MaskCombo.SetCurSel(0);
 
 	return TRUE;
 }
@@ -102,6 +116,8 @@ void PatientDialog::OnBnClickedOk()
 	database->getHeader().PatientHeight = Height;
 	database->getHeader().PatientWrist = Wrist;
 	database->getHeader().PatientSex = Sex;
+	database->getHeader().MaskNumber = m_MaskCombo.GetCurSel();
+
 
 	// TODO: добавьте свой код обработчика уведомлений
 	CDialogEx::OnOK();

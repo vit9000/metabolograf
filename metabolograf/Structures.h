@@ -10,7 +10,8 @@ struct HeaderDatabase
         int PatientSex;
         double PatientAge;
         char PatientName[128];
-        char AdditionalInformation[226];
+        char AdditionalInformation[225];
+		int8_t MaskNumber;
 		int8_t PowerStep;
 
 		int8_t HR;

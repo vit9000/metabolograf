@@ -235,6 +235,9 @@
     <ClInclude Include="IExperienceStatusTracker.h">
       <Filter>Исходники\Окна\MainPlot</Filter>
     </ClInclude>
+    <ClInclude Include="Masks.h">
+      <Filter>Исходники\VitLib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainFrm.cpp">

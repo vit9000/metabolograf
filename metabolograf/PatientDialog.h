@@ -1,6 +1,7 @@
 #pragma once
 #include "Database.h"
 #include "afxwin.h"
+#include "Masks.h"
 
 
 // диалоговое окно PatientDialog
@@ -28,6 +29,7 @@ public:
 	}
 
 private:
+	
 	Database* database;
 	bool active;
 	CEdit m_FIO_Edit;
@@ -36,10 +38,13 @@ private:
 	CEdit m_Height_Edit;
 	CComboBox m_Sex_Combo;
 	CEdit m_Wrist_Edit;
+	CComboBox m_MaskCombo;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // поддержка DDX/DDV
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedUnlockButton();
 	DECLARE_MESSAGE_MAP()
 
+
+	
 };

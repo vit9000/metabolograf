@@ -13,6 +13,7 @@
 #include "Structures.h"
 #include "Datetime.h"
 #include "Ini.h"
+#include "Masks.h"
 
 
 using namespace std;
@@ -32,6 +33,7 @@ private:
 		double Katch_MacArdle;
 	} calculatedMetab;
 
+	Masks masks;
 	double ADS;//дополнительное мертвое пространство
 
 	HeaderDatabase hdata;// заголовок файла

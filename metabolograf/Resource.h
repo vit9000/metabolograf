@@ -119,6 +119,8 @@
 #define IDC_EDITBOX                     1062
 #define IDC_COMBO                       1064
 #define IDC_COMBO2                      1065
+#define IDC_MASKCOMBO                   1066
+#define IDC_COMBO3                      1067
 #define ID_WRITE_PASTEASHYPERLINK       32770
 #define ID_RECORD                       32771
 #define ID_OPEN_FILE                    32772
@@ -176,7 +178,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        344
 #define _APS_NEXT_COMMAND_VALUE         32829
-#define _APS_NEXT_CONTROL_VALUE         1066
+#define _APS_NEXT_CONTROL_VALUE         1068
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

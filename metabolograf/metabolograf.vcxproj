@@ -201,6 +201,7 @@
     <ClInclude Include="Highlighter.h" />
     <ClInclude Include="Histogram.h" />
     <ClInclude Include="Ini.h" />
+    <ClInclude Include="Masks.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MainListConfigDialog.h" />
     <ClInclude Include="MainPlot.h" />
