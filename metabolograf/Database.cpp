@@ -106,8 +106,8 @@ void Database::DefaultVarNames()
 	variable_names.push_back("ДМП");
 	variable_names.push_back("Минутная_вентиляция");
 
-	if (static_cast<size_t>(hdata.MaskNumber) >= masks.count())
-		hdata.MaskNumber = 0;
+	
+	hdata.MaskNumber = 0;
 
 	if (hdata.HR == 1)
 	{
@@ -180,7 +180,7 @@ bool Database::SaveFile(const char *fname)
 	}
 
 	out.write((char *)&hdata, sizeof(hdata));
-
+	
 
 	int count = hdata.count;
 	Variable_<int> H(count), M(count), S(count);
@@ -235,6 +235,8 @@ bool Database::OpenFile(const char *fname)
 	DefaultVarNames();
 
 	in.read((char *)&hdata, sizeof(hdata));
+	if (hdata.MaskNumber < 0 || static_cast<size_t>(hdata.MaskNumber) >= masks.count())
+		hdata.MaskNumber = 0;
 	int size = hdata.count;
 
 	int* t = new int[size * 3];
