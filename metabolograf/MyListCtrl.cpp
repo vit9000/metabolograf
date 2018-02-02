@@ -246,7 +246,7 @@ void MyListCtrl::ShowConfigDialog()
 	vector<string> varnames;
 	for (const auto& varname : database->getVariableNames())
 	{
-		if (database->getVariable(varname).GetType() == Vector)
+		//if (database->getVariable(varname).GetType() == Vector)
 			varnames.push_back(varname);
 	}
 	//&database->variable_names
