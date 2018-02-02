@@ -33,6 +33,7 @@ void Database::Default()
 	hdata.PatientHeight = 170;
 	hdata.PatientSex = 1;
 	hdata.PatientWrist = 20;
+	hdata.MaskNumber = 0;
 	hdata.UseExpiratoryVolume = false;
 	hdata.Filter_TVolume = false;
 	hdata.Filter_BrKoef = false;
@@ -107,7 +108,7 @@ void Database::DefaultVarNames()
 	variable_names.push_back("Минутная_вентиляция");
 
 	
-	hdata.MaskNumber = 0;
+	
 
 	if (hdata.HR == 1)
 	{

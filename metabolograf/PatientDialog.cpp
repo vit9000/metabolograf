@@ -64,6 +64,7 @@ BOOL PatientDialog::OnInitDialog()
 	m_Weight_Edit.EnableWindow(active);
 	m_Height_Edit.EnableWindow(active);
 	m_Sex_Combo.EnableWindow(active);
+	m_MaskCombo.EnableWindow(active);
 
 	Masks masks;
 	for (size_t i = 0; i < masks.count(); ++i)
@@ -77,7 +78,9 @@ BOOL PatientDialog::OnInitDialog()
 			break;
 		}
 	}
-	m_MaskCombo.SetCurSel(0);
+	auto& hdata = database->getHeader();
+	int index = static_cast<int>(database->getHeader().MaskNumber);
+	m_MaskCombo.SetCurSel(index);
 
 	return TRUE;
 }
@@ -109,16 +112,22 @@ void PatientDialog::OnBnClickedOk()
 
 	m_FIO_Edit.GetWindowText(temp);
 	if (!IsValid(temp)) return;
-
-	sprintf(database->getHeader().PatientName, "%s", temp.GetBuffer());
+	
+	//убираем пробелы в конце имени пациента
+	int i;
+	for (i = temp.GetLength() - 1; i >= 0; --i)
+	{
+		if (temp[i] != ' ')
+			break;
+	}
+	sprintf(database->getHeader().PatientName, "%s", temp.GetBufferSetLength(i + 1));
 	database->getHeader().PatientAge = Age;
 	database->getHeader().PatientWeight = Weight;
 	database->getHeader().PatientHeight = Height;
 	database->getHeader().PatientWrist = Wrist;
 	database->getHeader().PatientSex = Sex;
 	database->getHeader().MaskNumber = m_MaskCombo.GetCurSel();
-
-
+	
 	// TODO: добавьте свой код обработчика уведомлений
 	CDialogEx::OnOK();
 }
@@ -132,5 +141,6 @@ void PatientDialog::OnBnClickedUnlockButton()
 	m_Weight_Edit.EnableWindow(active);
 	m_Height_Edit.EnableWindow(active);
 	m_Sex_Combo.EnableWindow(active);
+	m_MaskCombo.EnableWindow(active);
 
 }
