@@ -18,6 +18,7 @@ using namespace std;
 class MyListCtrl : public CListCtrl
 {
 protected:
+	const string ini_filename;
 	Database *database;
 	vector<string> show_parameters;
 	set<vector<int>> marks;
