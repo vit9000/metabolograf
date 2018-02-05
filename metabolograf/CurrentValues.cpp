@@ -247,8 +247,8 @@ string CurrentValues::DoubleToString(double val)
 		ss << 0;
 	else
 	{
-		if (val < 0) count = 4;
-		else if (val < 1) count = 3;
+		if (val < 0) count = 3;
+		//else if (val < 1) count = 3;
 		else if (val < 100) count = 1;
 		ss << setprecision(count);
 		ss << val*sign;
