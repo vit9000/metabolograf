@@ -61,3 +61,8 @@ string Datetime::getDatetimeString() const
 	return  getDateString() + " " + getTimeString();
 }
 
+string Datetime::getDatetimeStringNormal() const
+{
+	return  getDateStringNormal() + " " + getTimeString();
+}
+

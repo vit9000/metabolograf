@@ -24,6 +24,7 @@ public:
 	string getDateStringNormal() const;
 	string getTimeString() const;
 	string getDatetimeString() const;
+	string getDatetimeStringNormal() const;
 };
 
 #endif

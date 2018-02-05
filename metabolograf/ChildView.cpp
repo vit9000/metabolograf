@@ -1009,6 +1009,9 @@ void CChildView::UpdateStatusBar()
 	CString st = "Пациент: " + CString(database->getHeader().PatientName);
 	st += " (" + CString(to_string(age).c_str()) +" "+ age_lbl + ")";
 	st += " | Дата исследования: " + CString(database->getDatetime(0).getDateStringNormal().c_str());
+	st += " | Время исследования: " + CString(database->getDatetime(0).getTime().getString().c_str()) + "-" + CString(database->getDatetime(database->getCount() - 1).getTime().getString().c_str());
+
+
 
 	statusbar->GetElement(0)->SetText(st);
 	CRect sbrect = statusbar->GetElement(0)->GetRect();
