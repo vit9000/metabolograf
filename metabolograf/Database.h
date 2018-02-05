@@ -49,6 +49,7 @@ public:
 		return &p_instance;
 	}
 
+	void insertVariableName(const string& name) { variable_names.push_back(name); }
 	const vector<string>& getVariableNames() const { return variable_names; }
 	const Variable& getVariable(string var_name) const { return variables.at(var_name); };
 	const map<string, Variable>& getVariables() const { return variables; };

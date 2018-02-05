@@ -673,7 +673,7 @@ bool CChildView::GetNewData()
 	database->Append("ЧД", metab.RespRate);
 
 	
-	//database.variables["ЧД_old"].append(metab.RespRateOld);
+	database->Append("ЧД_old", metab.RespRateOld);
 	//в релизе это нужно удалить
 
 
@@ -732,11 +732,12 @@ void CChildView::OnRecord()
 		Recording = true;
 
 		//эта переменная "ЧД_old" появляетя только при записи нового файла
-		/*if (Circle == 0)
+		if (Circle == 0)
 		{
-			database.variable_names.push_back("ЧД_old");
+			database->insertVariableName("ЧД_old");
+			//database.variable_names.push_back("ЧД_old");
 			main_list.InsertParameterAfter("ЧД_old", "ЧД");
-		}*/
+		}
 		timerWindow.StartRec();
 	}
 	
