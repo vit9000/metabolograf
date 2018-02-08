@@ -1,6 +1,13 @@
 #include "stdafx.h"
 #include "MyListCtrl.h"
 
+
+BEGIN_MESSAGE_MAP(MyListCtrl, CWnd)
+	ON_WM_PAINT()
+	ON_WM_ERASEBKGND()
+END_MESSAGE_MAP()
+
+
 MyListCtrl::MyListCtrl()
 {
 	dpiX = DPIX();
@@ -297,15 +304,24 @@ void MyListCtrl::ShowConfigDialog()
 //-------------------------------------------------------------------------------------------
 void MyListCtrl::Reload()
 {
+
+	//LockWindowUpdate();
+
 	SetHeadersInList();
 	int size = database->getCount();
 	for (int i = 0; i < size; i++)
 		AddToList(i);
 
+
+
+	//UnlockWindowUpdate();
+
 }
 //-------------------------------------------------------------------------------------------
 void MyListCtrl::OnDrawMyList(NMHDR* pNMHDR, LRESULT* pResult)
 {
+
+
 	NMLVCUSTOMDRAW* pLVCD = reinterpret_cast<NMLVCUSTOMDRAW*>(pNMHDR);
 
 	// Take the default processing unless we 
@@ -314,7 +330,7 @@ void MyListCtrl::OnDrawMyList(NMHDR* pNMHDR, LRESULT* pResult)
 
 	// First thing - check the draw stage. If it's the control's prepaint
 	// stage, then tell Windows we want messages for every item.
-
+	
 	if (CDDS_PREPAINT == pLVCD->nmcd.dwDrawStage)
 	{
 		*pResult = CDRF_NOTIFYITEMDRAW;
@@ -346,11 +362,11 @@ void MyListCtrl::OnDrawMyList(NMHDR* pNMHDR, LRESULT* pResult)
 
 		if (errmarks.count({ static_cast<int>(pLVCD->nmcd.dwItemSpec) , pLVCD->iSubItem }) != 0)
 			pLVCD->clrTextBk = RGB(255, 200, 200);
-		else if (static_cast<int>(pLVCD->nmcd.dwItemSpec) % 2)
-			pLVCD->clrTextBk = RGB(240, 240, 240);
+		/*else if (static_cast<int>(pLVCD->nmcd.dwItemSpec) % 2)
+			pLVCD->clrTextBk = RGB(240, 240, 240);*/
 		else
 			pLVCD->clrTextBk = RGB(255, 255, 255);
-
+			
 		pLVCD->clrText = crText;
 
 		*pResult = CDRF_DODEFAULT;
@@ -412,4 +428,12 @@ BOOL MyListCtrl::OnEraseBkgnd(CDC* pDC)
 	}
 
 	return TRUE;
+}
+
+
+void MyListCtrl::OnPaint()
+{
+	
+	CListCtrl::OnPaint();
+	
 }

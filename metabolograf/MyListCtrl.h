@@ -11,6 +11,7 @@
 #include <utility>
 #include "DPIX.h"
 #include "Ini.h"
+#include "ugc.h"
 #include "IExperienceStatusTracker.h"
 using namespace std;
 
@@ -30,6 +31,7 @@ protected:
 	string ToString(string var_name, double value);
 	
 	void MyInsertColumn(int index, const string& param, Ini& ini);
+	
 	
 public:
 	void WriteConfig() const;
@@ -56,6 +58,8 @@ public:
 		return show_parameters;
 	}
 	
+	DECLARE_MESSAGE_MAP()
+	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	
 };
