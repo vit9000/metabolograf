@@ -107,8 +107,30 @@ void Database::DefaultVarNames()
 	variable_names.push_back("ДМП");
 	variable_names.push_back("Минутная_вентиляция");
 
+	variable_pseudonames.clear();
 	
+	variable_pseudonames.Add("Vвдоха", "Vвдоха (л)");
+	variable_pseudonames.Add("Vвыдоха", "Vвыдоха (л)");
+	variable_pseudonames.Add("Vвдоха_без_МП", "Vвдоха без МП (л)");
+	variable_pseudonames.Add("Vвыдоха_без_МП", "Vвыдоха без МП (л)");
+	variable_pseudonames.Add("Потребление_O2", "VO2 (л)");
+	variable_pseudonames.Add("Выделение_CO2", "VCO2 (л)");
+	variable_pseudonames.Add("Потребление_O2_мл_кг_мин", "VO2 (мл/кг/мин.)");
+	variable_pseudonames.Add("Выделение_CO2_мл_кг_мин", "VCO2 (мл/кг/мин.)");
+	variable_pseudonames.Add("Минутное_потребление_O2", "VO2 (л/мин.)");
+	variable_pseudonames.Add("Минутное_выделение_CO2", "VCO2 (л/мин.)");
+	variable_pseudonames.Add("Вентиляционный_эквивалент_O2", "ВЭКВ O2");
+	variable_pseudonames.Add("Вентиляционный_эквивалент_CO2", "ВЭКВ CO2");
+	variable_pseudonames.Add("Дыхательный_коэффициент", "ДК");
+	variable_pseudonames.Add("Метаболизм_O2", "Метаболизм по O2 (ккал/сут.)");
+	variable_pseudonames.Add("Метаболизм_CO2", "Метаболизм по CO2 (ккал/сут.)");
+	variable_pseudonames.Add("ДМП", "ДМП");
+	variable_pseudonames.Add("Минутная_вентиляция", "Мин.вент.(л)");
+
+
+
 	
+
 
 	if (hdata.HR == 1)
 	{
@@ -612,4 +634,33 @@ string  Database::GetHTMLHeader() // временный заголовок для экспотра протоколов
 	return ss.str();
 
 
+}
+
+
+vector<string> Database::getVariableNames() const
+{
+	vector<string> temp;
+	//создаем вектор строк псевдонимов
+	for (const string& realname : variable_names)
+	{
+		string pseudoname (realname);
+		variable_pseudonames.getPseudoName(realname, pseudoname);
+		temp.push_back(pseudoname);
+	}
+
+	return temp;
+}
+
+bool  Database::isVariableExists(const string& var_name) const
+{
+	string realname(var_name);
+	variable_pseudonames.getRealName(var_name, realname);
+	return variables.count(realname) > 0;
+}
+
+const Variable&  Database::getVariable(const string& var_name) const 
+{ 
+	string realname(var_name);
+	variable_pseudonames.getRealName(var_name, realname);
+	return variables.at(realname);
 }

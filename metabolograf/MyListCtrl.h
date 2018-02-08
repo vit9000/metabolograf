@@ -28,12 +28,13 @@ protected:
 	IExperienceStatusTracker* experienceStatusTracker;
 
 	string ToString(string var_name, double value);
-	void WriteConfig() const;
 	
+	void MyInsertColumn(int index, const string& param, Ini& ini);
 	
 public:
+	void WriteConfig() const;
 	MyListCtrl();
-	virtual ~MyListCtrl(){}
+	virtual ~MyListCtrl();
 	void Init(IExperienceStatusTracker* ExperienceStatusTracker);
 	bool IsBusy() const { return busy; }
 	void InsertParameter(string param, int pos);
@@ -55,5 +56,6 @@ public:
 		return show_parameters;
 	}
 	
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	
 };

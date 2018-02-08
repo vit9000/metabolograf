@@ -26,6 +26,7 @@ CChildView::CChildView()
 
 CChildView::~CChildView()
 {
+	
 }
 
 
@@ -245,6 +246,7 @@ int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 //----------------------------------------------------------------------------------------------
 void CChildView::OnClose()
 {
+	main_list.WriteConfig();
 	playground.SaveWorkScript();
 	if (ydata.Initialized && database->getCount()>0)
 	{

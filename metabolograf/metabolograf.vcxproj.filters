@@ -238,6 +238,9 @@
     <ClInclude Include="Masks.h">
       <Filter>Исходники\VitLib</Filter>
     </ClInclude>
+    <ClInclude Include="Pseudoname.h">
+      <Filter>Исходники\VitLib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainFrm.cpp">

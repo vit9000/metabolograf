@@ -15,6 +15,10 @@ void MyListCtrl::Init(IExperienceStatusTracker* ExperienceStatusTracker)
 	LoadConfig();
 	SetHeadersInList();
 }
+MyListCtrl::~MyListCtrl()
+{
+	//WriteConfig();
+}
 //-------------------------------------------------------------------------------------------
 void MyListCtrl::Clear()
 {
@@ -107,15 +111,39 @@ void MyListCtrl::SetHeadersInList()
 
 														  //vector<string>& headers = database->variable_names;
 	int index = 2;
+	Ini ini("listview.ini");
+	
 	for (int i = 0; i<show_parameters.size(); i++)
 	{
-		string temp = show_parameters[i];
-		for (char& t : temp)
-			if (t == '_') t = ' ';
-		InsertColumn(index, temp.c_str(), LVCFMT_CENTER, (temp.length() * 6 + 40)*dpiX, index);//добавляем колонки
+		MyInsertColumn(index, show_parameters[i], ini);
 		index++;
 
 	}
+	WriteConfig();
+	
+}
+
+void MyListCtrl::MyInsertColumn(int index, const string& param, Ini& ini)
+{
+	//for (char& t : param)
+	//	if (t == '_') t = ' ';
+
+	string var_name;
+	database->getRealName(param, var_name);
+
+	int width = 5 * 10 * dpiX;
+	if (var_name == "ЧД" || var_name == "FiO2" || var_name == "FetO2" || var_name == "FiCO2" || var_name == "FetCO2" ||
+		var_name == "ДМП" || var_name == "ЧСС" || var_name == "RR" || var_name == "SD" ||
+		var_name == "Минутная_вентиляция" || var_name == "Вентиляционный_эквивалент_O2" || var_name == "Вентиляционный_эквивалент_CO2")
+		width = 4 * 10 * dpiX;
+	if (ini.IsExists())
+	{
+		//int wt = 0;
+		//Write("ColumnWidth", varname.c_str(), GetColumnWidth(col));
+		width = ini.Read("ColumnWidth", param.c_str(), width);
+	}
+
+	InsertColumn(index, param.c_str(), LVCFMT_CENTER, width, index);//добавляем колонки
 }
 //-------------------------------------------------------------------------------------------
 void MyListCtrl::AddToList(int i)
@@ -146,8 +174,8 @@ void MyListCtrl::AddToList(int i)
 	int col = 0;
 	for (auto& varname : show_parameters)
 	{
-		int size = database->getCount();//database->variables[varname].size();
-		if (i < size)
+		int size = static_cast<int>(database->getVariable(varname).size());
+		if (i < size &&  database->isVariableExists(varname))
 		{
 			double value = database->getVariable(varname)[i];
 			string str = ToString(varname, value);//to_string(database->variables[varname][i]);
@@ -170,13 +198,18 @@ string MyListCtrl::ToString(string var_name, double value)
 {
 	if (value < 0) return string("НД");
 
+
+	database->getRealName(var_name, var_name);
+
 	int precision = 3;
 	if (var_name == "Метаболизм_O2" ||
 		var_name == "Метаболизм_CO2" ||
 		var_name == "ДМП" || var_name == "ЧСС" || var_name == "RR" || var_name == "SD")
 		return to_string(static_cast<int>(value));
 
-	else if (var_name == "ЧД" || var_name == "ЧД_old" || var_name == "FiO2" || var_name == "FetO2" || var_name == "FiCO2" || var_name == "FetCO2")
+	else if (var_name == "ЧД" || var_name == "ЧД_old" || var_name == "FiO2" || var_name == "FetO2" || var_name == "FiCO2" || var_name == "FetCO2" 
+		|| var_name == "Минутная_вентиляция" || var_name == "Вентиляционный_эквивалент_O2" || var_name == "Вентиляционный_эквивалент_CO2"
+		|| var_name == "Возраст" || var_name == "Пол" || var_name == "Рост" || var_name == "Вес")
 		precision = 1;
 	else if (var_name == "Дыхательный_коэффициент")
 	{
@@ -192,12 +225,16 @@ string MyListCtrl::ToString(string var_name, double value)
 //-------------------------------------------------------------------------------------------
 void MyListCtrl::WriteConfig() const
 {
-	Ini ini("metabolograf.ini");
+	Ini ini("listview.ini");
 	ini.Delete();
 
+	int col = 2;
 	for (auto& varname : show_parameters)
 	{
+		
 		ini.Write("Variable_names", varname.c_str(), "1");
+		ini.Write("ColumnWidth", varname.c_str(), GetColumnWidth(col));
+		++col;
 	}
 }
 //-------------------------------------------------------------------------------------------
@@ -205,34 +242,28 @@ void MyListCtrl::LoadConfig()
 {
 	show_parameters.clear();
 
-	Ini ini("metabolograf.ini");
+	Ini ini("listview.ini");
 	if (!ini.IsExists())
 	{
-
-		show_parameters.push_back("Vвдоха");
-		show_parameters.push_back("Vвыдоха");
-		show_parameters.push_back("ЧД");
-		show_parameters.push_back("FiO2");
-		show_parameters.push_back("FetO2");
-		//show_parameters.push_back("FiCO2");
-		//show_parameters.push_back("FetCO2");
-		//show_parameters.push_back("Vвдоха_без_МП");
-		//show_parameters.push_back("Vвыдоха_без_МП");
-		//show_parameters.push_back("Потребление_O2");
-		//show_parameters.push_back("Выделение_CO2");
-		show_parameters.push_back("Минутное_потребление_O2");
-		show_parameters.push_back("Минутное_выделение_CO2");
-		show_parameters.push_back("Дыхательный_коэффициент");
-		//show_parameters.push_back("Метаболизм_O2");
-		show_parameters.push_back("Метаболизм_CO2");
-		show_parameters.push_back("ДМП");
+		for (const auto& variable_name : database->getVariableNames())
+		{
+			if (database->isVariableExists(variable_name))
+			{
+				if (database->getVariable(variable_name).GetType() == Vector)
+				{
+				}
+			}
+			else
+				show_parameters.push_back(variable_name);
+		}
 		return;
 	}
 
-	for (size_t i = 0; i<database->getVariableNames().size(); i++)
+	vector<string> var_names = database->getVariableNames();
+	for (size_t i = 0; i<var_names.size(); i++)
 	{
 		int defaultVal = 0;
-		const string& varname = database->getVariableNames()[i];
+		const string& varname = var_names[i];
 
 		int temp = (bool)ini.Read<int>("Variable_names", varname.c_str(), defaultVal);
 		if (temp == 1)
@@ -251,13 +282,16 @@ void MyListCtrl::ShowConfigDialog()
 	}
 	//&database->variable_names
 
-
+	vector<string> old_parameters(show_parameters);
 	cfDlg.Init(&show_parameters, &varnames);
 	int result = cfDlg.DoModal();
 	if (result == 1)
 	{
 		Reload();
-		WriteConfig();
+		//WriteConfig();
+		//int old_count = static_cast<int>(old_parameters.size());
+		//int new_count = static_cast<int>(show_parameters.size());
+		
 	}
 }
 //-------------------------------------------------------------------------------------------
@@ -321,4 +355,61 @@ void MyListCtrl::OnDrawMyList(NMHDR* pNMHDR, LRESULT* pResult)
 
 		*pResult = CDRF_DODEFAULT;
 	}
+}
+
+
+BOOL MyListCtrl::OnEraseBkgnd(CDC* pDC)
+{
+	CBrush  br;
+	CRect   rcCli;
+	CRect   rcItemsRect(0, 0, 0, 0);
+	int     nHeadHeight = 0;
+	int     nItems = GetItemCount();
+
+	GetClientRect(&rcCli);
+
+	CHeaderCtrl* pHeadCtrl = GetHeaderCtrl();
+	if (pHeadCtrl)
+	{
+		CRect  rcHead;
+		pHeadCtrl->GetWindowRect(&rcHead);
+		nHeadHeight = rcHead.Height();
+	}
+	rcCli.top += nHeadHeight;
+
+	if (nItems > 0)
+	{
+		CPoint  ptItem;
+		CRect   rcItem;
+
+		GetItemRect(nItems - 1, &rcItem, LVIR_BOUNDS);
+		GetItemPosition(nItems - 1, &ptItem);
+
+		rcItemsRect.top = rcCli.top;
+		rcItemsRect.left = ptItem.x;
+		rcItemsRect.right = rcItem.right;
+		rcItemsRect.bottom = rcItem.bottom;
+
+		if (GetExtendedStyle() & LVS_EX_CHECKBOXES)
+			rcItemsRect.left -= GetSystemMetrics(SM_CXEDGE) + 16;
+	}
+
+	br.CreateSolidBrush(GetBkColor());
+
+	if (rcItemsRect.IsRectEmpty())
+		pDC->FillRect(rcCli, &br);
+	else
+	{
+		if (rcItemsRect.left > rcCli.left)     // fill left rectangle
+			pDC->FillRect(
+				CRect(0, rcCli.top, rcItemsRect.left, rcCli.bottom), &br);
+		if (rcItemsRect.bottom < rcCli.bottom) // fill bottom rectangle
+			pDC->FillRect(
+				CRect(0, rcItemsRect.bottom, rcCli.right, rcCli.bottom), &br);
+		if (rcItemsRect.right < rcCli.right) // fill right rectangle
+			pDC->FillRect(
+				CRect(rcItemsRect.right, rcCli.top, rcCli.right, rcCli.bottom), &br);
+	}
+
+	return TRUE;
 }

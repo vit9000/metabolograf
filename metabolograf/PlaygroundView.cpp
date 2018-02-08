@@ -154,14 +154,13 @@ void PlaygroundView::OnLButtonDblClk(UINT flags, CPoint point)
 
 void PlaygroundView::UpdateVariablesList()
 {
-	VariablesList.ResetContent();
-	for (const auto& it : database->getVariables())
+	/*VariablesList.ResetContent();
+	for (const auto& pseudoname : database->getVariableNames())
 	{
-		/*string type = (it.second.GetType()) ? "" : "Scalar - ";
-		type += it.first.c_str();
-		VariablesList.AddString(type.c_str());*/
-		VariablesList.AddString(it.first.c_str());
-	}
+		string realname;
+		database->getRealName(pseudoname, realname);
+		VariablesList.AddString(realname.c_str());
+	}*/
 }
 //-----------------------------------------------------------------------------
 void PlaygroundView::OnLbnDblclkVariableslist()

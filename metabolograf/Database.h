@@ -14,6 +14,7 @@
 #include "Datetime.h"
 #include "Ini.h"
 #include "Masks.h"
+#include "Pseudoname.h"
 
 
 using namespace std;
@@ -40,7 +41,9 @@ private:
 	VariableBOOL checked; // галки каждого измерения: вкл - обрабатывается, выкл - нет
 	Variable_<Datetime> datetime; // дата и время каждого измерения
 	vector<string> variable_names; // список переменных
+	Pseudoname variable_pseudonames; // псевдонимы переменных
 	map<string, Variable> variables; // все переменные
+
 public:
 
 	static Database* getInstance()//ключевая часть паттерна Одиночка
@@ -50,10 +53,17 @@ public:
 	}
 
 	void insertVariableName(const string& name) { variable_names.push_back(name); }
-	const vector<string>& getVariableNames() const { return variable_names; }
-	const Variable& getVariable(string var_name) const { return variables.at(var_name); };
-	const map<string, Variable>& getVariables() const { return variables; };
-	bool isVariableExists(string var_name) { return variables.count(var_name) > 0; }
+	
+	vector<string> getVariableNames() const;
+
+	bool getRealName(const string& pseudoname, string& realname) const
+	{
+		return variable_pseudonames.getRealName(pseudoname, realname);
+	}
+
+	const Variable& getVariable(const string& var_name) const;
+	
+	bool isVariableExists(const string& var_name) const;
 
 	const CalculatedMetab& getCalculatedMetab() const { return calculatedMetab;}
 	const VariableBOOL& getChecked() { return checked; }
