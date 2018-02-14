@@ -36,6 +36,7 @@ void MyListCtrl::Clear()
 	{
 		DeleteColumn(0);
 	}
+	
 }
 //-------------------------------------------------------------------------------------------
 void MyListCtrl::InsertParameter(string param, int pos)
@@ -181,24 +182,29 @@ void MyListCtrl::AddToList(int i)
 	int col = 0;
 	for (auto& varname : show_parameters)
 	{
-		int size = static_cast<int>(database->getVariable(varname).size());
-		if (i < size &&  database->isVariableExists(varname))
-		{
-			double value = database->getVariable(varname)[i];
-			string str = ToString(varname, value);//to_string(database->variables[varname][i]);
-			if (str == "ÍÄ")
-				errmarks.insert({ index, column });
-			else if (varname == "ÄÌÏ" && (value > 55 || value < 33))
-				marks.insert({ index, column });
-
-			SetItemText(index, column, str.c_str());
-		}
+		AddParameter(varname, column, index);
 		column++;
 
 	}
 
 	SetCheck(i, database->getChecked(i));
 	busy = false;
+}
+
+void MyListCtrl::AddParameter(const string& param, int column, int index)
+{
+	int size = static_cast<int>(database->getVariable(param).size());
+	if (index < size &&  database->isVariableExists(param))
+	{
+		double value = database->getVariable(param)[index];
+		string str = ToString(param, value);//to_string(database->variables[varname][i]);
+		if (str == "ÍÄ")
+			errmarks.insert({ index, column });
+		else if (param == "ÄÌÏ" && (value > 55 || value < 33))
+			marks.insert({ index, column });
+
+		SetItemText(index, column, str.c_str());
+	}
 }
 //-------------------------------------------------------------------------------------------
 string MyListCtrl::ToString(string var_name, double value)
@@ -278,6 +284,7 @@ void MyListCtrl::LoadConfig()
 	}
 }
 //-------------------------------------------------------------------------------------------
+
 void MyListCtrl::ShowConfigDialog()
 {
 	MainListConfigDialog cfDlg;
@@ -294,11 +301,58 @@ void MyListCtrl::ShowConfigDialog()
 	int result = cfDlg.DoModal();
 	if (result == 1)
 	{
-		Reload();
+		//Reload();
 		//WriteConfig();
-		//int old_count = static_cast<int>(old_parameters.size());
-		//int new_count = static_cast<int>(show_parameters.size());
+		if (old_parameters != show_parameters)
+		{
+			
+			vector<string> sorted_new_parameters(show_parameters);
+			vector<string> sorted_old_parameters(old_parameters);
+			std::sort(sorted_new_parameters.begin(), sorted_new_parameters.end());
+			std::sort(sorted_old_parameters.begin(), sorted_old_parameters.end());
+
+			DeleteUnselectedColumns(sorted_new_parameters, sorted_old_parameters, old_parameters);
+			AddSelectedColumns(sorted_new_parameters, sorted_old_parameters);
+			
+		}
 		
+	}
+}
+void MyListCtrl::DeleteUnselectedColumns(const vector<string>& sorted_new_parameters, const vector<string>& sorted_old_parameters, vector<string>& old_parameters)
+{
+	vector<string> to_delete;
+	std::set_difference(
+		sorted_old_parameters.begin(), sorted_old_parameters.end(),
+		sorted_new_parameters.begin(), sorted_new_parameters.end(),
+		std::inserter(to_delete, to_delete.begin()));
+	for (const string& d : to_delete)
+	{
+		auto it = find(old_parameters.begin(), old_parameters.end(), d);
+		if (it == old_parameters.end()) continue;
+
+		int column = it - old_parameters.begin();
+		old_parameters.erase(it);
+		DeleteColumn(column + 2);
+	}
+}
+
+void  MyListCtrl::AddSelectedColumns(const vector<string>& sorted_new_parameters, const vector<string>& sorted_old_parameters)
+{
+	vector<string> to_add;
+	std::set_difference(
+		sorted_new_parameters.begin(), sorted_new_parameters.end(),
+		sorted_old_parameters.begin(), sorted_old_parameters.end(),
+		std::inserter(to_add, to_add.begin()));
+
+	Ini ini("listview.ini");
+	for (const string& add : to_add)
+	{
+		auto it = std::find(show_parameters.begin(), show_parameters.end(), add);
+		if (it == show_parameters.end()) continue;
+		int column = it - show_parameters.begin() + 2;
+		MyInsertColumn(column, add, ini);
+		for (int i = 0; i < database->getCount(); ++i)
+			AddParameter(add, column, i);
 	}
 }
 //-------------------------------------------------------------------------------------------

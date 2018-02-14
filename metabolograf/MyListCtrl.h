@@ -9,6 +9,9 @@
 #include <iomanip>
 #include <set>
 #include <utility>
+#include <algorithm>
+#include <iterator>
+
 #include "DPIX.h"
 #include "Ini.h"
 #include "ugc.h"
@@ -26,12 +29,15 @@ protected:
 	set<vector<int>> errmarks;
 	bool busy;
 	double dpiX;
+
 	IExperienceStatusTracker* experienceStatusTracker;
 
 	string ToString(string var_name, double value);
 	
 	void MyInsertColumn(int index, const string& param, Ini& ini);
 	
+	void DeleteUnselectedColumns(const vector<string>& sorted_new_parameters, const vector<string>& sorted_old_parameters, vector<string>& old_parameters);
+	void AddSelectedColumns(const vector<string>& sorted_new_parameters, const vector<string>& sorted_old_parameters);
 	
 public:
 	void WriteConfig() const;
@@ -47,11 +53,14 @@ public:
 	vector<int> GetSelectedItems() const;
 	void SetHeadersInList();
 	void AddToList(int i);
+	void AddParameter(const string& param, int column, int index);
 	void LoadConfig();
 	void OnDrawMyList(NMHDR* pNMHDR, LRESULT* pResult);
 	void ShowConfigDialog();
 	void Reload();
 	void Clear();
+
+	
 
 	inline const vector<string>& getShowParameters() const 
 	{
