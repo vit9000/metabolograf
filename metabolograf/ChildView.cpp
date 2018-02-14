@@ -50,7 +50,6 @@ BEGIN_MESSAGE_MAP(CChildView, CWnd)
 	ON_COMMAND(ID_RECORD, &CChildView::OnRecord)
 	ON_COMMAND(ID_SHOW_LIST_CONFIG, &CChildView::OnShowListConfigDlg)
 
-	ON_NOTIFY(NM_CUSTOMDRAW, IDC_MAINLIST, OnCustomdrawMyList)
 	ON_COMMAND(ID_SHOW_PLOTDIALOG, &CChildView::OnShowPlotdialog)
 	ON_COMMAND(ID_NEW_SCRIPT, &CChildView::OnNewScript)
 	ON_COMMAND(ID_RUN_SCRIPT, &CChildView::OnRunScript)
@@ -213,10 +212,8 @@ int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Tab.InsertItem(1, " Графики ");
 	//m_Tab.InsertItem(2, " Скрипт ");//убрал скрипт пока
 
-	main_list.Create(WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL | WS_BORDER | LBS_NOTIFY, rect, this, IDC_MAINLIST);
+	main_list.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, rect, this, IDC_MAINLIST);
 	main_list.SetFocus();
-	main_list.ModifyStyle(LVS_LIST, LVS_REPORT, 0); //- ставим режим таблицы
-	main_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_CHECKBOXES);
 	main_list.Init(&main_plot);
 
 	curValues.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, CRect(0, 0, 100, 100), this, IDC_CURRVALUES);
@@ -703,7 +700,7 @@ bool CChildView::GetNewData()
 	listplot.Update();
 	if(CurValuesVisible)// если открыто панель Выбранных значений
 		curValues.SetSelected(Circle - 1);//обновляем последнее полученной
-	main_list.UnSelectCurrentItem();
+	//main_list.UnSelectCurrentItem();
 	UpdateStatusBar();
 	//main_list.SetSelectedItem(Circle - 1);
 	
@@ -778,11 +775,7 @@ void CChildView::OnShowListConfigDlg()
 
 }
 //----------------------------------------------------------------------------------------------
-void CChildView::OnCustomdrawMyList(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	main_list.OnDrawMyList(pNMHDR, pResult);
-}
-//----------------------------------------------------------------------------------------------
+
 void CChildView::OnShowPlotdialog()
 {
 	// TODO: добавьте свой код обработчика команд

@@ -13,10 +13,12 @@
 #include "Ini.h"
 #include "ugc.h"
 #include "IExperienceStatusTracker.h"
+#include "CFastListCtrl.h"
+
 using namespace std;
 
 
-class MyListCtrl : public CListCtrl
+class MyListCtrl : public CFastListCtrl
 {
 protected:
 	const string ini_filename;
@@ -41,14 +43,10 @@ public:
 	bool IsBusy() const { return busy; }
 	void InsertParameter(string param, int pos);
 	void InsertParameterAfter(string param, string prevparam);
-	void SetSelectedItem(int index);
-	void UnSelectCurrentItem();
-	int GetSelectedItem() const;
-	vector<int> GetSelectedItems() const;
-	void SetHeadersInList();
 	void AddToList(int i);
 	void LoadConfig();
-	void OnDrawMyList(NMHDR* pNMHDR, LRESULT* pResult);
+	void SetHeadersInList();
+	
 	void ShowConfigDialog();
 	void Reload();
 	void Clear();
@@ -58,8 +56,7 @@ public:
 		return show_parameters;
 	}
 	
-	DECLARE_MESSAGE_MAP()
-	afx_msg void OnPaint();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	
+	//void OnDrawMyList(NMHDR* pNMHDR, LRESULT* pResult);
 	
 };

@@ -190,6 +190,7 @@
     <ClInclude Include="BigPlot.h" />
     <ClInclude Include="BigPlotDialog.h" />
     <ClInclude Include="Canvas.h" />
+    <ClInclude Include="CFastListCtrl.h" />
     <ClInclude Include="ChildView.h" />
     <ClInclude Include="CurrentValues.h" />
     <ClInclude Include="Database.h" />
@@ -236,6 +237,7 @@
     <ClCompile Include="BigPlot.cpp" />
     <ClCompile Include="BigPlotDialog.cpp" />
     <ClCompile Include="Canvas.cpp" />
+    <ClCompile Include="CFastListCtrl.cpp" />
     <ClCompile Include="ChildView.cpp" />
     <ClCompile Include="CurrentValues.cpp" />
     <ClCompile Include="Database.cpp" />

@@ -129,9 +129,9 @@ void BigPlot::OnLButtonUp(UINT flags, CPoint point)
 
 		if (main_list && curValues)//если мы передали указатель на таблицу показателей
 		{//тогда выставляем выделение по полученному индексу
-			main_list->UnSelectCurrentItem();//сперва снимаем выделение текущей строки
+			//main_list->UnSelectCurrentItem();//сперва снимаем выделение текущей строки
 			main_list->SetSelectedItem(index);//выделяем необходимую строчку
-			main_list->EnsureVisible(index, true);//перемещаем скрул, чтобы видеть выделение
+			//main_list->EnsureVisible(index, true);//перемещаем скрул, чтобы видеть выделение
 			main_list->SetFocus();//передаем фокус таблице
 			curValues->SetSelected(index);
 		}

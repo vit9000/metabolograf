@@ -1,11 +1,7 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "MyListCtrl.h"
 
 
-BEGIN_MESSAGE_MAP(MyListCtrl, CWnd)
-	ON_WM_PAINT()
-	ON_WM_ERASEBKGND()
-END_MESSAGE_MAP()
 
 
 MyListCtrl::MyListCtrl()
@@ -60,66 +56,17 @@ void MyListCtrl::InsertParameterAfter(string param, string prevparam)
 	SetHeadersInList();
 }
 
-void MyListCtrl::SetSelectedItem(int index)
-{
-	busy = true;
-
-
-
-	SetSelectionMark(index);
-	//SetItemState(index, LVIS_SELECTED | LVIS_FOCUSED, 0xFF);
-	SetItemState(index, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-	//		RedrawItems(index, index);
-
-
-	busy = false;
-
-}
-void MyListCtrl::UnSelectCurrentItem()
-{
-	int old = GetSelectedItem();
-	if (old >= 0)
-	{
-		SetSelectionMark(old);
-		SetItemState(old, 0, LVIS_SELECTED | LVIS_FOCUSED);
-		//			RedrawItems(old, old);
-	}
-}
-
-vector<int> MyListCtrl::GetSelectedItems() const
-{
-	vector<int> v;
-	POSITION pos = this->GetFirstSelectedItemPosition();
-	if (pos != NULL)
-	{
-		while (pos)
-		{
-			int nItem = this->GetNextSelectedItem(pos);
-			
-			v.push_back(nItem);
-		}
-	}
-	
-
-	return v;
-}
-
-int MyListCtrl::GetSelectedItem() const
-{
-	return GetNextItem(-1, LVNI_FOCUSED);;
-}
-//-------------------------------------------------------------------------------------------
 void MyListCtrl::SetHeadersInList()
 {
 	Clear();
 
-	InsertColumn(0, "N", LVCFMT_CENTER, 50 * dpiX, 0);//добавляем колонки
-	InsertColumn(1, "Время", LVCFMT_CENTER, 60 * dpiX, 0);//добавляем колонки
+	InsertColumn(0, "N", 50 * dpiX);//Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ ГЄГ®Г«Г®Г­ГЄГЁ
+	InsertColumn(1, "Р’СЂРµРјСЏ", 60 * dpiX);//Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ ГЄГ®Г«Г®Г­ГЄГЁ
 
 														  //vector<string>& headers = database->variable_names;
 	int index = 2;
 	Ini ini("listview.ini");
-	
+
 	for (int i = 0; i<show_parameters.size(); i++)
 	{
 		MyInsertColumn(index, show_parameters[i], ini);
@@ -127,8 +74,14 @@ void MyListCtrl::SetHeadersInList()
 
 	}
 	WriteConfig();
-	
+
 }
+
+
+
+
+//-------------------------------------------------------------------------------------------
+
 
 void MyListCtrl::MyInsertColumn(int index, const string& param, Ini& ini)
 {
@@ -139,9 +92,9 @@ void MyListCtrl::MyInsertColumn(int index, const string& param, Ini& ini)
 	database->getRealName(param, var_name);
 
 	int width = 5 * 10 * dpiX;
-	if (var_name == "ЧД" || var_name == "FiO2" || var_name == "FetO2" || var_name == "FiCO2" || var_name == "FetCO2" ||
-		var_name == "ДМП" || var_name == "ЧСС" || var_name == "RR" || var_name == "SD" ||
-		var_name == "Минутная_вентиляция" || var_name == "Вентиляционный_эквивалент_O2" || var_name == "Вентиляционный_эквивалент_CO2")
+	if (var_name == "Р§Р”" || var_name == "FiO2" || var_name == "FetO2" || var_name == "FiCO2" || var_name == "FetCO2" ||
+		var_name == "Р”РњРџ" || var_name == "Р§РЎРЎ" || var_name == "RR" || var_name == "SD" ||
+		var_name == "РњРёРЅСѓС‚РЅР°СЏ_РІРµРЅС‚РёР»СЏС†РёСЏ" || var_name == "Р’РµРЅС‚РёР»СЏС†РёРѕРЅРЅС‹Р№_СЌРєРІРёРІР°Р»РµРЅС‚_O2" || var_name == "Р’РµРЅС‚РёР»СЏС†РёРѕРЅРЅС‹Р№_СЌРєРІРёРІР°Р»РµРЅС‚_CO2")
 		width = 4 * 10 * dpiX;
 	if (ini.IsExists())
 	{
@@ -150,14 +103,14 @@ void MyListCtrl::MyInsertColumn(int index, const string& param, Ini& ini)
 		width = ini.Read("ColumnWidth", param.c_str(), width);
 	}
 
-	InsertColumn(index, param.c_str(), LVCFMT_CENTER, width, index);//добавляем колонки
+	InsertColumn(index, param, width);//РґРѕР±Р°РІР»СЏРµРј РєРѕР»РѕРЅРєРё
 }
 //-------------------------------------------------------------------------------------------
 void MyListCtrl::AddToList(int i)
 {
 	busy = true;
 	int Count = GetItemCount();
-	int index = InsertItem(LVIF_TEXT, Count, to_string(i).c_str(), 0, 0, 0, NULL);
+	int index = InsertItem(0, Count, to_string(i));
 
 	
 	
@@ -175,8 +128,8 @@ void MyListCtrl::AddToList(int i)
 	else
 		time = (database->getDatetime(i).getTime() - database->getDatetime(start).getTime()).getString();
 	
-
-	SetItemText(index, 1, time.c_str());//time
+	
+	SetItemText(1, index, time);//time
 	int column = 2;
 	int col = 0;
 	for (auto& varname : show_parameters)
@@ -186,12 +139,12 @@ void MyListCtrl::AddToList(int i)
 		{
 			double value = database->getVariable(varname)[i];
 			string str = ToString(varname, value);//to_string(database->variables[varname][i]);
-			if (str == "НД")
+			if (str == "РќР”")
 				errmarks.insert({ index, column });
-			else if (varname == "ДМП" && (value > 55 || value < 33))
+			else if (varname == "Р”РњРџ" && (value > 55 || value < 33))
 				marks.insert({ index, column });
 
-			SetItemText(index, column, str.c_str());
+			SetItemText(column, index, str);
 		}
 		column++;
 
@@ -203,24 +156,24 @@ void MyListCtrl::AddToList(int i)
 //-------------------------------------------------------------------------------------------
 string MyListCtrl::ToString(string var_name, double value)
 {
-	if (value < 0) return string("НД");
+	if (value < 0) return string("РќР”");
 
 
 	database->getRealName(var_name, var_name);
 
 	int precision = 3;
-	if (var_name == "Метаболизм_O2" ||
-		var_name == "Метаболизм_CO2" ||
-		var_name == "ДМП" || var_name == "ЧСС" || var_name == "RR" || var_name == "SD")
+	if (var_name == "РњРµС‚Р°Р±РѕР»РёР·Рј_O2" ||
+		var_name == "РњРµС‚Р°Р±РѕР»РёР·Рј_CO2" ||
+		var_name == "Р”РњРџ" || var_name == "Р§РЎРЎ" || var_name == "RR" || var_name == "SD")
 		return to_string(static_cast<int>(value));
 
-	else if (var_name == "ЧД" || var_name == "ЧД_old" || var_name == "FiO2" || var_name == "FetO2" || var_name == "FiCO2" || var_name == "FetCO2" 
-		|| var_name == "Минутная_вентиляция" || var_name == "Вентиляционный_эквивалент_O2" || var_name == "Вентиляционный_эквивалент_CO2"
-		|| var_name == "Возраст" || var_name == "Пол" || var_name == "Рост" || var_name == "Вес")
+	else if (var_name == "Р§Р”" || var_name == "Р§Р”_old" || var_name == "FiO2" || var_name == "FetO2" || var_name == "FiCO2" || var_name == "FetCO2" 
+		|| var_name == "РњРёРЅСѓС‚РЅР°СЏ_РІРµРЅС‚РёР»СЏС†РёСЏ" || var_name == "Р’РµРЅС‚РёР»СЏС†РёРѕРЅРЅС‹Р№_СЌРєРІРёРІР°Р»РµРЅС‚_O2" || var_name == "Р’РµРЅС‚РёР»СЏС†РёРѕРЅРЅС‹Р№_СЌРєРІРёРІР°Р»РµРЅС‚_CO2"
+		|| var_name == "Р’РѕР·СЂР°СЃС‚" || var_name == "РџРѕР»" || var_name == "Р РѕСЃС‚" || var_name == "Р’РµСЃ")
 		precision = 1;
-	else if (var_name == "Дыхательный_коэффициент")
+	else if (var_name == "Р”С‹С…Р°С‚РµР»СЊРЅС‹Р№_РєРѕСЌС„С„РёС†РёРµРЅС‚")
 	{
-		if (value < 0.01) return string("НД");
+		if (value < 0.01) return string("РќР”");
 		precision = 2;
 	}
 
@@ -318,6 +271,7 @@ void MyListCtrl::Reload()
 
 }
 //-------------------------------------------------------------------------------------------
+/*
 void MyListCtrl::OnDrawMyList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 
@@ -362,8 +316,6 @@ void MyListCtrl::OnDrawMyList(NMHDR* pNMHDR, LRESULT* pResult)
 
 		if (errmarks.count({ static_cast<int>(pLVCD->nmcd.dwItemSpec) , pLVCD->iSubItem }) != 0)
 			pLVCD->clrTextBk = RGB(255, 200, 200);
-		/*else if (static_cast<int>(pLVCD->nmcd.dwItemSpec) % 2)
-			pLVCD->clrTextBk = RGB(240, 240, 240);*/
 		else
 			pLVCD->clrTextBk = RGB(255, 255, 255);
 			
@@ -372,68 +324,4 @@ void MyListCtrl::OnDrawMyList(NMHDR* pNMHDR, LRESULT* pResult)
 		*pResult = CDRF_DODEFAULT;
 	}
 }
-
-
-BOOL MyListCtrl::OnEraseBkgnd(CDC* pDC)
-{
-	CBrush  br;
-	CRect   rcCli;
-	CRect   rcItemsRect(0, 0, 0, 0);
-	int     nHeadHeight = 0;
-	int     nItems = GetItemCount();
-
-	GetClientRect(&rcCli);
-
-	CHeaderCtrl* pHeadCtrl = GetHeaderCtrl();
-	if (pHeadCtrl)
-	{
-		CRect  rcHead;
-		pHeadCtrl->GetWindowRect(&rcHead);
-		nHeadHeight = rcHead.Height();
-	}
-	rcCli.top += nHeadHeight;
-
-	if (nItems > 0)
-	{
-		CPoint  ptItem;
-		CRect   rcItem;
-
-		GetItemRect(nItems - 1, &rcItem, LVIR_BOUNDS);
-		GetItemPosition(nItems - 1, &ptItem);
-
-		rcItemsRect.top = rcCli.top;
-		rcItemsRect.left = ptItem.x;
-		rcItemsRect.right = rcItem.right;
-		rcItemsRect.bottom = rcItem.bottom;
-
-		if (GetExtendedStyle() & LVS_EX_CHECKBOXES)
-			rcItemsRect.left -= GetSystemMetrics(SM_CXEDGE) + 16;
-	}
-
-	br.CreateSolidBrush(GetBkColor());
-
-	if (rcItemsRect.IsRectEmpty())
-		pDC->FillRect(rcCli, &br);
-	else
-	{
-		if (rcItemsRect.left > rcCli.left)     // fill left rectangle
-			pDC->FillRect(
-				CRect(0, rcCli.top, rcItemsRect.left, rcCli.bottom), &br);
-		if (rcItemsRect.bottom < rcCli.bottom) // fill bottom rectangle
-			pDC->FillRect(
-				CRect(0, rcItemsRect.bottom, rcCli.right, rcCli.bottom), &br);
-		if (rcItemsRect.right < rcCli.right) // fill right rectangle
-			pDC->FillRect(
-				CRect(rcItemsRect.right, rcCli.top, rcCli.right, rcCli.bottom), &br);
-	}
-
-	return TRUE;
-}
-
-
-void MyListCtrl::OnPaint()
-{
-	
-	CListCtrl::OnPaint();
-	
-}
+*/

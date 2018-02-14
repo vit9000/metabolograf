@@ -98,6 +98,9 @@
     <Filter Include="Исходники\metab\Metab">
       <UniqueIdentifier>{da170583-19fa-4b91-8309-d324bcaae8e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходники\Controls\CFastListCtrl">
+      <UniqueIdentifier>{1e5c38f2-cdd3-4faf-9185-aa10daf701ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -241,6 +244,9 @@
     <ClInclude Include="Pseudoname.h">
       <Filter>Исходники\VitLib</Filter>
     </ClInclude>
+    <ClInclude Include="CFastListCtrl.h">
+      <Filter>Исходники\Controls\CFastListCtrl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainFrm.cpp">
@@ -323,6 +329,9 @@
     </ClCompile>
     <ClCompile Include="Metab.cpp">
       <Filter>Исходники\metab\Metab</Filter>
+    </ClCompile>
+    <ClCompile Include="CFastListCtrl.cpp">
+      <Filter>Исходники\Controls\CFastListCtrl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

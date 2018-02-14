@@ -92,7 +92,6 @@ protected:
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnCustomdrawMyList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTabChange(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnUpdateUseExpiratoryVolume(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateUseInspiratoryVolume(CCmdUI* pCmdUI);
