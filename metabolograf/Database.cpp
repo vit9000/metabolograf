@@ -364,6 +364,13 @@ double Database::ChildTV(int x/*month*/)
 void Database::CalculateParameters()
 {
 	if (getCount() == 0) return;
+	
+	std::thread t([this]() {
+		if (this->hdata.HR && this->variables["SD"].size() == 0)
+			this->FillSD();
+	});
+	t.detach();
+	
 
 	Variable Volinsp, Volexp;
 	double additionalDeadSpace = ADS;
@@ -444,10 +451,11 @@ void Database::CalculateParameters()
 
 	variables["ДМП"] = (variables["Минутное_потребление_O2"] * 1000 / (variables["Vвыдоха"] * variables["ЧД"]));
 
-	if (hdata.HR && variables["SD"].size() == 0)
-		FillSD();
+	
+	
 }
 //--------------------------------------------------------------------------
+
 void Database::FillSD()
 {
 	if (getCount() <= 0) return;
@@ -470,12 +478,35 @@ void Database::FillSD()
 	}
 	//начинаем с 30 секундной отметки
 	Variable sd(getCount());
-	for (int i = start; i < getCount(); ++i)
-	{//идем по значению
-
+	int end = getCount();
+	for (int i = start; i < end; i++)
+	{
 		CalculateSD(i, false);
-
 	}
+
+
+	/*
+	int end = getCount()/2;
+	auto f1 = [this, start, end]() {
+		for (int i = start; i < end; i++)
+		{
+			CalculateSD(i, false);
+		}
+	};
+	std::thread t1(f1);
+	
+
+	start = end + 1;
+	end = getCount();
+	auto f2 = [this, start, end]() {
+		for (int i = start; i < end; i++)
+		{
+			CalculateSD(i, false);
+		}
+	};
+	std::thread t2(f2);
+	t1.join();
+	t2.join();*/
 }
 //--------------------------------------------------------------------------
 void Database::CalculateSD(int i, bool checktime)

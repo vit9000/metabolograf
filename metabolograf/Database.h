@@ -15,7 +15,7 @@
 #include "Ini.h"
 #include "Masks.h"
 #include "Pseudoname.h"
-
+#include <thread>
 
 using namespace std;
 
