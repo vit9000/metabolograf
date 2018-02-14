@@ -304,17 +304,25 @@ void MyListCtrl::ShowConfigDialog()
 //-------------------------------------------------------------------------------------------
 void MyListCtrl::Reload()
 {
-
-	//LockWindowUpdate();
-
 	SetHeadersInList();
-	int size = database->getCount();
-	for (int i = 0; i < size; i++)
-		AddToList(i);
 
-
-
-	//UnlockWindowUpdate();
+	std::thread t([this]()
+	{
+		int size = database->getCount();
+		SetItemCount(size);
+		SetRedraw(FALSE);
+		int count_on_page = GetCountPerPage()*2;
+		for (int i = 0; i < size; i++)
+		{
+			if (i == count_on_page || i%20==0)
+				SetRedraw(TRUE);
+			AddToList(i);
+			if(i%20==0) 
+				SetRedraw(FALSE);
+		}
+		SetRedraw(TRUE);
+	});
+	t.detach();
 
 }
 //-------------------------------------------------------------------------------------------
@@ -384,6 +392,7 @@ BOOL MyListCtrl::OnEraseBkgnd(CDC* pDC)
 
 	GetClientRect(&rcCli);
 
+
 	CHeaderCtrl* pHeadCtrl = GetHeaderCtrl();
 	if (pHeadCtrl)
 	{
@@ -412,19 +421,25 @@ BOOL MyListCtrl::OnEraseBkgnd(CDC* pDC)
 
 	br.CreateSolidBrush(GetBkColor());
 
+	
+
 	if (rcItemsRect.IsRectEmpty())
+	{
 		pDC->FillRect(rcCli, &br);
+		
+	}
 	else
 	{
 		if (rcItemsRect.left > rcCli.left)     // fill left rectangle
-			pDC->FillRect(
-				CRect(0, rcCli.top, rcItemsRect.left, rcCli.bottom), &br);
+			pDC->FillRect(CRect(0, rcCli.top, rcItemsRect.left, rcCli.bottom), &br);
 		if (rcItemsRect.bottom < rcCli.bottom) // fill bottom rectangle
-			pDC->FillRect(
-				CRect(0, rcItemsRect.bottom, rcCli.right, rcCli.bottom), &br);
+			pDC->FillRect(CRect(0, rcItemsRect.bottom, rcCli.right, rcCli.bottom), &br);
 		if (rcItemsRect.right < rcCli.right) // fill right rectangle
-			pDC->FillRect(
-				CRect(rcItemsRect.right, rcCli.top, rcCli.right, rcCli.bottom), &br);
+			pDC->FillRect(CRect(rcItemsRect.right, rcCli.top, rcCli.right, rcCli.bottom), &br);
+
+		pDC->FillRect(CRect(0, rcCli.top, 3, rcCli.bottom), &br);
+
+		
 	}
 
 	return TRUE;
