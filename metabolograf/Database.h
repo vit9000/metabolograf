@@ -103,7 +103,22 @@ public:
 	void CalculateParameters(int i);
 	void DeleteUncheckedValues();
 	string  GetHTMLHeader();
-	
+	string GetPseudoname(const string& realname)
+	{
+		string temp;
+		if (variable_pseudonames.getPseudoName(realname, temp))
+			return temp;
+		return realname;
+		
+	}
+	string GetRealname(const string& pseudoname)
+	{
+		string temp;
+		if (variable_pseudonames.getRealName(pseudoname, temp))
+			return temp;
+		return pseudoname;
+
+	}
 
 
 

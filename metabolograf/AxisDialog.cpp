@@ -55,8 +55,9 @@ BOOL AxisDialog::OnInitDialog()
 	{
 		if (database->getVariable(varname).GetType() == Vector)
 		{
+			
 			m_VarCombo.AddString(varname.c_str());
-			if (param.varname == varname)
+			if (database->GetPseudoname(param.varname) == varname)
 				index = counter;
 			counter++;
 		}
@@ -140,8 +141,11 @@ void AxisDialog::OnBnClickedOk()
 	m_ScaleCombo.GetLBText(m_ScaleCombo.GetCurSel(), temp);
 	int ScaleN = atoi(temp.GetBuffer())-1;
 
-	
-	param = { varname.GetBuffer(), legend.GetBuffer(), min, max , ScaleN };
+	string real_var_name = database->GetRealname(varname.GetBuffer());
+	string legend_ = varname.GetBuffer();
+	if (!legend.IsEmpty())
+		legend_ = legend.GetBuffer();
+	param = { real_var_name, legend_, min, max , ScaleN };
 
 	CDialogEx::OnOK();
 }

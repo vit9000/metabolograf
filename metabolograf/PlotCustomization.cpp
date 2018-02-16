@@ -118,7 +118,7 @@ BOOL PlotCustomization::OnInitDialog()
 	int axis_number = 0;
 	for (const auto& var : (*var_XY))
 	{
-		Parameter p;
+		//Parameter p;
 		int count = var.count();
 		for (int i = 0; i < count; i++)
 		{
@@ -328,7 +328,7 @@ void PlotCustomization::UpdateLists()
 	for (auto& var : (*multiAxis))
 	{
 		string str = "шкала " + to_string(var.axis_number+1) + ": ";
-		str += var.varname;
+		str += database->GetPseudoname(var.varname);
 		m_multivarlist.AddString(str.c_str());
 	}
 	m_onevarlist.ResetContent();
