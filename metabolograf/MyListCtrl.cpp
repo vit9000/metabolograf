@@ -154,14 +154,8 @@ void MyListCtrl::MyInsertColumn(int index, const string& param, Ini& ini)
 	InsertColumn(index, param.c_str(), LVCFMT_CENTER, width, index);//добавляем колонки
 }
 //-------------------------------------------------------------------------------------------
-void MyListCtrl::AddToList(int i)
+string MyListCtrl::getTime(int i)
 {
-	busy = true;
-	int Count = GetItemCount();
-	int index = InsertItem(LVIF_TEXT, Count, to_string(i).c_str(), 0, 0, 0, NULL);
-
-	
-	
 	int start = 0;
 	if (experienceStatusTracker && experienceStatusTracker->GetExperienceStatus())
 	{
@@ -175,9 +169,28 @@ void MyListCtrl::AddToList(int i)
 	}
 	else
 		time = (database->getDatetime(i).getTime() - database->getDatetime(start).getTime()).getString();
+	return time;
+}
+//-------------------------------------------------------------------------------------------
+void MyListCtrl::OverwriteTime()
+{
+	thread t([this]() {
+		for (int i = 0; i < database->getCount(); ++i)
+		{
+			SetItemText(i, 1, getTime(i).c_str());//time
+		}});
+	t.detach();
+}
+//-------------------------------------------------------------------------------------------
+void MyListCtrl::AddToList(int i)
+{
+	busy = true;
+	int Count = GetItemCount();
+	int index = InsertItem(LVIF_TEXT, Count, to_string(i).c_str(), 0, 0, 0, NULL);
+
 	
 
-	SetItemText(index, 1, time.c_str());//time
+	SetItemText(index, 1, getTime(i).c_str());//time
 	int column = 2;
 	int col = 0;
 	for (auto& varname : show_parameters)
@@ -190,7 +203,7 @@ void MyListCtrl::AddToList(int i)
 	SetCheck(i, database->getChecked(i));
 	busy = false;
 }
-
+//-------------------------------------------------------------------------------------------
 void MyListCtrl::AddParameter(const string& param, int column, int index)
 {
 	int size = static_cast<int>(database->getVariable(param).size());

@@ -1179,7 +1179,7 @@ void CChildView::OnUpdateEndTestButton(CCmdUI* pCmdUI)
 void CChildView::OnSetExperienceMode()
 {
 	main_plot.SetExperienceMode();
-	main_list.Reload();
+	main_list.OverwriteTime();
 }
 
 

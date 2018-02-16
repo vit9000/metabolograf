@@ -39,7 +39,10 @@ protected:
 	void DeleteUnselectedColumns(const vector<string>& sorted_new_parameters, const vector<string>& sorted_old_parameters, vector<string>& old_parameters);
 	void AddSelectedColumns(const vector<string>& sorted_new_parameters, const vector<string>& sorted_old_parameters);
 	
+	string getTime(int i);
+	
 public:
+	void OverwriteTime();
 	void WriteConfig() const;
 	MyListCtrl();
 	virtual ~MyListCtrl();
