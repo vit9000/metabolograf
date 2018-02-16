@@ -239,15 +239,24 @@ string MyListCtrl::ToString(string var_name, double value)
 void MyListCtrl::WriteConfig() const
 {
 	Ini ini("listview.ini");
-	ini.Delete();
+	//ini.Delete();
 
 	int col = 2;
-	for (auto& varname : show_parameters)
+	int i = 0;
+	for (auto& varname : database->getVariableNames())
 	{
+		if (i<static_cast<int>(show_parameters.size()) && varname == show_parameters[i])
+		{
+			ini.Write("Variable_names", varname.c_str(), "1");
+			int w = GetColumnWidth(col);
+			ini.Write("ColumnWidth", varname.c_str(), w);
+			++i;
+			++col;
+		}
+		else
+			ini.Write("Variable_names", varname.c_str(), "0");
 		
-		ini.Write("Variable_names", varname.c_str(), "1");
-		ini.Write("ColumnWidth", varname.c_str(), GetColumnWidth(col));
-		++col;
+		
 	}
 }
 //-------------------------------------------------------------------------------------------
@@ -287,6 +296,8 @@ void MyListCtrl::LoadConfig()
 
 void MyListCtrl::ShowConfigDialog()
 {
+	WriteConfig();
+
 	MainListConfigDialog cfDlg;
 	vector<string> varnames;
 	for (const auto& varname : database->getVariableNames())
@@ -294,18 +305,16 @@ void MyListCtrl::ShowConfigDialog()
 		//if (database->getVariable(varname).GetType() == Vector)
 			varnames.push_back(varname);
 	}
-	//&database->variable_names
-
+	
 	vector<string> old_parameters(show_parameters);
 	cfDlg.Init(&show_parameters, &varnames);
 	int result = cfDlg.DoModal();
 	if (result == 1)
 	{
 		//Reload();
-		//WriteConfig();
+		
 		if (old_parameters != show_parameters)
 		{
-			
 			vector<string> sorted_new_parameters(show_parameters);
 			vector<string> sorted_old_parameters(old_parameters);
 			std::sort(sorted_new_parameters.begin(), sorted_new_parameters.end());
