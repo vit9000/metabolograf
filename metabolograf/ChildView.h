@@ -54,7 +54,7 @@ public:
 	void Init(CMFCRibbonBar* _ribbonbar, CMFCRibbonStatusBar* _statusbar);
 	virtual ~CChildView();
 	bool GetNewData();
-	void OnClose();
+	bool OnClose();
 	
 	bool ProtolsAvailable();
 	// Созданные функции схемы сообщений

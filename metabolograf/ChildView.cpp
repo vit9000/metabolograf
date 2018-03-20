@@ -40,6 +40,7 @@ BEGIN_MESSAGE_MAP(CChildView, CWnd)
 	ON_WM_SIZE()
 	ON_WM_PAINT()
 	ON_WM_TIMER()
+	
 	ON_COMMAND(ID_OPEN_FILE, &CChildView::OnOpenFile)
 	ON_COMMAND(ID_FILE_OPEN, &CChildView::OnOpenFile)
 	ON_COMMAND(ID_SAVE_FILE, &CChildView::OnSaveFile)
@@ -244,10 +245,27 @@ int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 //----------------------------------------------------------------------------------------------
-void CChildView::OnClose()
+bool CChildView::OnClose()
 {
 	main_list.WriteConfig();
 	playground.SaveWorkScript();
+
+	if (Recording)
+	{
+		int result = MessageBox("Проводится исследование. Выход из программы приведет к потере данных. Хотите закрыть программу?", "Внимание", MB_YESNO | MB_ICONQUESTION);
+		if (result == IDYES)
+		{
+
+			if (ydata.Initialized)
+				ydata.g_pdata->action = 0;
+			if (metab.Connect())
+				metab.Disconnect();
+			return true;
+		}
+		else return false;
+	}
+
+	
 	if (ydata.Initialized && database->getCount()>0)
 	{
 		//if (filename_from_commandline.IsEmpty())
@@ -276,7 +294,7 @@ void CChildView::OnClose()
 	}
 	if (metab.Connect())
 		metab.Disconnect();
-	
+	return true;
 }
 //----------------------------------------------------------------------------------------------
 
@@ -712,6 +730,7 @@ bool CChildView::GetNewData()
 //----------------------------------------------------------------------------------------------
 void CChildView::OnRecord()
 {
+	
 	CMFCRibbonButton *button = (CMFCRibbonButton*)ribbonbar->FindByID(ID_RECORD);
 	if (timer != 0)
 	{
@@ -722,6 +741,7 @@ void CChildView::OnRecord()
 	}
 	else
 	{
+		main_list.WriteConfig();
 		PatientDialog pDlg;
 		pDlg.Init(true);
 		int result = pDlg.DoModal();
@@ -734,12 +754,12 @@ void CChildView::OnRecord()
 		Recording = true;
 
 		//эта переменная "ЧД_old" появляетя только при записи нового файла
-		if (Circle == 0)
+		/*if (Circle == 0)
 		{
 			database->insertVariableName("ЧД_old");
 			//database.variable_names.push_back("ЧД_old");
 			main_list.InsertParameterAfter("ЧД_old", "ЧД");
-		}
+		}*/
 		timerWindow.StartRec();
 	}
 	
@@ -842,6 +862,8 @@ bool CChildView::ProtolsAvailable()
 		MessageBox("Недостаточно данных для формирования протокола", "Внимание", MB_OK);
 		return false;
 	}
+	if (UnavailableMessage())
+		return false;
 	/*if (database.hdata.PatientWrist <= 0)
 	{
 		MessageBox(L"Для формирования протокола необходимо ввести окружность запястия", L"Внимание", MB_OK);

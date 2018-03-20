@@ -53,8 +53,8 @@ CMainFrame::~CMainFrame()
 
 void CMainFrame::OnClose()
 {
-	m_wndView.OnClose();
-	CFrameWndEx::OnClose();
+	if(m_wndView.OnClose())
+		CFrameWndEx::OnClose();
 }
 
 void CMainFrame::OnPaint()
@@ -98,6 +98,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//m_edit.SetFocus();
 
 	// создать представление для размещения рабочей области рамки
+	
+	
 	if (!m_wndView.Create(NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL))
 	//if (!m_edit.Create(NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL))
 	{
