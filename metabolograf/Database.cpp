@@ -399,24 +399,24 @@ void Database::CalculateParameters()
 
 	// РАСЧЕТ ДЫХАТЕЛЬНОГО КОЭФФИЦИЕНТА
 	variables["Дыхательный_коэффициент"] = variables["Минутное_выделение_CO2"] / variables["Минутное_потребление_O2"];
-	double *BrK_Ptr = variables["Дыхательный_коэффициент"].getPtr();
+	Variable& BrK_Ptr = variables["Дыхательный_коэффициент"];
+
+	// копирование данных, так как будут изменяться для расчета метаболографа
 	Variable tempMOP = variables["Минутное_потребление_O2"];
 	Variable tempMCOP = variables["Минутное_выделение_CO2"];
 	for (int i = 0; i < variables["Минутное_выделение_CO2"].size(); i++)
 	{
 		if (BrK_Ptr[i] < 0) BrK_Ptr[i] = 0.0;
-		if (variables["Минутное_потребление_O2"].getPtr()[i] < 0.01 || variables["Минутное_выделение_CO2"].getPtr()[i] < 0.01)
+		if (variables["Минутное_потребление_O2"][i] < 0.01 || variables["Минутное_выделение_CO2"][i] < 0.01)
 			BrK_Ptr[i] = 0.0;
-		if (tempMCOP.getPtr()[i] < 0) tempMCOP.getPtr()[i] = 0;
-		if (tempMOP.getPtr()[i] < 0) tempMOP.getPtr()[i] = 0;
+		if (tempMCOP[i] < 0) tempMCOP[i] = 0;
+		if (tempMOP[i] < 0) tempMOP[i] = 0;
 		if (BrK_Ptr[i] > 1.0)
 		{
-			tempMCOP.getPtr()[i] = tempMOP.getPtr()[i];
+			tempMCOP[i] = tempMOP[i];
 		}
 
 	}
-
-
 
 	Variable temp = tempMOP * 20000;//KKAL - O2
 	temp = temp * 60 * 24;//24 hours
