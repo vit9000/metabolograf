@@ -118,7 +118,7 @@ void MainPlot::ShowPlotWindow()
 	plot.SetExperience(plots[selectedPlot]->IsExperience());
 	plot.Run(database, plots[selectedPlot]->getPlotCode());
 
-	if (bpDlg.DoModal(&plot, database) == IDOK && plot.IsExperience())
+	if (bpDlg.DoModal(&plot, false) == IDOK && plot.IsExperience())
 	{
 		database->getHeader().AeT = bpDlg.getBigPlot().getValue(0);
 		database->getHeader().AT = bpDlg.getBigPlot().getValue(1);
