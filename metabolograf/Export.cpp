@@ -4,8 +4,8 @@
 #include <Windows.h>
 
 Export::Export(Database *_database)
+	: database (_database)
 {
-    database = _database;
     CalcIdealWeight();
 	char buffer[MAX_PATH];
 	GetCurrentDirectory(sizeof(buffer), buffer);
@@ -622,8 +622,25 @@ void Export::CalculateMeanValues()
 	Vexp=0.;
 
 	const Variable_<uint8_t>& checked =  database->getChecked();
-	tidalVol = database->getVariable("Vвдоха").mean(checked);
 	Vexp = database->getVariable("Vвыдоха").mean(checked);
+
+	if (database->getHeader().UseExpiratoryVolume)
+	{
+		tidalVol = Vexp;
+	}
+	else if (database->getHeader().UseMeanVolume)
+	{
+		auto Vinsp = database->getVariable("Vвдоха").mean(checked);
+		tidalVol = (Vinsp + Vexp) / 2;
+	}
+	else // if (database->getHeader().UseInspiratoryVolume)
+	{
+		tidalVol = database->getVariable("Vвдоха").mean(checked);
+	}
+
+
+	
+	
 	RespRate = database->getVariable("ЧД").mean(checked);
 	if(database->getHeader().OsrednenieType2)
 	{

@@ -47,6 +47,7 @@ public:
 	int getPageWidth() const { return page_width; }
 	double getBrK() const { return breathK_sredn;}
 private:
+	int mean_option;
 
     int page_width;
     string file_name;
