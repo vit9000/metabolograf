@@ -442,8 +442,9 @@ void Plot::DrawPlot()
 int Plot::GetStep(int& size)
 {
 	if (size > plotRect.width) size = plotRect.width;
-
-	int step = plotRect.width / (size==0 ? size : 1);
+	int step = plotRect.width;
+	if(size>0)
+		step = plotRect.width / size;
 
 	if (step > 20.*static_cast<double>(dpiX))
 		step = static_cast<int>(20.*static_cast<double>(dpiX));
@@ -768,7 +769,8 @@ void Plot::DrawTwoParamPlot()
 			// рисуем кривые
 			Variable& varX = var_X[i].getVar(v);
 			Variable& varY = var_Y[i].getVar(0);
-			int x_step = plotRect.width / sizeX;
+			int x_step = plotRect.width;;
+			if(sizeX>0) x_step/= sizeX;
 
 			//int point = plotRect.height / 4.0 / sizeX * dpiX;
 			int point = plotRect.height / 40;
