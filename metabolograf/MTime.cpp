@@ -71,6 +71,7 @@ void MTime::Zero()
 }
 void MTime::CurrentTime()
 {
+#pragma warning (disable : 4996)
 	time_t t = time(NULL);
 	tm *tmp = localtime(&t);
 	Hour = tmp->tm_hour;

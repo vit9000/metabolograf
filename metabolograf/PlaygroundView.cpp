@@ -62,7 +62,7 @@ int PlaygroundView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CFont* pFont = new CFont;
 	pFont->CreateFont(
-		14 * (double)DPIX(),                        // nHeight
+		static_cast<int>(14 * (double)DPIX()),                        // nHeight
 		0,                         // nWidth
 		0,                         // nEscapement
 		0,                         // nOrientation
@@ -109,7 +109,7 @@ void PlaygroundView::OnSize(UINT nType, int cx, int cy)
 	rect.right -= rect.left;
 	double dpiX = DPIX();
 
-	int tempX = 200 * dpiX;
+	int tempX = static_cast<int>(200 * dpiX);
 	::SetWindowPos(GetDlgItem(IDC_VARIABLELIST)->m_hWnd, HWND_TOP,
 		0,
 		0,
@@ -117,7 +117,7 @@ void PlaygroundView::OnSize(UINT nType, int cx, int cy)
 		rect.bottom,
 		NULL);
 	
-	int tempY = 200 * dpiX;
+	int tempY = static_cast<int>(200 * dpiX);
 	::SetWindowPos(GetDlgItem(IDC_OUTPUTLIST)->m_hWnd, HWND_TOP,
 		tempX,
 		rect.Height() - tempY,
@@ -212,7 +212,7 @@ void PlaygroundView::OnRunScript(bool repeat=false)
 string PlaygroundView::BuildCode(string& code, Analizator& analizator)
 {
 	string result = "";
-	for (int i = 0; i<code.length(); i++)
+	for (size_t i = 0; i<code.length(); i++)
 	{
 		if (code[i] == '\n' || code[i] == '\r') code[i] = ' ';
 	}

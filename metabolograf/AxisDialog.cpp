@@ -1,6 +1,7 @@
 // AxisDialog.cpp: файл реализации
 //
 
+
 #include "stdafx.h"
 #include "metabolograf.h"
 #include "AxisDialog.h"
@@ -157,13 +158,14 @@ double AxisDialog::ToDouble(CString str)
 	if (str.IsEmpty()) return -1;
 	string temp = str.GetBuffer();
 	//
+#pragma warning (disable : 4129)
 	regex txt_regex("[0-9]*[\.]?[0-9]*");
 	if (!regex_match(temp, txt_regex))
 	{
 		throw runtime_error("Проверьте правильность введения минимального и максимального значения.");
 	}
 	double d;
-	sscanf(str.GetBuffer(), "%lf", &d);
+	sscanf_s(str.GetBuffer(), "%lf", &d);
 	return d;
 }
 

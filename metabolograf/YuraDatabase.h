@@ -1,6 +1,8 @@
 #ifndef YURADATABASE_H
 #define YURADATABASE_H
 
+#pragma warning (disable: 4996)
+
 #include <Windows.h>
 #include <stdio.h>
 #include <time.h>
@@ -57,12 +59,12 @@ public:
 		PatientHeight = (int)g_pdata->pac_height;
 
 		PatientWeight = (int)g_pdata->pac_weight;
-		PatientSex = (double)g_pdata->pac_sex;
+		PatientSex = (int)g_pdata->pac_sex;
 		GetPatientAge(g_pdata->pac_birth);
 
 
-		sprintf(FIO, "%s %s %s", WStringToString(g_pdata->pac_lname).c_str(), WStringToString(g_pdata->pac_fname).c_str(), WStringToString(g_pdata->pac_mname).c_str());
-		sprintf(Info, "%s", WStringToString(g_pdata->pac_diagn).c_str());
+		sprintf_s(FIO, "%s %s %s", WStringToString(g_pdata->pac_lname).c_str(), WStringToString(g_pdata->pac_fname).c_str(), WStringToString(g_pdata->pac_mname).c_str());
+		sprintf_s(Info, "%s", WStringToString(g_pdata->pac_diagn).c_str());
 	}
 	//-------------------------------------------------------------------------------------------------
 

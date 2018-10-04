@@ -103,7 +103,7 @@ public:
 		//сохраняем название для легеды 
 		else if (parameter == "legend" || parameter == "легенда")
 		{
-			if (legendcount < legend.size())
+			if (legendcount < static_cast<int>(legend.size()))
 			{
 				legend[legendcount] = value;
 				legendcount++;
@@ -124,7 +124,7 @@ public:
 
 	const string& getLegend(int index) const
 	{
-		if (index >= varY.size())
+		if (index >= static_cast<int>(varY.size()))
 		{
 			throw runtime_error("Ошибка обращения к несуществующей переменной");
 		}
@@ -132,7 +132,7 @@ public:
 	}
 	const string& getVarname(int index) const
 	{
-		if (index >= varnames.size())
+		if (index >= static_cast<int>(varnames.size()))
 		{
 			throw runtime_error("Ошибка обращения к несуществующей переменной");
 		}
@@ -174,7 +174,7 @@ public:
 private:
 	string getNameWithoutUnderline(string temp)
 	{
-		for(int i=0; i<temp.length(); i++)
+		for(size_t i=0; i<temp.length(); i++)
 			if (temp[i] == '_') temp[i] = ' ';
 		return temp;
 	}

@@ -73,7 +73,7 @@ BOOL PatientDialog::OnInitDialog()
 		{
 			m_MaskCombo.AddString(masks.getMask(i).name.c_str());
 		}
-		catch (invalid_argument& ex)
+		catch (...)
 		{
 			break;
 		}
@@ -120,7 +120,7 @@ void PatientDialog::OnBnClickedOk()
 		if (temp[i] != ' ')
 			break;
 	}
-	sprintf(database->getHeader().PatientName, "%s", temp.GetBufferSetLength(i + 1));
+	sprintf_s(database->getHeader().PatientName, "%s", temp.GetBufferSetLength(i + 1));
 	database->getHeader().PatientAge = Age;
 	database->getHeader().PatientWeight = Weight;
 	database->getHeader().PatientHeight = Height;

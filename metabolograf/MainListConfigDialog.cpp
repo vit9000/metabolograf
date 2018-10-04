@@ -35,7 +35,7 @@ BOOL MainListConfigDialog::OnInitDialog()
 	//checklist.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES| WS_BORDER);
 	CFont* pFont = new CFont;
 	VERIFY(pFont->CreateFont(
-		14 * (double)DPIX(),                        // nHeight
+		static_cast<int>(14 * (double)DPIX()),                        // nHeight
 		0,                         // nWidth
 		0,                         // nEscapement
 		0,                         // nOrientation
@@ -55,9 +55,9 @@ BOOL MainListConfigDialog::OnInitDialog()
 
 	if (checked && names)
 	{
-		int j = 0;
-		int size = (*names).size();
-		for (int i = 0; i<size; i++)
+		size_t j = 0;
+		size_t size = (*names).size();
+		for (size_t i = 0; i<size; i++)
 		{
 			checklist.AddString((*names)[i].c_str());
 			if ((j < checked->size()) && (*names)[i] == (*checked)[j])
@@ -78,8 +78,10 @@ BOOL MainListConfigDialog::OnInitDialog()
 	rect.right -= rect.left;
 	double dpix = (double) DPIX();
 	::SetWindowPos(checklist.m_hWnd,HWND_TOP,
-	10* dpix, 10* dpix, rect.right-35* dpix,
-	rect.bottom - 80* dpix, NULL);
+		static_cast<int>(10* dpix),
+		static_cast<int>(10* dpix),
+		static_cast<int>(rect.right-35*dpix),
+		static_cast<int>(rect.bottom - 80* dpix), NULL);
 	
 
 	return TRUE;  // возврат значения TRUE, если фокус не передан элементу управления

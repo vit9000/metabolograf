@@ -48,7 +48,7 @@ void MyListCtrl::InsertParameter(string param, int pos)
 void MyListCtrl::InsertParameterAfter(string param, string prevparam)
 {
 	int pos = 0;
-	for (int i = 0; i < show_parameters.size(); i++)
+	for (size_t i = 0; i < show_parameters.size(); i++)
 	{
 		if (show_parameters[i] == prevparam)
 		{
@@ -114,14 +114,14 @@ void MyListCtrl::SetHeadersInList()
 {
 	Clear();
 
-	InsertColumn(0, "N", LVCFMT_CENTER, 50 * dpiX, 0);//добавляем колонки
-	InsertColumn(1, "Время", LVCFMT_CENTER, 60 * dpiX, 0);//добавляем колонки
+	InsertColumn(0, "N", LVCFMT_CENTER, static_cast<int>(50 * dpiX), 0);//добавляем колонки
+	InsertColumn(1, "Время", LVCFMT_CENTER, static_cast<int>(60 * dpiX), 0);//добавляем колонки
 
 														  //vector<string>& headers = database->variable_names;
 	int index = 2;
 	Ini ini("listview.ini");
 	
-	for (int i = 0; i<show_parameters.size(); i++)
+	for (size_t i = 0; i<show_parameters.size(); i++)
 	{
 		MyInsertColumn(index, show_parameters[i], ini);
 		index++;
@@ -139,11 +139,11 @@ void MyListCtrl::MyInsertColumn(int index, const string& param, Ini& ini)
 	string var_name;
 	database->getRealName(param, var_name);
 
-	int width = 5 * 10 * dpiX;
+	int width = static_cast<int>(5 * 10 * dpiX);
 	if (var_name == "ЧД" || var_name == "FiO2" || var_name == "FetO2" || var_name == "FiCO2" || var_name == "FetCO2" ||
 		var_name == "ДМП" || var_name == "ЧСС" || var_name == "RR" || var_name == "SD" ||
 		var_name == "Минутная_вентиляция" || var_name == "Вентиляционный_эквивалент_O2" || var_name == "Вентиляционный_эквивалент_CO2")
-		width = 4 * 10 * dpiX;
+		width = static_cast<int>(4 * 10 * dpiX);
 	if (ini.IsExists())
 	{
 		//int wt = 0;
@@ -175,9 +175,9 @@ string MyListCtrl::getTime(int i)
 void MyListCtrl::OverwriteTime()
 {
 	thread t([this]() {
-		for (int i = 0; i < database->getCount(); ++i)
+		for (size_t i = 0; i < database->getCount(); ++i)
 		{
-			SetItemText(i, 1, getTime(i).c_str());//time
+			SetItemText((int)i, 1, getTime(i).c_str());//time
 		}});
 	t.detach();
 }
@@ -373,8 +373,8 @@ void  MyListCtrl::AddSelectedColumns(const vector<string>& sorted_new_parameters
 		if (it == show_parameters.end()) continue;
 		int column = it - show_parameters.begin() + 2;
 		MyInsertColumn(column, add, ini);
-		for (int i = 0; i < database->getCount(); ++i)
-			AddParameter(add, column, i);
+		for (size_t i = 0; i < database->getCount(); ++i)
+			AddParameter(add, column, (int)i);
 	}
 }
 //-------------------------------------------------------------------------------------------

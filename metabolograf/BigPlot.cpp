@@ -45,14 +45,14 @@ void BigPlot::SetType(int _type)
 
 void BigPlot::LoadValues(const vector<int>& v)//загрузка меток из файла
 {
-	for (int i = 0; i < v.size(), i < values.size(); i++)
+	for (size_t i = 0; i < v.size(), i < values.size(); i++)
 		values[i] = (v[i] > 0) ? v[i] : -1;
 
 }
 
 int BigPlot::getValue(int i) const
 {
-	if (i<0 || i >= values.size()) return -1;
+	if (i<0 || i >= static_cast<int>(values.size())) return -1;
 	return values[i];
 }
 
@@ -104,7 +104,7 @@ void BigPlot::OnPaint()
 
 	double dpix = ugc.getDPIX();
 
-	ugc.FillRectangle(cursor, plot->getPlotRect().y - plot->getPlotRect().height, 2 * dpix, plot->getPlotRect().height);
+	ugc.FillRectangle(cursor, plot->getPlotRect().y - plot->getPlotRect().height, static_cast<int>(2 * dpix), plot->getPlotRect().height);
 
 	
 }
@@ -122,7 +122,7 @@ void BigPlot::OnLButtonUp(UINT flags, CPoint point)
 		plot->SetMarkPosByMouseCoordinate(type, x - plot->getPlotRect().x);// выставляем метку на графике по координате мышкм
 		
 		int index = plot->FromPlotIndexToTableIndex(type, database);//получаем индекс курсора в таблице
-		if (index > 0 && index < database->getCount())
+		if (index > 0 && index < static_cast<int>(database->getCount()))
 			values[type] = index;//сохраняем по типу индекса
 		
 		
@@ -153,7 +153,7 @@ void BigPlot::SetCursor(int index)//выставляем метку по индексу
 
 void BigPlot::SetTimeCursor(int selectedItem)//выставляем метку по времени
 {
-	if (selectedItem < 0 || selectedItem >= database->getCount())
+	if (selectedItem < 0 || selectedItem >= static_cast<int>(database->getCount()))
 	{
 		SetCursor(-1);
 		return;

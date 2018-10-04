@@ -98,7 +98,7 @@ void MainPlot::OnLButtonDblClk(UINT flags, CPoint point)
 void MainPlot::ShowCustomizationDialog()
 {
 	
-	if (selectedPlot < 0 && selectedPlot >= plots.size()) return;
+	if (selectedPlot < 0 && selectedPlot >= static_cast<int>(plots.size())) return;
 	PlotCustomization pltDlg;
 	int result = pltDlg.DoModal(plots[selectedPlot]);
 	if (result == IDOK)
@@ -208,7 +208,7 @@ int MainPlot::getGridWidth()
 	if (size == 1) count = 1;
 	else if (size>0)
 	{
-		count = sqrt(size);
+		count = static_cast<int>(sqrt(size));
 		if (count*count != size) count++;
 	}
 	return count;
@@ -220,7 +220,7 @@ int MainPlot::getMinWidth(CRect& rect, int count)
 	int h = rect.Height() / count;
 	if (w > h) return h;
 	else if (h > w) return w;
-
+	return 0;
 }
 
 int MainPlot::getIndex(int x, int y)
@@ -301,7 +301,7 @@ void MainPlot::WriteConfig()
 {
 	Ini ini("metabolograf_config.ini");
 
-	for (int i = 0; i<plots.size(); i++)
+	for (size_t i = 0; i<plots.size(); i++)
 	{
 		string param = string("plot_") + to_string(i);
 		ini.Write("Plots", param.c_str(), plots[i]->getPlotCode());

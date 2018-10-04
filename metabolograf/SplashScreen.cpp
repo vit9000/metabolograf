@@ -59,8 +59,8 @@ void SplashScreen::OnPaint()
 	ugc.SetDrawColor(255, 255, 255);
 	ugc.FillRectangle(0, 0, Width, Height);
 	
-	int w = bmp->GetWidth()*dpiX/1.5;
-	int h = bmp->GetHeight()*dpiX/1.5;
+	int w = static_cast<int>(bmp->GetWidth()*dpiX/1.5);
+	int h = static_cast<int>(bmp->GetHeight()*dpiX/1.5);
 	
 	int x = Width / 2 - w/2;
 

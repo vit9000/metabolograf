@@ -190,10 +190,10 @@ void NutritionDialog::Calculate(bool save)
 			double p_body = 0;
 			dietexport->CalcPFCH(&P, &F, &CH, &p_body, &BK, DUK, NBK, &BrK);
 			char bbuf[1000];
-			sprintf(bbuf, "Энергетическая ценность %d ккал", (int)p_body);
+			sprintf_s(bbuf, "Энергетическая ценность %d ккал", (int)p_body);
 			CString t(bbuf);
 			preview1.SetWindowTextA(t);
-			sprintf(bbuf, "Б=%d г, Ж=%d г, У=%d г., расчетный ДК: %.1lf", (int)P, (int)F, (int)CH, BrK);
+			sprintf_s(bbuf, "Б=%d г, Ж=%d г, У=%d г., расчетный ДК: %.1lf", (int)P, (int)F, (int)CH, BrK);
 			t = CString(bbuf);
 			preview2.SetWindowTextA(t);
 		}
@@ -231,7 +231,7 @@ void NutritionDialog::Calculate(bool save)
 
 			if (CH <= 0 || F <= 0)
 			{
-				sprintf(bbuf, "Дых. коэффициент: %.1lf", dietexport->getBrK());
+				sprintf_s(bbuf, "Дых. коэффициент: %.1lf", dietexport->getBrK());
 				CString t(bbuf);
 				preview1.SetWindowTextA(t);
 				preview2.SetWindowTextA("используйте вкладку БЖУ");
@@ -239,10 +239,10 @@ void NutritionDialog::Calculate(bool save)
 			else
 			{
 				char bbuf[1000];
-				sprintf(bbuf, "Энергетическая ценность %d ккал", (int)p_body);
+				sprintf_s(bbuf, "Энергетическая ценность %d ккал", (int)p_body);
 				CString t(bbuf);
 				preview1.SetWindowTextA(t);
-				sprintf(bbuf, "Б=%d г, Ж=%d г, У=%d г.", (int)P, (int)F, (int)CH);
+				sprintf_s(bbuf, "Б=%d г, Ж=%d г, У=%d г.", (int)P, (int)F, (int)CH);
 				t = CString(bbuf);
 				preview2.SetWindowTextA(t);
 
@@ -265,7 +265,7 @@ void NutritionDialog::Calculate(bool save)
 		//int NBK = NBKBar->Position;
 		CString temp;
 		edit1.GetWindowTextA(temp);
-		int NBK = atof(temp.GetBuffer());
+		int NBK = static_cast<int>(atof(temp.GetBuffer()));
 		if (NBK <= 0) goto END;
 
 		if (!save)
@@ -279,7 +279,7 @@ void NutritionDialog::Calculate(bool save)
 			char bbuf[100];
 			if (CH <= 0 || F <= 0)
 			{
-				sprintf(bbuf, "Дых. коэффициент: %.1lf", dietexport->getBrK());
+				sprintf_s(bbuf, "Дых. коэффициент: %.1lf", dietexport->getBrK());
 				CString t(bbuf);
 				preview1.SetWindowTextA(t);
 				preview2.SetWindowTextA("используйте вкладку БЖУ");
@@ -287,10 +287,10 @@ void NutritionDialog::Calculate(bool save)
 			else
 			{
 				char bbuf[1000];
-				sprintf(bbuf, "Энергетическая ценность %d ккал", (int)p_body);
+				sprintf_s(bbuf, "Энергетическая ценность %d ккал", (int)p_body);
 				CString t(bbuf);
 				preview1.SetWindowTextA(t);
-				sprintf(bbuf, "Б=%d г, Ж=%d г, У=%d г.", (int)P, (int)F, (int)CH);
+				sprintf_s(bbuf, "Б=%d г, Ж=%d г, У=%d г.", (int)P, (int)F, (int)CH);
 				t = CString(bbuf);
 				preview2.SetWindowTextA(t);
 

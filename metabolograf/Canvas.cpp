@@ -124,7 +124,7 @@ int CCanvas::getGridWidth()
 	if (size == 1) count = 1;
 	else if (size>0)
 	{
-		count = sqrt(size);
+		count = static_cast<int>(sqrt(size));
 		if (count*count != size) count++;
 	}
 	return count;
@@ -136,7 +136,7 @@ int CCanvas::getMinWidth(CRect& rect, int count)
 	int h = rect.Height() / count;
 	if (w >= h) return h;
 	else if (h > w) return w;
-	
+	return 0;
 }
 
 

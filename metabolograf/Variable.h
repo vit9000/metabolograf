@@ -26,7 +26,7 @@ public:
 	{
 	   values.clear();
 	   values.resize(size);
-	   for(int i=0; i<size; i++)
+	   for(size_t i=0; i<size; i++)
             values[i] = fill;
 	   if(size>1)
 		   SetType(Scalar);
@@ -124,7 +124,7 @@ public:
         if(a.values.size() != b.values.size())
             throw exception();
 
-        for(int i=0; i<a.values.size(); i++)
+        for(size_t i=0; i<a.values.size(); i++)
             result.values.push_back(a.values[i] * b.values[i]);
 		return result;
 	}
@@ -133,7 +133,7 @@ public:
     friend Variable_ operator*(const Variable_& a, const T& b)
     {
         Variable_ result;
-        for(int i=0; i<a.values.size(); i++)
+        for(size_t i=0; i<a.values.size(); i++)
             result.values.push_back(a.values[i] * b);
 		return result;
     }
@@ -145,7 +145,7 @@ public:
         Variable_ result;
         if(a.values.size() != b.values.size())
             throw exception();
-		for(int i=0; i<a.values.size(); i++)
+		for(size_t i=0; i<a.values.size(); i++)
 		{
             if(b.values[i]==0)
 				result.values.push_back(0);
@@ -159,7 +159,7 @@ public:
     friend Variable_ operator/(const Variable_& a, const T& b)
     {
         Variable_ result;
-		for(int i=0; i<a.values.size(); i++)
+		for(size_t i=0; i<a.values.size(); i++)
 		{
 			if(b==0)
 				result.values.push_back(0);
@@ -193,7 +193,7 @@ public:
 
         if(a.values.size() != b.values.size())
             throw exception();
-        for(int i=0; i<a.values.size(); i++)
+        for(size_t i=0; i<a.values.size(); i++)
             result.values.push_back(a.values[i] + b.values[i]);
 		return result;
 	}
@@ -206,7 +206,7 @@ public:
 
 		if (a.values.size() != b.values.size())
 			throw exception();
-		for (int i = 0; i<a.values.size(); i++)
+		for (size_t i = 0; i<a.values.size(); i++)
 			result.values.push_back(a.values[i] - b.values[i]);
 		return result;
 	}
@@ -217,7 +217,7 @@ public:
     friend Variable_ operator+(const Variable_& a, const T& b)
     {
         Variable_ result;
-        for(int i=0; i<a.values.size(); i++)
+        for(size_t i=0; i<a.values.size(); i++)
             result.values.push_back(a.values[i] + b);
 		return result;
     }
@@ -228,7 +228,7 @@ public:
     friend Variable_ operator-(const Variable_& a, const T& b)
     {
         Variable_ result;
-        for(int i=0; i<a.values.size(); i++)
+        for(size_t i=0; i<a.values.size(); i++)
             result.values.push_back(a.values[i] - b);
         return result;
     }
@@ -350,9 +350,9 @@ public:
 	Variable_<V> getWithoutUnchecked(const Variable_<uint8_t>& checked) const
 	{
 		Variable_<V> var;
-		for (int i = 0; i < values.size(); i++)
+		for (size_t i = 0; i < values.size(); i++)
 		{
-			if (i >= checked.size()) break;
+			if ((int)i >= checked.size()) break;
 			bool b = checked[i];
 			if (b)
 				var.append(values[i]);
@@ -363,7 +363,7 @@ public:
 	Variable_<V> meanByIntervals(const vector<int>& intervals)
 	{
 		Variable_<V> var;
-		for (int i = 0; i < intervals.size() - 1; i++)
+		for (int i = 0; i < static_cast<int>(intervals.size()) - 1; i++)
 		{
 			if (i == intervals.size() - 2)
 				int i = 0;
@@ -397,7 +397,7 @@ public:
 
 		V Mean = mean(start, end);
 		
-		if (end >= size())
+		if (end >= static_cast<size_t>(size()))
 			end = size() - 1;
 		for (size_t i = start; i <= end; i++)
 		{
@@ -422,7 +422,7 @@ public:
 		
 		for (size_t i = start; i <= end; i++)
 		{
-			if (i >= size()) break;
+			if (i >= static_cast<size_t>(size())) break;
 			count++;
 
 			temp += values[i];

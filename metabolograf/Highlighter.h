@@ -73,7 +73,7 @@ public:
 		CHARRANGE crBefore;
 		Editor->GetSel(crBefore);
 
-		CHARRANGE all = { 0, text.length() };
+		CHARRANGE all = { 0, (LONG)text.length() };
 		SetNormal(all);
 		//
 		int shift = 0;

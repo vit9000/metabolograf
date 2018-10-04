@@ -229,9 +229,9 @@ public:
 	void FillTriangle(int x1, int y1, int x2, int y2, int x3, int y3)
 	{
 		Gdiplus::SolidBrush blackBrush(color);
-		Gdiplus::PointF point1(x1, y1);
-		Gdiplus::PointF point2(x2, y2);
-		Gdiplus::PointF point3(x3, y3);
+		Gdiplus::PointF point1((Gdiplus::REAL)x1, (Gdiplus::REAL)y1);
+		Gdiplus::PointF point2((Gdiplus::REAL)x2, (Gdiplus::REAL)y2);
+		Gdiplus::PointF point3((Gdiplus::REAL)x3, (Gdiplus::REAL)y3);
 		Gdiplus::PointF points[3] = { point1, point2, point3 };
 		g->FillPolygon(&blackBrush, points, 3);
 	};
@@ -245,7 +245,7 @@ public:
 		
 		//0 - pause, 1 - no change, 2 - up, 3 - down
 		width = width/2*2;
-		int temp=height*0.3;
+		int temp = static_cast<int>(height*0.3);
 
 		switch(form)
 		{
@@ -275,7 +275,7 @@ public:
 	void DrawLine(int x1, int y1, int x2, int y2, int line_width = 1)
 	{
 		Gdiplus::Pen penCurrent(color);
-		penCurrent.SetWidth(line_width*getDPIX());
+		penCurrent.SetWidth(static_cast<Gdiplus::REAL>(line_width*getDPIX()));
 
 		g->DrawLine(&penCurrent, x1, y1, x2, y2);
 	};
@@ -297,7 +297,7 @@ public:
 	{
 		
 		Gdiplus::Pen penCurrent(color);
-		penCurrent.SetWidth(line_width);
+		penCurrent.SetWidth(static_cast<Gdiplus::REAL>(line_width));
 		g->DrawRectangle(&penCurrent, x, y, width, height);
 
 	};
@@ -318,7 +318,7 @@ public:
 	void DrawEllipse(int x, int y, int D, int line_width)
 	{
 		Gdiplus::Pen penCurrent(color);
-		penCurrent.SetWidth(line_width);
+		penCurrent.SetWidth(static_cast<Gdiplus::REAL>(line_width));
 		g->DrawEllipse(&penCurrent, x, y, D, D);
 	}
 	//-------------------------------------------------------
@@ -332,13 +332,13 @@ public:
 	void SetTextSize(int size)
 	{
 		TextSize=size;
-		RealTextSize = TextSize*1.2;
+		RealTextSize = static_cast<int>(TextSize*1.2);
 
 	}
 	//-------------------------------------------------------
 	int GetTextHeight(int size)
 	{
-		Gdiplus::Font font(FontName.c_str(), size / (double)DPIX(), Gdiplus::FontStyleRegular);
+		Gdiplus::Font font(FontName.c_str(), static_cast<Gdiplus::REAL>(size / (double)DPIX()), Gdiplus::FontStyleRegular);
 		//Font font(L"Helvetica", TextSize, FontStyleRegular);
 
 		int length = 1;
@@ -349,7 +349,7 @@ public:
 		RectF boundRect;
 		// Measure the string.
 		g->MeasureString(L"A", length, &font, origin, &format, &boundRect);
-		return boundRect.Height;
+		return static_cast<int>(boundRect.Height);
 		//return RealTextSize;
 	}
 	//-------------------------------------------------------
@@ -369,7 +369,7 @@ public:
 	int GetTextWidth(string str,int size)
 	{
 		
-		Gdiplus::Font font(FontName.c_str(), size/getDPIX(), Bold ? Gdiplus::FontStyleBold : Gdiplus::FontStyleRegular);
+		Gdiplus::Font font(FontName.c_str(), static_cast<Gdiplus::REAL>(size/getDPIX()), Bold ? Gdiplus::FontStyleBold : Gdiplus::FontStyleRegular);
 		//Font font(L"Helvetica", TextSize, FontStyleRegular);
 
 		int length = str.length();
@@ -380,7 +380,7 @@ public:
 		RectF boundRect;
 		// Measure the string.
 		g->MeasureString(StringToWString(str).c_str(), length, &font, origin, &format, &boundRect);
-		return boundRect.Width;
+		return static_cast<int>(boundRect.Width);
 	}
 	//-------------------------------------------------------
 	void DrawString(char* str, int x, int y)
@@ -392,9 +392,9 @@ public:
 	//-------------------------------------------------------
 	void DrawVerticalString(string mstring, int x, int y)
 	{
-		g->TranslateTransform(x, y); // Set rotation point
+		g->TranslateTransform(static_cast<Gdiplus::REAL>(x), static_cast<Gdiplus::REAL>(y)); // Set rotation point
 		g->RotateTransform(-90); // Rotate text
-		g->TranslateTransform(-x, -y); // Reset translate transform
+		g->TranslateTransform(static_cast<Gdiplus::REAL>(-x), static_cast<Gdiplus::REAL>(-y)); // Reset translate transform
 		DrawString(mstring, x, y);
 		g->ResetTransform(); // Only needed if you reuse the Graphics object for multiple calls to DrawString
 
@@ -403,7 +403,7 @@ public:
 	void DrawString(string mstring, int x, int y)
 	{
 
-		Gdiplus::Font font(FontName.c_str(), TextSize/getDPIX(), Bold?Gdiplus::FontStyleBold:Gdiplus::FontStyleRegular);
+		Gdiplus::Font font(FontName.c_str(), static_cast<Gdiplus::REAL>(TextSize/getDPIX()), Bold?Gdiplus::FontStyleBold:Gdiplus::FontStyleRegular);
 		//Font font(L"Helvetica", TextSize, FontStyleBold);
 		g->SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);//SetTextRenderingHint(TextRenderingHintAntiAlias);
 		Gdiplus::SolidBrush brush(color);
@@ -412,7 +412,7 @@ public:
 		else if (align == Align::CENTER)
 			x -= GetTextWidth(mstring) / 2;
 		int length = static_cast<int>(mstring.length());
-		g->DrawString(StringToWString(mstring).c_str(), length, &font, Gdiplus::PointF(x, y), &brush);
+		g->DrawString(StringToWString(mstring).c_str(), length, &font, Gdiplus::PointF(static_cast<Gdiplus::REAL>(x), static_cast<Gdiplus::REAL>(y)), &brush);
 	};
 	//-------------------------------------------------------
 	void DrawSymbol(char symb, int x, int y)

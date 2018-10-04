@@ -26,7 +26,7 @@ public:
 	void update()
 	{
 		char temp[10];
-		sprintf(temp, "%d", slider.GetPos());
+		sprintf_s(temp, "%d", slider.GetPos());
 		edit.SetWindowTextA(temp);
 	}
 	int getValue()

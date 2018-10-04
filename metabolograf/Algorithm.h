@@ -46,11 +46,11 @@ public:
 	vector<MTime> getTimeByIntervals(vector<Datetime>& datetime, const vector<int>& intervals)
 	{
 		vector<MTime> result;
-		for (int i = 1; i < intervals.size(); i++)
+		for (size_t i = 1; i < intervals.size(); i++)
 		{
 			int temp = intervals[i] - 1;
 			if (temp < 0) temp = 0;
-			if (temp >= datetime.size()) temp = datetime.size() - 1;
+			if (temp >= static_cast<int>(datetime.size())) temp = static_cast<int>(datetime.size()) - 1;
 			result.push_back(datetime[temp].getTime());
 		}
 		return result;

@@ -4,7 +4,7 @@
 
 Histogram::Histogram()
 {
-	border = 20 * (double)DPIX();
+	border = static_cast<int>(20 * (double)DPIX());
 }
 
 
@@ -67,7 +67,7 @@ void Histogram::OnPaint()
 
 
 	ugc.SetAlign(Align::CENTER);
-	ugc.SetTextSize(8 * dpix);
+	ugc.SetTextSize(static_cast<int>(8 * dpix));
 	for (int i = 0; i < table_size; ++i)
 	{
 		int length = static_cast<int>(table[i].size());
@@ -87,19 +87,19 @@ void Histogram::OnPaint()
 	ugc.DrawNumber(min + step*table_size, border + table_size*bitW, Height - border);
 
 	// рисуем ошибку
-	ugc.SetTextSize(14 * dpix);
-	ugc.DrawNumber(CalculateErr(), Width/2, 2 * dpix);
+	ugc.SetTextSize(static_cast<int>(14 * dpix));
+	ugc.DrawNumber(CalculateErr(), Width/2, static_cast<int>(2 * dpix));
 }
 
 double Histogram::CalculateErr()
 {
 	double result = 0;
 	int count = 0;
-	for (int i = 0; i < table.size(); ++i)
+	for (size_t i = 0; i < table.size(); ++i)
 	{
 		if (column_status[i])
 		{
-			for (int j=0; j<table[i].size(); ++j)
+			for (size_t j=0; j<table[i].size(); ++j)
 			{
 				result += err_vector[table[i][j]];
 				++count;
@@ -177,9 +177,9 @@ void Histogram::BuildTable(int count)
 
 void Histogram::Apply()
 {
-	for (int i = 0; i < table.size(); ++i)
+	for (size_t i = 0; i < table.size(); ++i)
 	{
-		for (int j = 0; j < table[i].size(); ++j)
+		for (size_t j = 0; j < table[i].size(); ++j)
 		{
 			database->setChecked(table[i][j], column_status[i]);
 		}

@@ -25,7 +25,7 @@ void Database::Default()
 {
 
 	ZeroMemory((void*)&hdata, sizeof(hdata));
-	sprintf(hdata.PatientName, "");
+	sprintf_s(hdata.PatientName, "");
 	hdata.UseMeanVolume = true;
 	hdata.UseInspiratoryVolume = false;
 	hdata.PatientAge = 40;
@@ -68,7 +68,7 @@ Variable_<MTime> Database::GetTimeFromZero(int zerotime)
 	if (size == 0) return temp;
 
 	temp.resize(size);
-	for (int i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
 	{
 
 		temp[i] = datetime[i].getTime() - datetime[zerotime].getTime();
@@ -359,7 +359,7 @@ void Database::CalculateParameters()
 	catch (...) {}
 	if (hdata.PatientAge <= 14)
 	{
-		double childTV = ChildTV(hdata.PatientAge * 12);
+		double childTV = ChildTV(static_cast<int>(hdata.PatientAge * 12));
 		variables["Vвдоха_без_МП"] = variables["Vвдоха"] - (0.3*childTV + additionalDeadSpace) / 1000.;//без мертвого пространства
 		variables["Vвыдоха_без_МП"] = variables["Vвыдоха"] - (0.3*childTV + additionalDeadSpace) / 1000.;//без мертвого пространства
 
@@ -446,7 +446,7 @@ void Database::FillSD()
 
 	// сперва находим 30 секундную отметку
 	MTime starttime = datetime[0].getTime() + 30;
-	for (; start < getCount(); ++start)
+	for (; start < static_cast<int>(getCount()); ++start)
 	{
 		if (datetime[start].getTime() > starttime)
 		{
@@ -509,8 +509,6 @@ void Database::CalculateSD(int i, bool checktime)
 //-----------------------------------------------------------------------------------------------------------
 void Database::CalculateParameters(int i)
 {
-
-	double Volinsp, Volexp;
 	double additionalDeadSpace = ADS;
 	try
 	{
@@ -520,7 +518,7 @@ void Database::CalculateParameters(int i)
 
 	if (hdata.PatientAge <= 14)
 	{
-		double childTV = ChildTV(hdata.PatientAge * 12);
+		double childTV = ChildTV(static_cast<int>(hdata.PatientAge * 12));
 		variables["Vвдоха_без_МП"][i] = variables["Vвдоха"][i] - (0.3*childTV + additionalDeadSpace) / 1000.;//без мертвого пространства
 		variables["Vвыдоха_без_МП"][i] = variables["Vвыдоха"][i] - (0.3*childTV + additionalDeadSpace) / 1000.;//без мертвого пространства
 
@@ -620,14 +618,13 @@ string  Database::GetHTMLHeader() // временный заголовок для экспотра протоколов
 {
 	stringstream ss("");
 	int page_width = 800;
-	char bbuf[1024];
 	//write html-header with coding
 	ss << "<html><head><meta http-equiv='Content-Type' content='text/html; charset=windows-1251'>\n<style type='text/css'>\n";
 	ss << "TABLE {width: %dpx;    border-collapse: collapse; }A:link {text-decoration: none; color: black; }A:visited { text-decoration: none; color: black;}A:active { text-decoration: none; color: black;}A:hover {text-decoration: none; color: red; border-bottom: 1px dashed;}\n</style>\n</head> \n<center>\n";
 	ss << "<table width=" << page_width << " bordercolor=white>\n <tr><td><img src='images\\logo.png'><br><a href=lanamedica.ru><center><b>www.lanamedica.ru</b></center></a> <td align=center><font size=5><b>Исследование выполнено на оборудовании <br><a href=http://lanamedica.ru/new/catalog/spirolan-m/>СПИРОЛАН-М</a></b></font>\n</table>";
 	ss << "<hr align=center width=" + to_string(page_width) + " size=2 color=#000/>\n";
 	ss << "<table width=" << page_width << " bordercolor=white>";
-	ss << "<tr><td width=25%%\%>Дата исследования:<td width=30%%><font size=4><b>";
+	ss << "<tr><td width=25%%>Дата исследования:<td width=30%%><font size=4><b>";
 	ss << datetime[0].getDatetimeString() << " -<br>" << datetime[datetime.size() - 1].getDatetimeString() << endl;
 	ss << "<td width=25%%>Возраст:<td width=15%%><font size=4><b>" << static_cast<int>(hdata.PatientAge) << " лет</b></font>\n";
 	ss << "<tr><td>ФИО:<td><font size=4><b>" << hdata.PatientName << "</b></font>\n";

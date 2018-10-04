@@ -40,11 +40,11 @@ private:
 
 		string word="";
 	
-        for(int i=0; i<code.length(); i++)//посимвольно
+        for(size_t i=0; i<code.length(); i++)//посимвольно
         {
 			if (code[i] == '\"')
 			{
-				int j = code.find('\"', i + 1);
+				int j = (int)code.find('\"', i + 1);
 				if (j == -1)
 					throw runtime_error("Ошибка синтаксиса: кавычки должны быть закрыты.");
 				string temp = code.substr(i+1, j-i-1);
@@ -157,7 +157,7 @@ private:
         Variable result=0;
 		result = Computation(elements_copy);
 		string msg = "Инициализирована переменная '"+var+"' со значением ";
-		if (database->isVariableExists(var) > 0)
+		if (database->isVariableExists(var))
 			msg = "Переменная '"+var+"' равна ";
 		if(database->isVariableExists(var) && database->getVariable(var).isConst())
 			throw runtime_error("Нельзя изменить константную переменную");
@@ -183,7 +183,7 @@ private:
         vector<string>str_operators;
 
         int rank=1;
-		for(int i=0; i<elements_copy.size(); ++i)
+		for(size_t i=0; i<elements_copy.size(); ++i)
 		{
 			const string& e = elements_copy[i];
             if(e=="+" || e=="-")

@@ -1,6 +1,7 @@
 
 // ChildView.cpp : реализация класса CChildView
 //
+#pragma warning disable 4996
 
 #include "stdafx.h"
 #include "metabolograf.h"
@@ -166,13 +167,13 @@ void CChildView::Init(CMFCRibbonBar* _ribbonbar, CMFCRibbonStatusBar* _statusbar
 		database->getHeader().PatientSex = ydata.PatientSex;
 		database->getHeader().PatientWeight = ydata.PatientWeight;
 		database->getHeader().PatientHeight = ydata.PatientHeight;
-		sprintf(database->getHeader().PatientName, "%s", ydata.FIO);
+		sprintf_s(database->getHeader().PatientName, "%s", ydata.FIO);
 		for (int i = strlen(database->getHeader().PatientName) - 1; i >= 0; i--)
 		{
 			if (database->getHeader().PatientName[i] == ' ') database->getHeader().PatientName[i] = '\0';
 			else break;
 		}
-		sprintf(database->getHeader().AdditionalInformation, "%s", ydata.Info);
+		sprintf_s(database->getHeader().AdditionalInformation, "%s", ydata.Info);
 	}
 
 	playground.UpdateVariablesList();
@@ -184,8 +185,6 @@ int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	BOOL bNameValid;
-
 	CRect rect(0, 0, 300, 300);
 
 	//m_Tab.Create(WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL | WS_BORDER | LBS_NOTIFY, rect, this, IDC_TABCTRL);
@@ -193,7 +192,7 @@ int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CFont* pFont = new CFont;
 	VERIFY(pFont->CreateFont(
-		14 * (double)DPIX(),                        // nHeight
+		static_cast<int>(14 * (double)DPIX()),                        // nHeight
 		0,                         // nWidth
 		0,                         // nEscapement
 		0,                         // nOrientation
@@ -315,22 +314,22 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 		0, 0, rect.right,
 		rect.bottom, NULL);
 
-	int curWidth = (CurValuesVisible) ? 240 * (double)dpiX : 0;
-	int timerHeight = 100 * dpiX;
+	int curWidth = static_cast<int>((CurValuesVisible) ? 240 * (double)dpiX : 0);
+	int timerHeight = static_cast<int>(100 * dpiX);
 	//
 	::SetWindowPos(GetDlgItem(IDC_CURRVALUES)->m_hWnd, HWND_TOP,
 		0,
 		0,
-		240 * dpiX,
-		rect.bottom - 20 * dpiX - timerHeight,
+		static_cast<int>(240 * dpiX),
+		static_cast<int>(rect.bottom - 20 * dpiX - timerHeight),
 		NULL);
 
 
 
 	::SetWindowPos(GetDlgItem(ID_TIMERWINDOW)->m_hWnd, HWND_TOP,
 		0,
-		rect.bottom - timerHeight - 20 * dpiX,
-		240 * dpiX,
+		static_cast<int>(rect.bottom - timerHeight - 20 * dpiX),
+		static_cast<int>(240 * dpiX),
 		timerHeight,
 		NULL);
 
@@ -338,14 +337,15 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 	::SetWindowPos(GetDlgItem(IDC_MAINLIST)->m_hWnd, HWND_TOP,
 		curWidth, 0,
 		rect.right - curWidth,
-		rect.bottom - 220 * dpiX,
+		static_cast<int>(rect.bottom - 220 * dpiX),
 		NULL);
 
 	//график под таблицей
 	::SetWindowPos(GetDlgItem(IDC_LISTPLOT)->m_hWnd, HWND_TOP,
-		curWidth, rect.bottom - 220 * dpiX,
+		curWidth, 
+		static_cast<int>(rect.bottom - 220 * dpiX),
 		rect.right - curWidth,
-		200 * dpiX,
+		static_cast<int>(200 * dpiX),
 		NULL);
 
 	//графики
@@ -353,13 +353,13 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 	::SetWindowPos(GetDlgItem(ID_MAINPLOTWINDOW)->m_hWnd, HWND_TOP,
 		curWidth, 0,
 		rect.right - curWidth,
-		rect.bottom - 20 * dpiX,
+		static_cast<int>(rect.bottom - 20 * dpiX),
 		NULL);
 
 	::SetWindowPos(GetDlgItem(ID_PLAYGROUNDWINDOW)->m_hWnd, HWND_TOP,
 		0, 0,
 		rect.right,
-		rect.bottom - 20 * dpiX,
+		static_cast<int>(rect.bottom - 20 * dpiX),
 		NULL);
 
 	curValues.RedrawWindow();
@@ -430,7 +430,7 @@ void CChildView::OnLvnItemchangedList(NMHDR *pNMHDR, LRESULT *pResult)
 	if (pNMLV->uChanged & LVIF_STATE) // item state has been changed
 	{
 		int i = pNMLV->iItem;
-		if (i >= 0 && i < database->getCount())
+		if (i >= 0 && i < static_cast<int>(database->getCount()))
 		{
 			bool temp = main_list.GetCheck(i);
 			auto vec = main_list.GetSelectedItems();
@@ -620,7 +620,7 @@ void CChildView::SaveFile(CString fname)
 {
 	if (UnavailableMessage()) return;
 
-	for (int i = 0; i < database->getCount(); i++)
+	for (int i = 0; i < static_cast<int>(database->getCount()); i++)
 	{
 		database->setChecked(i, main_list.GetCheck(i));
 	}
@@ -632,7 +632,7 @@ void CChildView::SaveFile(CString fname)
 //----------------------------------------------------------------------------------------------
 void CChildView::LoadToList()
 {
-	for (int i = 0; i < database->getCount(); i++)
+	for (int i = 0; i < static_cast<int>(database->getCount()); i++)
 	{
 		main_list.AddToList(i);
 	}
@@ -928,7 +928,7 @@ void CChildView::OnProtocolData()
 //----------------------------------------------------------------------------------------------
 void CChildView::ChangeFilterStatus()
 {
-	for (int i = 0; i<database->getCount(); i++)
+	for (size_t i = 0; i<database->getCount(); i++)
 	{
 		database->Filter(i);
 		main_list.SetCheck(i, database->getChecked(i));
@@ -1039,7 +1039,7 @@ void CChildView::UpdateStatusBar()
 
 	statusbar->GetElement(0)->SetText(st);
 	CRect sbrect = statusbar->GetElement(0)->GetRect();
-	sbrect.right = st.GetLength() * 12 * (double)DPIX();
+	sbrect.right = static_cast<int>(st.GetLength() * 12 * (double)DPIX());
 	statusbar->GetElement(0)->SetRect(sbrect);
 
 	statusbar->RedrawWindow();

@@ -46,7 +46,7 @@ void TimerWindow::OnPaint()
 	SetBounds();
 
 	UGC ugc(GetDC(), Width, Height);
-	int dpix = ugc.getDPIX();
+	int dpix = static_cast<int>(ugc.getDPIX());
 	
 
 	ugc.getGraphics()->Clear(Color(225, 225, 225));

@@ -185,7 +185,7 @@ void BigPlotDialog::ExportButtonClick()
 		plot.DrawPlot();
 		image.Attach(plot.getHBITMAP());
 		image.Save(pictname.c_str(), ImageFormatPNG);
-		sprintf(bbuf, "<br><table bordercolor=white >\n <tr><td><img src='%s' width=%d></table>\n", pictname.c_str(), pictexport->getPageWidth());
+		sprintf_s(bbuf, "<br><table bordercolor=white >\n <tr><td><img src='%s' width=%d></table>\n", pictname.c_str(), pictexport->getPageWidth());
 		fwrite(bbuf, strlen(bbuf), 1, file);
 	}
 
@@ -261,7 +261,7 @@ void BigPlotDialog::PrintEnd2Minutes(std::iostream& out, int lastmop)
 		int start = 0;
 		int end = 0;
 		int end30 = 0;
-		for (end30 = start = end = database->getHeader().EndTest; end < database->getCount(); ++end)// ищем подходящее время
+		for (end30 = start = end = database->getHeader().EndTest; end < static_cast<int>(database->getCount()); ++end)// ищем подходящее время
 		{
 			//MTime temp = database->datetime[end].getTime();
 			if (database->getDatetime(end).getTime() < time30)
@@ -272,12 +272,12 @@ void BigPlotDialog::PrintEnd2Minutes(std::iostream& out, int lastmop)
 		}
 		
 		--end;
-		options.mop = database->getVariable("Минутное_потребление_O2").mean(start, end)*1000.;
-		options.mcop = database->getVariable("Минутное_выделение_CO2").mean(start, end)*1000.;
+		options.mop = static_cast<int>(database->getVariable("Минутное_потребление_O2").mean(start, end)*1000.);
+		options.mcop = static_cast<int>(database->getVariable("Минутное_выделение_CO2").mean(start, end)*1000.);
 		if (database->getHeader().HR)
 		{
 			options.HR = database->getVariable("ЧСС").mean(start, end);
-			options.SD = database->getVariable("SD").mean(start, end30);//(60000. / database->variables["ЧСС"]).SD(start, end30);
+			options.SD = static_cast<int>(database->getVariable("SD").mean(start, end30));//(60000. / database->variables["ЧСС"]).SD(start, end30);
 		}
 		options.VO2 = database->getVariable("Вентиляционный_эквивалент_O2").mean(start, end);
 		options.VCO2 = database->getVariable("Вентиляционный_эквивалент_CO2").mean(start, end);
@@ -314,12 +314,12 @@ void BigPlotDialog::Print1Minute(std::iostream& out)
 		}
 		
 		if (start < 0) start = 0;
-		options.mop = database->getVariable("Минутное_потребление_O2").mean(start, end)*1000.;
-		options.mcop = database->getVariable("Минутное_выделение_CO2").mean(start, end)*1000.;
+		options.mop = static_cast<int>(database->getVariable("Минутное_потребление_O2").mean(start, end)*1000.);
+		options.mcop = static_cast<int>(database->getVariable("Минутное_выделение_CO2").mean(start, end)*1000.);
 		if (database->getHeader().HR)
 		{
 			options.HR = database->getVariable("ЧСС").mean(start, end);
-			options.SD = database->getVariable("SD").mean(start30, end);//(60000./database->variables["ЧСС"]).SD(start, end);
+			options.SD = static_cast<int>(database->getVariable("SD").mean(start30, end));//(60000./database->variables["ЧСС"]).SD(start, end);
 			
 		}
 		options.VO2 = database->getVariable("Вентиляционный_эквивалент_O2").mean(start, end);
@@ -402,7 +402,7 @@ std::string  BigPlotDialog::ExportMPKTable()
 	size_t size = mop.size();//отрезаем с конца 2 минуты
 	PrintOptions options;
 	
-	for (int i = 0; i < size; ++i)
+	for (size_t i = 0; i < size; ++i)
 	{
 		//текущие потребления о2 и выделение со2
 		options.mop = static_cast<int>(mop[i] * 1000);
@@ -415,7 +415,7 @@ std::string  BigPlotDialog::ExportMPKTable()
 		if (database->getHeader().HR)
 		{
 			options.HR = HR[i];
-			options.SD = SD[i];
+			options.SD = static_cast<int>(SD[i]);
 		}
 		//время опыта для таблицы
 		options.time = time_research.getString();
@@ -424,7 +424,7 @@ std::string  BigPlotDialog::ExportMPKTable()
 		// Приращ. потребл. за 1 минуту
 		options.delta = 0;
 		if (i >= 4)
-			options.delta = (mop[i] * 1000 + mop[i - 1] * 1000) / 2 - (mop[i - 2] * 1000 + mop[i - 3] * 1000) / 2;
+			options.delta = static_cast<int>((mop[i] * 1000 + mop[i - 1] * 1000) / 2 - (mop[i - 2] * 1000 + mop[i - 3] * 1000) / 2);
 
 		// нагрузка
 		options.power = database->getHeader().PowerStep * (i/ 4 + 1);
