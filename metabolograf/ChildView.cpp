@@ -589,7 +589,7 @@ void CChildView::OnSaveFile()
 {
 	if (database->getCount() == 0)
 	{
-		MessageBox("Нет данных для сохранения)", "Внимание", MB_OK | MB_ICONINFORMATION);
+		MessageBox("Нет данных для сохранения", "Внимание", MB_OK | MB_ICONINFORMATION);
 		return;
 	}
 	if (filename.IsEmpty())
@@ -604,7 +604,7 @@ void CChildView::OnSaveAsFile()
 {
 	if (database->getCount() == 0)
 	{
-		MessageBox("Нет данных для сохранения)", "Внимание", MB_OK | MB_ICONINFORMATION);
+		MessageBox("Нет данных для сохранения", "Внимание", MB_OK | MB_ICONINFORMATION);
 		return;
 	}
 	CFileDialog fileDialog(FALSE, "Файл метаболографа", "*.mbf");	//объект класса выбора файла
