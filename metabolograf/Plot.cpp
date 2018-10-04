@@ -442,7 +442,8 @@ void Plot::DrawPlot()
 int Plot::GetStep(int& size)
 {
 	if (size > plotRect.width) size = plotRect.width;
-	int step = plotRect.width / size;
+
+	int step = plotRect.width / (size==0 ? size : 1);
 
 	if (step > 20.*static_cast<double>(dpiX))
 		step = static_cast<int>(20.*static_cast<double>(dpiX));

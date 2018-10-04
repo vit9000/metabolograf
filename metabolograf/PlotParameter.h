@@ -58,19 +58,28 @@ public:
 
 		Variable& var = varY[varY.size() - 1];
 
-		int size = var.size();
-		auto min_max = minmax_element(var.begin(), var.end());
+		size_t size = var.size();
+		if (size == 0)
+		{
+			start = 0;
+			end = 0;
+		}
+		else
+		{
+			auto min_max = minmax_element(var.begin(), var.end());
 
-		double min = *min_max.first;
-		if(varY.size()==1 || min < start)
-			start = min;
-		double max = *min_max.second;
-		if (varY.size() == 1 || max > end)
-			end = max;
+			double min = *min_max.first;
+			if (varY.size() == 1 || min < start)
+				start = min;
+			double max = *min_max.second;
+			if (varY.size() == 1 || max > end)
+				end = max;
 
-		double temp = (end - start)*0.05;
-		start -= temp;
-		end += temp;
+			double temp = (end - start)*0.05;
+			start -= temp;
+			end += temp;
+		}
+		
 
 		autoStart = true;
 		autoEnd = true;
