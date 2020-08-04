@@ -137,7 +137,7 @@ private:
 		/*switch(dict->functions[elements[0]])
 		{
 			case 1://ГРАФИК
-				plot.Run(variables, elements);
+				m_pPlot.Run(variables, elements);
 				break;
 		}*/
 		name = "'" + name + "'";
@@ -162,7 +162,7 @@ private:
 		if(database->isVariableExists(var) && database->getVariable(var).isConst())
 			throw runtime_error("Нельзя изменить константную переменную");
 
-		database->SetVariable(var, result);//database->variables[var] = result;//все хорошо, создаем новую запись в словаре переменных
+		database->SetVariable(var, result);//m_pDatabase->variables[var] = result;//все хорошо, создаем новую запись в словаре переменных
 		return msg + ToString(result);
     }
     //------------------------------------------------------------------------------------

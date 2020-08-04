@@ -1,2 +1,12 @@
 /.vs/
 /Debug/
+/20-12-2017_11-54-26
+/metabolograf/Debug/metabolograf.tlog
+/metabolograf/Debug
+/metabolograf/files
+/metabolograf/Release
+/metabolograf/x64/Debug
+*.ini
+*.txt
+/Release
+*.zip

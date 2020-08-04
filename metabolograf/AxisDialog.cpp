@@ -74,8 +74,8 @@ BOOL AxisDialog::OnInitDialog()
 		SetWindowTextA("Редактирование параметра");
 		if(index>0)
 			m_VarCombo.SetCurSel(index);
-		/*for (int i=0; i< database->variable_names.size(); i++)
-			if (param.varname == database->variable_names[i])
+		/*for (int i=0; i< m_pDatabase->variable_names.size(); i++)
+			if (param.varname == m_pDatabase->variable_names[i])
 			{
 				m_VarCombo.SetCurSel(i);
 				break;

@@ -4,12 +4,25 @@
 class DPIX
 {
 protected:
-	double dpix;
+
 public:
+	static double dpix;
+
 	DPIX()
 	{
+	}
+
+	static int GetDPI() { return static_cast<int>(dpix * 96); }
+
+	static void SetDPI(int dpi)
+	{
+		dpix = static_cast<double>(dpi) / 96.;
+	}
+
+	static void SetDisplayDPI()
+	{
 		HDC hdcScreen = ::GetDC(NULL);
-		dpix = 1; // assume failure
+		dpix = 1.; // assume failure
 		if (hdcScreen)
 		{
 			dpix = (double)::GetDeviceCaps(hdcScreen, LOGPIXELSX);
@@ -17,16 +30,24 @@ public:
 			dpix /= 96;
 		}
 	}
-	double getValue()
+
+	double GetValue(double val) const
 	{
-		return dpix;
+		return dpix * val;
 	}
+	int getIntegerValue(double val)
+	{
+		return static_cast<int>(dpix*val);
+	}
+
+	int operator ()(double val) const
+	{
+		return static_cast<int>(dpix*val);
+	}
+
 	operator double() const
 	{
 		return dpix;
 	}
-	operator int() const
-	{
-		return static_cast<int>(dpix);
-	}
+
 };

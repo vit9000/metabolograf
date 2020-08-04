@@ -10,7 +10,6 @@ END_MESSAGE_MAP()
 
 MyListCtrl::MyListCtrl()
 {
-	dpiX = DPIX();
 	busy = false;
 	experienceStatusTracker = nullptr;
 }
@@ -114,10 +113,10 @@ void MyListCtrl::SetHeadersInList()
 {
 	Clear();
 
-	InsertColumn(0, "N", LVCFMT_CENTER, static_cast<int>(50 * dpiX), 0);//добавляем колонки
-	InsertColumn(1, "Время", LVCFMT_CENTER, static_cast<int>(60 * dpiX), 0);//добавляем колонки
+	InsertColumn(0, "N", LVCFMT_CENTER, DPIX()(50), 0);//добавляем колонки
+	InsertColumn(1, "Время", LVCFMT_CENTER, DPIX()(60), 0);//добавляем колонки
 
-														  //vector<string>& headers = database->variable_names;
+														  //vector<string>& headers = m_pDatabase->variable_names;
 	int index = 2;
 	Ini ini("listview.ini");
 	
@@ -139,11 +138,11 @@ void MyListCtrl::MyInsertColumn(int index, const string& param, Ini& ini)
 	string var_name;
 	database->getRealName(param, var_name);
 
-	int width = static_cast<int>(5 * 10 * dpiX);
+	int width = DPIX()(5 * 10);
 	if (var_name == "ЧД" || var_name == "FiO2" || var_name == "FetO2" || var_name == "FiCO2" || var_name == "FetCO2" ||
 		var_name == "ДМП" || var_name == "ЧСС" || var_name == "RR" || var_name == "SD" ||
 		var_name == "Минутная_вентиляция" || var_name == "Вентиляционный_эквивалент_O2" || var_name == "Вентиляционный_эквивалент_CO2")
-		width = static_cast<int>(4 * 10 * dpiX);
+		width = DPIX()(4 * 10);
 	if (ini.IsExists())
 	{
 		//int wt = 0;
@@ -210,7 +209,7 @@ void MyListCtrl::AddParameter(const string& param, int column, int index)
 	if (index < size &&  database->isVariableExists(param))
 	{
 		double value = database->getVariable(param)[index];
-		string str = ToString(param, value);//to_string(database->variables[varname][i]);
+		string str = ToString(param, value);//to_string(m_pDatabase->variables[varname][i]);
 		if (str == "НД")
 			errmarks.insert({ index, column });
 		else if (param == "ДМП" && (value > 55 || value < 33))
@@ -315,7 +314,7 @@ void MyListCtrl::ShowConfigDialog()
 	vector<string> varnames;
 	for (const auto& varname : database->getVariableNames())
 	{
-		//if (database->getVariable(varname).GetType() == Vector)
+		//if (m_pDatabase->getVariable(varname).GetType() == Vector)
 			varnames.push_back(varname);
 	}
 	

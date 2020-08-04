@@ -371,7 +371,7 @@ void  Export::WriteHeader(FILE *file)
 	fwrite(bbuf, strlen(bbuf), 1, file);
 	const auto& zero_dt = database->getDatetime(0);
 	const auto& last_dt = database->getDatetime(database->getCount() - 1);
-	sprintf_s(bbuf, "%s %s-%s</b></font><td width=10%%>\n", zero_dt.getDateStringRU().c_str(), zero_dt.getTimeString().c_str(), last_dt.getTimeString().c_str());// database->getHour(0), database->getMinute(0), database->getHour(database->getHeader().count - 1), database->getMinute(database->getHeader().count - 1));
+	sprintf_s(bbuf, "%s %s-%s</b></font><td width=10%%>\n", zero_dt.getDateStringRU().c_str(), zero_dt.getTimeString().c_str(), last_dt.getTimeString().c_str());// m_pDatabase->getHour(0), m_pDatabase->getMinute(0), m_pDatabase->getHour(m_pDatabase->getHeader().count - 1), m_pDatabase->getMinute(m_pDatabase->getHeader().count - 1));
 	fwrite(bbuf, strlen(bbuf), 1, file);
 	sprintf_s(bbuf, "<td width=25%%>Возраст:<td width=15%%><font size=4><b>%d лет</b></font>\n", (int)database->getHeader().PatientAge);
 	fwrite(bbuf, strlen(bbuf), 1, file);
@@ -638,7 +638,7 @@ void Export::CalculateMeanValues()
 		auto Vinsp = database->getVariable("Vвдоха").mean(checked);
 		tidalVol = (Vinsp + Vexp) / 2;
 	}
-	else // if (database->getHeader().UseInspiratoryVolume)
+	else // if (m_pDatabase->getHeader().UseInspiratoryVolume)
 	{
 		tidalVol = database->getVariable("Vвдоха").mean(checked);
 	}
@@ -1206,24 +1206,24 @@ void Export::ExportExcel(const vector<string>& parameters)
      /*sprintf_s(bbuf, "<table><tr><td>Время<td>Vвдоха (л)<td>Vвыдоха (л)<td>FiO2<td>FetO2<td>FiCO2<td>FetCO2<td>ЧД<td>Поглощение O2 (мл)<td>Выделение CO2 (мл)<td>ДМП<td>ДК");
      fwrite(bbuf, strlen(bbuf), 1, file);
 	 
-     for(int i=0; i<database->getHeader().count; i++)
+     for(int i=0; i<m_pDatabase->getHeader().count; i++)
      {
-          if(database->getChecked(i))
+          if(m_pDatabase->getChecked(i))
           {
 			  stringstream ss;
 			  ss << fixed;
-			  ss << "<tr><td align = center>" << database->getDatetime(i).getTimeString().c_str()
-				  << "<td align=center>" << setprecision(3) << database->getVariable("Vвдоха")[i]
-				  << "<td align=center>" << setprecision(3) << database->getVariable("Vвыдоха")[i]
-				  << "<td align=center>" << setprecision(3) << database->getVariable("FiO2")[i]
-				  << "<td align=center>" << setprecision(3) << database->getVariable("FetO2")[i]
-				  << "<td align=center>" << setprecision(3) << database->getVariable("FiCO2")[i].
-				  << "<td align=center>" << setprecision(3) << database->getVariable("FetCO2")[i].
-				  << "<td align=center>" << setprecision(3) << database->getVariable("ЧД")[i]
-				  << "<td align=center>" << setprecision(3) << database->getVariable("Потребление_O2")[i]
-				  << "<td align=center>" << setprecision(3) << database->getVariable("Выделение_CO2")[i]
-				  << "<td align=center>" << setprecision(3) << static_cast<int>(database->getVariable("ДМП")[i])
-				  << "<td align=center>" << setprecision(3) << database->getVariable("Дыхательный_коэффициент")[i]
+			  ss << "<tr><td align = center>" << m_pDatabase->getDatetime(i).getTimeString().c_str()
+				  << "<td align=center>" << setprecision(3) << m_pDatabase->getVariable("Vвдоха")[i]
+				  << "<td align=center>" << setprecision(3) << m_pDatabase->getVariable("Vвыдоха")[i]
+				  << "<td align=center>" << setprecision(3) << m_pDatabase->getVariable("FiO2")[i]
+				  << "<td align=center>" << setprecision(3) << m_pDatabase->getVariable("FetO2")[i]
+				  << "<td align=center>" << setprecision(3) << m_pDatabase->getVariable("FiCO2")[i].
+				  << "<td align=center>" << setprecision(3) << m_pDatabase->getVariable("FetCO2")[i].
+				  << "<td align=center>" << setprecision(3) << m_pDatabase->getVariable("ЧД")[i]
+				  << "<td align=center>" << setprecision(3) << m_pDatabase->getVariable("Потребление_O2")[i]
+				  << "<td align=center>" << setprecision(3) << m_pDatabase->getVariable("Выделение_CO2")[i]
+				  << "<td align=center>" << setprecision(3) << static_cast<int>(m_pDatabase->getVariable("ДМП")[i])
+				  << "<td align=center>" << setprecision(3) << m_pDatabase->getVariable("Дыхательный_коэффициент")[i]
 				  << endl;
 
 			  string temp = ss.str();

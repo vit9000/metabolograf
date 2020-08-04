@@ -21,6 +21,7 @@
 #define new DEBUG_NEW
 #endif
 
+double DPIX::dpix = 1.;
 // CMainFrame
 
 IMPLEMENT_DYNAMIC(CMainFrame, CFrameWndEx)

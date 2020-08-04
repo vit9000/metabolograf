@@ -41,7 +41,6 @@ private:
 	int TextSizeAxis;
 	bool NeedMean;
 	float UIZoom;
-	DPIX dpiX;
 	string header;
 	Variable_<MTime> varTime;
 	string meanTime;

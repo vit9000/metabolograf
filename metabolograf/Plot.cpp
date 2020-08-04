@@ -446,8 +446,8 @@ int Plot::GetStep(int& size)
 	if(size>0)
 		step = plotRect.width / size;
 
-	if (step > 20.*static_cast<double>(dpiX))
-		step = static_cast<int>(20.*static_cast<double>(dpiX));
+	if (step > DPIX()(20.))
+		step = DPIX()(20.);
 
 	return step;
 }
@@ -530,8 +530,7 @@ void Plot::DrawTimePlot()
 	*/
 	int size = varTime.size();
 	int step = GetStep(size);
-	//double dpix = ugc.getDPIX();
-
+	
 	for (int c = 0; c<3; c++)//!!!!!!!!!!!!!!!!!!!!!
 	{
 		if (marks[c] >= 0)
@@ -542,7 +541,7 @@ void Plot::DrawTimePlot()
 				ugc.SetDrawColor(0, 255, 0);
 			else
 				ugc.SetDrawColor(0, 0, 255);
-			ugc.FillRectangle(plotRect.x + marks[c] * step, plotRect.y - plotRect.height, static_cast<int>(2 * (double)dpiX), plotRect.height);
+			ugc.FillRectangle(plotRect.x + marks[c] * step, plotRect.y - plotRect.height, DPIX()(2), plotRect.height);
 		}
 	}
 	DrawLegend(ugc, legends, plotRect);
@@ -582,12 +581,14 @@ void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, const int& position, con
 
 		ugc.SetDrawColor(Color(0, 0, 0));
 		ugc.DrawNumber(number + start, x, y - ugc.GetTextHeight() / 2);
-		ugc.DrawLine(x - 1, y, x + 1, y);
+		//ugc.DrawLine(x - 1, y, x + 1, y);
+		ugc.SetDrawColor(Color(155, 155, 155));
+		ugc.DrawDashLine(plotRect.x, y, plotRect.x + plotRect.width, y);
 
 		int temp = ugc.GetTextWidth(ugc.ToString(start + number), TextSizeAxis);
 		if (temp > w) w = temp;
 	}
-
+	ugc.SetDrawColor(Color(0, 0, 0));
 	ugc.SetTextSize(TextSizeLegend);
 	string text = "";
 	ugc.SetAlign(Align::CENTER);
@@ -628,8 +629,12 @@ void Plot::DrawAxisX(UGC& ugc, PlotParameter& variable, const int& position, con
 		double number = (range / (double)countPointsInAxis)*(double)i;
 		ugc.SetDrawColor(Color(0, 0, 0));
 		ugc.DrawNumber(number + start, x + i*step, y + 4);
-		ugc.DrawLine(x + i*step, y + 2, x + i*step, y + 4);
+		
+		ugc.SetDrawColor(Color(155, 155, 155));
+		ugc.DrawDashLine(x + i * step, plotRect.y, x + i * step, plotRect.y-plotRect.height);
+		
 	}
+	ugc.SetDrawColor(Color(0, 0, 0));
 	ugc.SetTextSize(TextSizeLegend);
 	string text = "";
 	//ugc.SetAlign(Align::CENTER);
@@ -666,8 +671,11 @@ void Plot::DrawAxisTime(UGC& ugc, const VitLib::Bounds& plotRect)
 		if (i >= varTime.size()) break;
 
 		string time = varTime[i].getStringAlt();
+		ugc.SetDrawColor(0, 0, 0);
 		ugc.DrawVerticalString(time, x + i*x_step - ugc.GetTextHeight() / 2, y + TextSizeAxis);
-		ugc.DrawLine(x + i*x_step, y + 2, x + i*x_step, y + 4);
+		ugc.SetDrawColor(155, 155, 155);
+		ugc.DrawDashLine(x + i * x_step, plotRect.y, x + i * x_step, plotRect.y - plotRect.height);
+		//ugc.DrawLine(x + i*x_step, y + 2, x + i*x_step, y + 4);
 	}
 	ugc.SetAlign(Align::LEFT);
 }
@@ -693,7 +701,7 @@ void Plot::DrawLegend(UGC& ugc, vector<string> var_Y, const VitLib::Bounds& rect
 	}
 	if (experience && plot_type == "TimePlot")
 	{
-		int yi = static_cast<int>(var_Y.size()+1.5) * textheight;
+		int yi = static_cast<int>(var_Y.size()+2) * textheight;
 		vector<string> v{ "ПАО", "ПАНО", "МПК" };
 		vector<Color> c{ Color(255,0,0), Color(0,255,0), Color(0,0,255) };
 		int width = rect.width;
@@ -716,7 +724,6 @@ void Plot::DrawTwoParamPlot()
 	ugc.SetDrawColor(bgColor);
 	ugc.Clear();
 
-	double dpiX = ugc.getDPIX();
 	//рисуем заголовок
 	int headerHeight = DrawHeader(ugc);
 	//определяемся с полями графика
@@ -774,8 +781,8 @@ void Plot::DrawTwoParamPlot()
 
 			//int point = plotRect.height / 4.0 / sizeX * dpiX;
 			int point = plotRect.height / 40;
-			if (point < 2 * dpiX) point = static_cast<int>(2 * dpiX);
-			if (point > 8 * dpiX) point = static_cast<int>(8 * dpiX);
+			if (point < DPIX()(2)) point = DPIX()(2);
+			if (point > DPIX()(8)) point = DPIX()(8);
 
 			int sizeY = varY.size();
 			for (int j = 0; j < sizeX, j<sizeY; j++)

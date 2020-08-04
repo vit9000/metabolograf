@@ -17,7 +17,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Русский (Россия) resources
+// Russian (Russia) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
 LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
@@ -313,17 +313,17 @@ BEGIN
     LTEXT           "Остальные поля можно оставить пустыми",IDC_STATIC,9,104,138,8
 END
 
-IDD_BIGPLOT_DIALOG DIALOGEX 0, 0, 393, 210
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_BIGPLOT_DIALOG DIALOGEX 0, 0, 550, 260
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Dialog"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Аэробный порог",IDC_AET,"Button",BS_AUTORADIOBUTTON,2,5,69,10
     CONTROL         "МПК",IDC_MOC,"Button",BS_AUTORADIOBUTTON,153,5,30,10
     CONTROL         "Анаэробный порог",IDC_AT,"Button",BS_AUTORADIOBUTTON,73,5,77,10
-    PUSHBUTTON      "OK",IDOK,305,1,42,14
+    PUSHBUTTON      "OK",IDOK,459,1,42,14
     PUSHBUTTON      "Экспорт",ID_EXPORT_MPK_BUTTON,206,1,42,14
-    PUSHBUTTON      "Отмена",IDCANCEL,348,1,42,14
+    PUSHBUTTON      "Отмена",IDCANCEL,502,1,42,14
     PUSHBUTTON      "Очистить",IDC_CLEAR_BUTTON,249,1,42,14
 END
 
@@ -474,7 +474,8 @@ BEGIN
 
     IDD_BIGPLOT_DIALOG, DIALOG
     BEGIN
-        RIGHTMARGIN, 390
+        RIGHTMARGIN, 544
+        BOTTOMMARGIN, 210
     END
 
     IDD_SPLASH, DIALOG
@@ -694,7 +695,7 @@ BEGIN
     IDS_EDIT_MENU           "Редактировать"
 END
 
-#endif    // Русский (Россия) resources
+#endif    // Russian (Russia) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

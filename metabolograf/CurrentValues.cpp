@@ -74,19 +74,13 @@ void CurrentValues::OnPaint()
 {
 	CWnd::OnPaint();
 
-	double dpiX = DPIX();
-
 	CRect rect;
 	GetClientRect(&rect);
 	UGC ugc(GetDC(), rect.Width(), rect.Height());
 
 	ugc.getGraphics()->Clear(Color(225, 225, 225));
 
-
-	//ugc.SetDrawColor(100, 100, 100);
-	//ugc.FillRectangle(0, 0, Width, 20 * dpiX);
-
-	ugc.SetTextSize(static_cast<int>(10*dpiX));
+	ugc.SetTextSize(DPIX()(10));
 	ugc.SetAlign(Align::CENTER);
 
 	//ugc.SetDrawColor(255, 255, 255);
@@ -100,7 +94,7 @@ void CurrentValues::OnPaint()
 	int startY = 0;// space * 2;
 
 	//ugc.DrawLine(w / 2, startY, w / 2, variable_names.size() / 2 * space * 3+startY);
-	const int border = static_cast<int>(2 * dpiX);
+	const int border = DPIX()(2);
 	for (size_t i = 0; i < variable_names.size(); i++)
 	{
 		string& vname = variable_names[i];
@@ -109,7 +103,7 @@ void CurrentValues::OnPaint()
 		int yi = static_cast<int>(i / 2);
 		yi *= static_cast<int>(space * 2.7);
 		yi += startY+border;
-
+		
 		int xi = 0;
 		if (i % 2 != 0)
 		{
@@ -118,20 +112,19 @@ void CurrentValues::OnPaint()
 			//	ugc.DrawLine(0, yi-space/2, Width, yi-space/2);
 		}
 		ugc.SetDrawColor(60, 60, 60);
-		ugc.FillRectangle(static_cast<int>(xi+2*dpiX), yi, static_cast<int>(w/2-4*dpiX), static_cast<int>(space*2.5));
+		ugc.FillRectangle(static_cast<int>(xi + DPIX()(2)), yi, static_cast<int>(w/2- DPIX()(4)), static_cast<int>(space*2.5));
 		ugc.SetDrawColor(255, 255, 255);
-		ugc.FillRectangle(static_cast<int>(xi + 2 * dpiX + border), yi+space, static_cast<int>(w / 2 - 4 * dpiX - 2*border), static_cast<int>(space*1.5-border));
+		ugc.FillRectangle(static_cast<int>(xi + DPIX()(2) + border), yi+space, static_cast<int>(w / 2 - DPIX()(4) - 2*border), static_cast<int>(space*1.5-border));
 		ugc.SetDrawColor(225, 225, 225);
-		ugc.SetTextSize(static_cast<int>(9 * dpiX));
-		ugc.DrawString(lables[i], xi+w/4, static_cast<int>(yi+2*dpiX));
-		ugc.SetTextSize(static_cast<int>(22*dpiX));
+		ugc.SetTextSize(DPIX()(9));
+		ugc.DrawString(lables[i], xi+w/4, static_cast<int>(yi+DPIX()(2)));
+		ugc.SetTextSize(DPIX()(22));
 
 		
 		double value = 0;
 		if (selected != -1)
 			value = database->getVariable(vname)[selected];
 		ugc.SetDrawColor(235, 235, 235);
-		//ugc.FillRectangle(xi + 2 * dpiX, yi+space, w / 2 - 4 * dpiX, space);
 		ugc.SetDrawColor(0, 0, 0);
 
 		ugc.SetBold(true);
@@ -148,13 +141,13 @@ void CurrentValues::OnPaint()
 	int xi = w / 2;
 	
 	ugc.SetDrawColor(60, 60, 60);
-	ugc.FillRectangle(static_cast<int>(xi + 2 * dpiX), yi, static_cast<int>(w / 2 - 4 * dpiX), static_cast<int>(space*2.5));
+	ugc.FillRectangle(static_cast<int>(xi + DPIX()(2)), yi, static_cast<int>(w / 2 - DPIX()(4)), static_cast<int>(space*2.5));
 	ugc.SetDrawColor(255, 255, 255);
-	ugc.FillRectangle(static_cast<int>(xi + 2 * dpiX + border), yi + space, static_cast<int>(w / 2 - 4 * dpiX - 2 * border), static_cast<int>(space*1.5 - border));
+	ugc.FillRectangle(static_cast<int>(xi + DPIX()(2) + border), yi + space, static_cast<int>(w / 2 - DPIX()(4) - 2 * border), static_cast<int>(space*1.5 - border));
 	ugc.SetDrawColor(225, 225, 225);
-	ugc.SetTextSize(static_cast<int>(9 * dpiX));
-	ugc.DrawString("Вдох-Выдох (%)", xi + w / 4, static_cast<int>(yi + 2 * dpiX));
-	ugc.SetTextSize(static_cast<int>(22 * dpiX));
+	ugc.SetTextSize(DPIX()(9));
+	ugc.DrawString("Вдох-Выдох (%)", xi + w / 4, static_cast<int>(yi + DPIX()(2)));
+	ugc.SetTextSize(DPIX()(22));
 
 
 	double value = 0;

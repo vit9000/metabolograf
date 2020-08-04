@@ -192,7 +192,7 @@ int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CFont* pFont = new CFont;
 	VERIFY(pFont->CreateFont(
-		static_cast<int>(14 * (double)DPIX()),                        // nHeight
+		DPIX()(14),                // nHeight
 		0,                         // nWidth
 		0,                         // nEscapement
 		0,                         // nOrientation
@@ -238,7 +238,7 @@ int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	listplot.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, CRect(0, 0, 100, 100), this, IDC_LISTPLOT);
 	main_plot.LoadPlotFromConfig(plot);
 	plot.EnlargeUI();
-	//plot.SetBackgroundColor(225, 225, 225);
+	//m_pPlot.SetBackgroundColor(225, 225, 225);
 	plot.DrawPlot();
 	listplot.Init(&plot, &main_list, &curValues);
 	return 0;
@@ -307,29 +307,28 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 	ScreenToClient(&rect);
 	rect.bottom -= rect.top;
 	rect.right -= rect.left;
-	double dpiX = (double)DPIX();
-
+	
 	//Tab
 	::SetWindowPos(GetDlgItem(IDC_TABCTRL)->m_hWnd, HWND_TOP,
 		0, 0, rect.right,
 		rect.bottom, NULL);
 
-	int curWidth = static_cast<int>((CurValuesVisible) ? 240 * (double)dpiX : 0);
-	int timerHeight = static_cast<int>(100 * dpiX);
+	int curWidth = static_cast<int>((CurValuesVisible) ? DPIX()(240) : 0);
+	int timerHeight = DPIX()(100);
 	//
 	::SetWindowPos(GetDlgItem(IDC_CURRVALUES)->m_hWnd, HWND_TOP,
 		0,
 		0,
-		static_cast<int>(240 * dpiX),
-		static_cast<int>(rect.bottom - 20 * dpiX - timerHeight),
+		DPIX()(240),
+		rect.bottom - DPIX()(20) - timerHeight,
 		NULL);
 
 
 
 	::SetWindowPos(GetDlgItem(ID_TIMERWINDOW)->m_hWnd, HWND_TOP,
 		0,
-		static_cast<int>(rect.bottom - timerHeight - 20 * dpiX),
-		static_cast<int>(240 * dpiX),
+		rect.bottom - timerHeight - DPIX()(20),
+		DPIX()(240),
 		timerHeight,
 		NULL);
 
@@ -337,15 +336,15 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 	::SetWindowPos(GetDlgItem(IDC_MAINLIST)->m_hWnd, HWND_TOP,
 		curWidth, 0,
 		rect.right - curWidth,
-		static_cast<int>(rect.bottom - 220 * dpiX),
+		rect.bottom - DPIX()(220),
 		NULL);
 
 	//график под таблицей
 	::SetWindowPos(GetDlgItem(IDC_LISTPLOT)->m_hWnd, HWND_TOP,
 		curWidth, 
-		static_cast<int>(rect.bottom - 220 * dpiX),
+		rect.bottom - DPIX()(220),
 		rect.right - curWidth,
-		static_cast<int>(200 * dpiX),
+		DPIX()(200),
 		NULL);
 
 	//графики
@@ -353,13 +352,13 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 	::SetWindowPos(GetDlgItem(ID_MAINPLOTWINDOW)->m_hWnd, HWND_TOP,
 		curWidth, 0,
 		rect.right - curWidth,
-		static_cast<int>(rect.bottom - 20 * dpiX),
+		rect.bottom - DPIX()(20),
 		NULL);
 
 	::SetWindowPos(GetDlgItem(ID_PLAYGROUNDWINDOW)->m_hWnd, HWND_TOP,
 		0, 0,
 		rect.right,
-		static_cast<int>(rect.bottom - 20 * dpiX),
+		rect.bottom - DPIX()(20),
 		NULL);
 
 	curValues.RedrawWindow();
@@ -756,8 +755,8 @@ void CChildView::OnRecord()
 		//эта переменная "ЧД_old" появляетя только при записи нового файла
 		/*if (Circle == 0)
 		{
-			database->insertVariableName("ЧД_old");
-			//database.variable_names.push_back("ЧД_old");
+			m_pDatabase->insertVariableName("ЧД_old");
+			//m_pDatabase.variable_names.push_back("ЧД_old");
 			main_list.InsertParameterAfter("ЧД_old", "ЧД");
 		}*/
 		timerWindow.StartRec();
@@ -864,11 +863,11 @@ bool CChildView::ProtolsAvailable()
 	}
 	if (UnavailableMessage())
 		return false;
-	/*if (database.hdata.PatientWrist <= 0)
+	/*if (m_pDatabase.hdata.PatientWrist <= 0)
 	{
 		MessageBox(L"Для формирования протокола необходимо ввести окружность запястия", L"Внимание", MB_OK);
 		PatientForm->ShowModal();
-		if (calculator->database.hdata.PatientWrist <= 0)
+		if (calculator->m_pDatabase.hdata.PatientWrist <= 0)
 		{
 			Application->MessageBox(L"Вы не ввели окружность запястия. Протокол формироваться не будет", L"Внимание", MB_OK);
 			return false;
@@ -884,13 +883,13 @@ void CChildView::OnProtocol3()
 {
 	if (!ProtolsAvailable()) return;
 
-	/*if (database.hdata.PatientWrist<2)
+	/*if (m_pDatabase.hdata.PatientWrist<2)
 	{
 		MessageBox("Для получения протокола необходимо указать окружность запястья", L"Внимание", MB_OK);
 		PatientForm->SetEditable(true, true);
 		PatientForm->ShowModal();
 
-		if (calculator->database.hdata.PatientWrist<2) return;
+		if (calculator->m_pDatabase.hdata.PatientWrist<2) return;
 	}*/
 
 	Export *fitnes_export = new Export(database);
@@ -1039,7 +1038,7 @@ void CChildView::UpdateStatusBar()
 
 	statusbar->GetElement(0)->SetText(st);
 	CRect sbrect = statusbar->GetElement(0)->GetRect();
-	sbrect.right = static_cast<int>(st.GetLength() * 12 * (double)DPIX());
+	sbrect.right = st.GetLength() * DPIX()(12);
 	statusbar->GetElement(0)->SetRect(sbrect);
 
 	statusbar->RedrawWindow();
@@ -1050,13 +1049,13 @@ void CChildView::UpdateStatusBar()
 void CChildView::OnStatusBarTimeUpdate(CCmdUI *pCmdUI)
 {
 	/*CString st;
-	if (database.getCount() == 0)
+	if (m_pDatabase.getCount() == 0)
 	{
 		st = "Исследование не проводилось";
 		return;
 	}
 
-	MTime temp = database.datetime[database.getCount() - 1].getTime() - database.datetime[0].getTime();
+	MTime temp = m_pDatabase.datetime[m_pDatabase.getCount() - 1].getTime() - m_pDatabase.datetime[0].getTime();
 	st = "Время исследования: ";
 	st.Append(temp.getString().c_str());
 
@@ -1191,7 +1190,7 @@ void CChildView::OnUpdateStartTestButton(CCmdUI* pCmdUI)
 void CChildView::OnUpdateEndTestButton(CCmdUI* pCmdUI)
 {
 	/*bool result = false;
-	if (Recording && database.hdata.StartTest != 0 && database.hdata.EndTest == 0) 
+	if (Recording && m_pDatabase.hdata.StartTest != 0 && m_pDatabase.hdata.EndTest == 0) 
 		result = true;
 
 	pCmdUI->Enable(result);*/
@@ -1296,7 +1295,7 @@ void CChildView::OnStepChanged()
 {
 	// TODO: добавьте свой код обработчика команд
 
-	//database.hdata.PowerStep;
+	//m_pDatabase.hdata.PowerStep;
 }
 
 
@@ -1304,7 +1303,7 @@ void CChildView::OnUpdatePowerStep(CCmdUI *pCmdUI)
 {
 	
 	// TODO: добавьте свой код обработчика ИП обновления команд
-	//database.hdata.PowerStep;
+	//m_pDatabase.hdata.PowerStep;
 }
 
 void CChildView::OnBigPlotClick(int index)

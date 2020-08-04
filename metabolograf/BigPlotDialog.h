@@ -4,11 +4,14 @@
 #include "DPIX.h"
 
 // диалоговое окно BigPlotDialog
-
-
-
 class BigPlotDialog : private CDialogEx
 {
+
+	bool m_bExport;
+	Plot* m_pPlot;
+	Database* m_pDatabase;
+	BigPlot m_BigPlot;
+	
 	DECLARE_DYNAMIC(BigPlotDialog)
 	#ifdef AFX_DESIGN_TIME
 		enum { IDD = IDD_BIGPLOT_DIALOG };
@@ -18,8 +21,11 @@ public:
 	BigPlotDialog(CWnd* pParent = NULL);   
 	virtual ~BigPlotDialog();
 	int DoModal(Plot* _plot, bool Export = false);
-	const BigPlot& getBigPlot() { return bigPlot; }
+	const BigPlot& getBigPlot() { return m_BigPlot; }
+	afx_msg void OnBnClickedExportMpkButton();
+	afx_msg void OnBnClickedClearButton();
 protected:
+
 	struct PrintOptions
 	{
 		string time = ""; 
@@ -32,18 +38,8 @@ protected:
 		double VCO2 = 0;
 		double EtO2 = 0;
 		double EtCO2 = 0;
-		int SD = 0;
-
-		
+		int SD = 0;	
 	};
-
-
-	
-
-	bool _Export;
-	Plot* plot;
-	Database* database;
-	BigPlot bigPlot;
 
 	BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX); 
@@ -52,21 +48,10 @@ protected:
 	void print(std::iostream& out, const PrintOptions& options);
 	void Print1Minute(std::iostream& out);
 	void PrintEnd2Minutes(std::iostream& out, int lastmop);
-	int FindInterval(vector<int>& v, int p)
-	{
-		for (size_t i = 0; i < v.size(); i++)
-		{
-			if (p < v[i])
-			{
-				p = i - 1;
-				break;
-			}
-		}
-		return p;
-	}
+	int FindInterval(vector<int>& v, int p);
 
-
-	
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedCancel();
 	afx_msg void OnBnClickedAet();
@@ -74,7 +59,4 @@ protected:
 	afx_msg void OnBnClickedMoc();
 	DECLARE_MESSAGE_MAP()
 
-public:
-	afx_msg void OnBnClickedExportMpkButton();
-	afx_msg void OnBnClickedClearButton();
 };

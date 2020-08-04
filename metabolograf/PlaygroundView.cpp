@@ -40,21 +40,8 @@ void PlaygroundView::OnPaint()
 {
 	CWnd::OnPaint();
 
-
-	/*CRect rect;
-	GetWindowRect(&rect);
-	ScreenToClient(&rect);
-	rect.bottom -= rect.top;
-	rect.right -= rect.left;
-	double dpiX = getDPIX();
-
-	CDC* cdc = GetDC();
-	UGC ugc(cdc->m_hDC, 100, 100);
-	ugc.SetDrawColor(255, 0, 0);
-	ugc.FillRectangle(0, 0, rect.Width(), rect.Height());
-
-	ReleaseDC(cdc);*/
 }
+
 int PlaygroundView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	CWnd::OnCreate(lpCreateStruct);
@@ -62,7 +49,7 @@ int PlaygroundView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CFont* pFont = new CFont;
 	pFont->CreateFont(
-		static_cast<int>(14 * (double)DPIX()),                        // nHeight
+		DPIX()(14),                // nHeight
 		0,                         // nWidth
 		0,                         // nEscapement
 		0,                         // nOrientation
@@ -107,7 +94,7 @@ void PlaygroundView::OnSize(UINT nType, int cx, int cy)
 	ScreenToClient(&rect);
 	rect.bottom -= rect.top;
 	rect.right -= rect.left;
-	double dpiX = DPIX();
+	double dpiX = DPIX().dpix;
 
 	int tempX = static_cast<int>(200 * dpiX);
 	::SetWindowPos(GetDlgItem(IDC_VARIABLELIST)->m_hWnd, HWND_TOP,
@@ -155,10 +142,10 @@ void PlaygroundView::OnLButtonDblClk(UINT flags, CPoint point)
 void PlaygroundView::UpdateVariablesList()
 {
 	/*VariablesList.ResetContent();
-	for (const auto& pseudoname : database->getVariableNames())
+	for (const auto& pseudoname : m_pDatabase->getVariableNames())
 	{
 		string realname;
-		database->getRealName(pseudoname, realname);
+		m_pDatabase->getRealName(pseudoname, realname);
 		VariablesList.AddString(realname.c_str());
 	}*/
 }

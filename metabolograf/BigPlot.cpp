@@ -102,17 +102,16 @@ void BigPlot::OnPaint()
 	else 
 		ugc.SetDrawColor(0, 0, 255);
 
-	double dpix = ugc.getDPIX();
-
-	ugc.FillRectangle(cursor, plot->getPlotRect().y - plot->getPlotRect().height, static_cast<int>(2 * dpix), plot->getPlotRect().height);
+	
+	ugc.FillRectangle(cursor, plot->getPlotRect().y - plot->getPlotRect().height, DPIX()(2), plot->getPlotRect().height);
 
 	
 }
 
 void BigPlot::OnLButtonUp(UINT flags, CPoint point)
 {
-	//if (!plot->experience) return;
-	//if (database->getHeader().StartTest <= 0) return;
+	//if (!m_pPlot->experience) return;
+	//if (m_pDatabase->getHeader().StartTest <= 0) return;
 	int x = point.x;
 	int y = point.y;
 	cursor = -1;
@@ -164,7 +163,7 @@ void BigPlot::SetTimeCursor(int selectedItem)//выставляем метку по времени
 
 	time = time - starttime;
 	
-	plot->SetMarkPosByTime(type, time);// x - plot->plotRect.x);
+	plot->SetMarkPosByTime(type, time);// x - m_pPlot->plotRect.x);
 	cursor = -1;
 	plot->DrawPlot();
 	RedrawWindow();

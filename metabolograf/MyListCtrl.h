@@ -28,8 +28,7 @@ protected:
 	set<vector<int>> marks;
 	set<vector<int>> errmarks;
 	bool busy;
-	double dpiX;
-
+	
 	IExperienceStatusTracker* experienceStatusTracker;
 
 	string ToString(string var_name, double value);

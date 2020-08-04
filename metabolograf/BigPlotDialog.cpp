@@ -12,6 +12,9 @@ IMPLEMENT_DYNAMIC(BigPlotDialog, CDialogEx)
 
 BigPlotDialog::BigPlotDialog(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_BIGPLOT_DIALOG, pParent)
+	, m_bExport(false)
+	, m_pPlot(nullptr)
+	, m_pDatabase(nullptr)
 {
 	
 }
@@ -28,7 +31,8 @@ void BigPlotDialog::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(BigPlotDialog, CDialogEx)
-	
+	ON_WM_SIZE()
+	ON_WM_GETMINMAXINFO()
 	ON_BN_CLICKED(IDOK, &BigPlotDialog::OnBnClickedOk)
 	ON_BN_CLICKED(IDCANCEL, &BigPlotDialog::OnBnClickedCancel)
 	ON_BN_CLICKED(IDC_AET, &BigPlotDialog::OnBnClickedAet)
@@ -41,13 +45,12 @@ END_MESSAGE_MAP()
 
 int BigPlotDialog::DoModal(Plot* _plot, bool Export)
 {
-	if (!Export)
-		_Export = Export;
+	m_bExport = Export;
 	//MODE = mode;
-	database = Database::getInstance();
-	plot = _plot;
+	m_pDatabase = Database::getInstance();
+	m_pPlot = _plot;
 	
-	bigPlot.LoadValues({ database->getHeader().AeT , database->getHeader().AT , database->getHeader().MCO });
+	m_BigPlot.LoadValues({ m_pDatabase->getHeader().AeT , m_pDatabase->getHeader().AT , m_pDatabase->getHeader().MCO });
 
 	return CDialogEx::DoModal();
 	
@@ -58,10 +61,9 @@ BOOL BigPlotDialog::OnInitDialog()
 	CDialogEx::OnInitDialog();
 	CRect rect;
 	GetClientRect(&rect);
-	DPIX dpix;
-	rect.top += 30 * static_cast<int>(dpix);
-	bigPlot.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, rect, this, IDC_BIG_PLOT);
-	bigPlot.Init(plot);
+	rect.top += DPIX()(30);
+	m_BigPlot.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, rect, this, IDC_BIG_PLOT);
+	m_BigPlot.Init(m_pPlot);
 
 	CButton *button1 = (CButton*)GetDlgItem(IDC_AET);
 	CButton *button2 = (CButton*)GetDlgItem(IDC_AT);
@@ -69,7 +71,7 @@ BOOL BigPlotDialog::OnInitDialog()
 	button1->SetCheck(true);
 
 	SetWindowText("Расстановка меток");
-	if (!plot->IsExperience())
+	if (!m_pPlot->IsExperience())
 	{
 		button1->ShowWindow(SW_HIDE);
 		button2->ShowWindow(SW_HIDE);
@@ -77,7 +79,7 @@ BOOL BigPlotDialog::OnInitDialog()
 		GetDlgItem(IDC_CLEAR_BUTTON)->ShowWindow(SW_HIDE);
 		SetWindowText("График");
 	}
-	if(!_Export)
+	if(!m_bExport)
 	{
 		GetDlgItem(ID_EXPORT_MPK_BUTTON)->ShowWindow(SW_HIDE);
 		
@@ -87,43 +89,72 @@ BOOL BigPlotDialog::OnInitDialog()
 		
 	return TRUE;
 }
+//-------------------------------------------------------------------------
+void BigPlotDialog::OnSize(UINT nType, int cx, int cy)
+{
+	if (!m_BigPlot.GetSafeHwnd())
+		return;
+	CRect rect;
+	GetClientRect(&rect);
+	rect.top += DPIX()(30);
+	m_BigPlot.MoveWindow(rect);
+	
+	/*
+	int width = rect.Width();
+	auto okButton = GetDlgItem(IDOK);
+	okButton->GetClientRect(&rect);
+	int buttonWidth = rect.Width();
+	rect.left = width - buttonWidth * 2 - 10;
+	rect.right = width - buttonWidth - 10;
+	okButton->MoveWindow(rect);
 
+	auto cancelButton = GetDlgItem(IDCANCEL);
+	rect.left = width - buttonWidth - 5;
+	rect.right = width - 5;
+	cancelButton->MoveWindow(rect);
+	*/
+	CWnd::OnSize(nType, cx, cy);
+}
+//-------------------------------------------------------------------------
+void BigPlotDialog::OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI)
+{
+	lpMMI->ptMinTrackSize = CPoint(836, 400);
+	CDialog::OnGetMinMaxInfo(lpMMI);
+}
+//------------------------------------------------------------------------------------------------
 void BigPlotDialog::OnBnClickedOk()
 {
 	// TODO: добавьте свой код обработчика уведомлений
 	CDialogEx::OnOK();
 }
-
+//------------------------------------------------------------------------------------------------
 void BigPlotDialog::OnBnClickedCancel()
 {
 	// TODO: добавьте свой код обработчика уведомлений
 	CDialogEx::OnCancel();
 }
-
-
+//------------------------------------------------------------------------------------------------
 void BigPlotDialog::OnBnClickedAet()
 {
-	bigPlot.SetType(0);
+	m_BigPlot.SetType(0);
 }
-
-
+//------------------------------------------------------------------------------------------------
 void BigPlotDialog::OnBnClickedAt()
 {
-	bigPlot.SetType(1);
+	m_BigPlot.SetType(1);
 }
-
-
+//------------------------------------------------------------------------------------------------
 void BigPlotDialog::OnBnClickedMoc()
 {
-	bigPlot.SetType(2);
+	m_BigPlot.SetType(2);
 }
 //+++++++++++++++++++++++++
 //++++++++++++++++++++++++
 void BigPlotDialog::ExportButtonClick()
 {
 	//A a = {};
-	if (database->getCount() == 0) return;
-	if (database->getHeader().StartTest <= 0 || database->getHeader().EndTest <= 0)
+	if (m_pDatabase->getCount() == 0) return;
+	if (m_pDatabase->getHeader().StartTest <= 0 || m_pDatabase->getHeader().EndTest <= 0)
 	{
 		MessageBox("Экспорт невозможен, так как исследование выполнено неверно", "Внимание", MB_OK | MB_ICONINFORMATION);
 		return;
@@ -131,17 +162,17 @@ void BigPlotDialog::ExportButtonClick()
 
 	string header = "Протокол-график";
 	/*for(int i=0; i<3; i++)
-		if (bigPlot.getValue(i) <= 0)
+		if (m_BigPlot.getValue(i) <= 0)
 		{
 			MessageBox("Необходимо выставить все метки", "Внимание", MB_OK | MB_ICONINFORMATION);
 			return;
 		}
 	*/
-	database->getHeader().AeT = bigPlot.getValue(0);
-	database->getHeader().AT = bigPlot.getValue(1);
-	database->getHeader().MCO = bigPlot.getValue(2);
+	m_pDatabase->getHeader().AeT = m_BigPlot.getValue(0);
+	m_pDatabase->getHeader().AT = m_BigPlot.getValue(1);
+	m_pDatabase->getHeader().MCO = m_BigPlot.getValue(2);
 
-	Export *pictexport = new Export(database);
+	Export *pictexport = new Export(m_pDatabase);
 	
 
 	FILE *file = pictexport->CreateExportFile(header, "html");
@@ -152,17 +183,17 @@ void BigPlotDialog::ExportButtonClick()
 	CreateDirectory(dir.c_str(), NULL);
 
 	vector<string> code;
-	if (database->getHeader().AeT && database->getHeader().HR)
+	if (m_pDatabase->getHeader().AeT && m_pDatabase->getHeader().HR)
 	{
 		code.push_back("график (осреднение = \"20 сек\", y = ЧСС, легенда=\"Частота сердечных сокращений\"");
 		code.push_back("график (осреднение = \"20 сек\", y = SD, легенда=\"SD\"");
 	}
-	if (database->getHeader().AT)
+	if (m_pDatabase->getHeader().AT)
 	{
 		code.push_back("график (осреднение = \"20 сек\", y = Вентиляционный_эквивалент_O2, легенда=\"Вент.эквивалент по O2\", y = Вентиляционный_эквивалент_CO2, легенда=\"Вент.эквивалент по CO2\")");
 		code.push_back("график (осреднение = \"20 сек\", y = FetO2, легенда=\"EtO2\", y = FetCO2, легенда = \"EtO2\"");
 	}
-	if (database->getHeader().MCO)
+	if (m_pDatabase->getHeader().MCO)
 		code.push_back("график (осреднение = \"20 сек\", y = Потребление_O2_мл_кг_мин, легенда=\"Потребление O2 (мл/кг/мин)\")");
 
 
@@ -175,12 +206,12 @@ void BigPlotDialog::ExportButtonClick()
 		CImage image;
 		Plot plot(800,300);
 		plot.SetExperience(true);
-		plot.SetMarkPosByTableIndex(database, 0, database->getHeader().AeT);
-		plot.SetMarkPosByTableIndex(database, 1, database->getHeader().AT);
-		plot.SetMarkPosByTableIndex(database, 2, database->getHeader().MCO);
+		plot.SetMarkPosByTableIndex(m_pDatabase, 0, m_pDatabase->getHeader().AeT);
+		plot.SetMarkPosByTableIndex(m_pDatabase, 1, m_pDatabase->getHeader().AT);
+		plot.SetMarkPosByTableIndex(m_pDatabase, 2, m_pDatabase->getHeader().MCO);
 
-		//plot.Set
-		plot.Run(database, code[i]);
+		//m_pPlot.Set
+		plot.Run(m_pDatabase, code[i]);
 		
 		plot.DrawPlot();
 		image.Attach(plot.getHBITMAP());
@@ -190,22 +221,6 @@ void BigPlotDialog::ExportButtonClick()
 	}
 
 
-	
-	
-
-	//int len = pictname.length();
-	/*
-	int i = 0;
-	for (i = dir.length(); i>0; i--)
-	{
-		if (dir[i] == '\\') break;
-
-	}
-	//wcscpy(dir, dir + i + 1);
-	*/
-
-	
-	
 	string temp = ExportMPKTable();
 	fwrite(temp.c_str(), temp.length(), 1, file);
 	//ExportPANOTable(file);
@@ -228,7 +243,7 @@ void BigPlotDialog::print(std::iostream& out, const PrintOptions& options)
 	out << fixed;
 	out << "<tr>"
 		<< template_ << options.time;
-	if (database->getHeader().HR)
+	if (m_pDatabase->getHeader().HR)
 	{
 		out << template_ << static_cast<int>(options.HR)
 			<< template_ << static_cast<int>(60000. / options.HR)
@@ -240,9 +255,9 @@ void BigPlotDialog::print(std::iostream& out, const PrintOptions& options)
 		<< template_ << options.VCO2
 		<< template_ << options.EtO2
 		<< template_ << options.EtCO2	
-		<< template_ << (double)options.mop / database->getHeader().PatientWeight
+		<< template_ << (double)options.mop / m_pDatabase->getHeader().PatientWeight
 		<< template_ << static_cast<int>(options.power)
-		<< template_ << options.power / database->getHeader().PatientWeight
+		<< template_ << options.power / m_pDatabase->getHeader().PatientWeight
 		<< template_ << (to_string(options.delta))
 		<< template_ << KER
 		<< template_ << KPD;
@@ -254,35 +269,35 @@ void BigPlotDialog::PrintEnd2Minutes(std::iostream& out, int lastmop)
 {
 	{//отдельная область видимости со своими переменными
 	 //до исследования
-		MTime time = database->getDatetime(database->getHeader().EndTest).getTime() + 120;//необходима 2 минуты после исследования
-		MTime time30 = database->getDatetime(database->getHeader().EndTest).getTime() + 30;//необходима 2 минуты после исследования
+		MTime time = m_pDatabase->getDatetime(m_pDatabase->getHeader().EndTest).getTime() + 120;//необходима 2 минуты после исследования
+		MTime time30 = m_pDatabase->getDatetime(m_pDatabase->getHeader().EndTest).getTime() + 30;//необходима 2 минуты после исследования
 		PrintOptions options;
 		//int count = 0;
 		int start = 0;
 		int end = 0;
 		int end30 = 0;
-		for (end30 = start = end = database->getHeader().EndTest; end < static_cast<int>(database->getCount()); ++end)// ищем подходящее время
+		for (end30 = start = end = m_pDatabase->getHeader().EndTest; end < static_cast<int>(m_pDatabase->getCount()); ++end)// ищем подходящее время
 		{
-			//MTime temp = database->datetime[end].getTime();
-			if (database->getDatetime(end).getTime() < time30)
+			//MTime temp = m_pDatabase->datetime[end].getTime();
+			if (m_pDatabase->getDatetime(end).getTime() < time30)
 				end30++;
-			if (database->getDatetime(end).getTime() >= time)
+			if (m_pDatabase->getDatetime(end).getTime() >= time)
 				break;
 			
 		}
 		
 		--end;
-		options.mop = static_cast<int>(database->getVariable("Минутное_потребление_O2").mean(start, end)*1000.);
-		options.mcop = static_cast<int>(database->getVariable("Минутное_выделение_CO2").mean(start, end)*1000.);
-		if (database->getHeader().HR)
+		options.mop = static_cast<int>(m_pDatabase->getVariable("Минутное_потребление_O2").mean(start, end)*1000.);
+		options.mcop = static_cast<int>(m_pDatabase->getVariable("Минутное_выделение_CO2").mean(start, end)*1000.);
+		if (m_pDatabase->getHeader().HR)
 		{
-			options.HR = database->getVariable("ЧСС").mean(start, end);
-			options.SD = static_cast<int>(database->getVariable("SD").mean(start, end30));//(60000. / database->variables["ЧСС"]).SD(start, end30);
+			options.HR = m_pDatabase->getVariable("ЧСС").mean(start, end);
+			options.SD = static_cast<int>(m_pDatabase->getVariable("SD").mean(start, end30));//(60000. / m_pDatabase->variables["ЧСС"]).SD(start, end30);
 		}
-		options.VO2 = database->getVariable("Вентиляционный_эквивалент_O2").mean(start, end);
-		options.VCO2 = database->getVariable("Вентиляционный_эквивалент_CO2").mean(start, end);
-		options.EtO2 = database->getVariable("FetO2").mean(start, end);
-		options.EtCO2 = database->getVariable("FetCO2").mean(start, end);
+		options.VO2 = m_pDatabase->getVariable("Вентиляционный_эквивалент_O2").mean(start, end);
+		options.VCO2 = m_pDatabase->getVariable("Вентиляционный_эквивалент_CO2").mean(start, end);
+		options.EtO2 = m_pDatabase->getVariable("FetO2").mean(start, end);
+		options.EtCO2 = m_pDatabase->getVariable("FetCO2").mean(start, end);
 
 
 		options.power = 0;
@@ -296,36 +311,36 @@ void BigPlotDialog::Print1Minute(std::iostream& out)
 	{//отдельная область видимости со своими переменными
 	 //до исследования
 		PrintOptions options;
-		MTime time = database->getDatetime(database->getHeader().StartTest).getTime() - 60;//необходима 1 минута до начала исследования
-		MTime time30 = database->getDatetime(database->getHeader().StartTest).getTime() - 30;
+		MTime time = m_pDatabase->getDatetime(m_pDatabase->getHeader().StartTest).getTime() - 60;//необходима 1 минута до начала исследования
+		MTime time30 = m_pDatabase->getDatetime(m_pDatabase->getHeader().StartTest).getTime() - 30;
 		//int count = 0;
 		int start = 0;
 		int end = 0;
 		int start30=0;
-		for (start30 = end = start = database->getHeader().StartTest; start >= 0; --start)// ищем подходящее время
+		for (start30 = end = start = m_pDatabase->getHeader().StartTest; start >= 0; --start)// ищем подходящее время
 		{
-			MTime temp = database->getDatetime(start).getTime();
-			if (database->getDatetime(start).getTime() > time30)
+			MTime temp = m_pDatabase->getDatetime(start).getTime();
+			if (m_pDatabase->getDatetime(start).getTime() > time30)
 				--start30;
 
-			if (database->getDatetime(start).getTime() <= time)
+			if (m_pDatabase->getDatetime(start).getTime() <= time)
 				break;
 			
 		}
 		
 		if (start < 0) start = 0;
-		options.mop = static_cast<int>(database->getVariable("Минутное_потребление_O2").mean(start, end)*1000.);
-		options.mcop = static_cast<int>(database->getVariable("Минутное_выделение_CO2").mean(start, end)*1000.);
-		if (database->getHeader().HR)
+		options.mop = static_cast<int>(m_pDatabase->getVariable("Минутное_потребление_O2").mean(start, end)*1000.);
+		options.mcop = static_cast<int>(m_pDatabase->getVariable("Минутное_выделение_CO2").mean(start, end)*1000.);
+		if (m_pDatabase->getHeader().HR)
 		{
-			options.HR = database->getVariable("ЧСС").mean(start, end);
-			options.SD = static_cast<int>(database->getVariable("SD").mean(start30, end));//(60000./database->variables["ЧСС"]).SD(start, end);
+			options.HR = m_pDatabase->getVariable("ЧСС").mean(start, end);
+			options.SD = static_cast<int>(m_pDatabase->getVariable("SD").mean(start30, end));//(60000./m_pDatabase->variables["ЧСС"]).SD(start, end);
 			
 		}
-		options.VO2 = database->getVariable("Вентиляционный_эквивалент_O2").mean(start, end);
-		options.VCO2 = database->getVariable("Вентиляционный_эквивалент_CO2").mean(start, end);
-		options.EtO2 = database->getVariable("FetO2").mean(start, end);
-		options.EtCO2 = database->getVariable("FetCO2").mean(start, end);
+		options.VO2 = m_pDatabase->getVariable("Вентиляционный_эквивалент_O2").mean(start, end);
+		options.VCO2 = m_pDatabase->getVariable("Вентиляционный_эквивалент_CO2").mean(start, end);
+		options.EtO2 = m_pDatabase->getVariable("FetO2").mean(start, end);
+		options.EtCO2 = m_pDatabase->getVariable("FetCO2").mean(start, end);
 
 
 		options.power = 0;
@@ -338,39 +353,39 @@ void BigPlotDialog::Print1Minute(std::iostream& out)
 std::string  BigPlotDialog::ExportMPKTable()
 {
 	
-	int zerotime_index = database->getHeader().StartTest;
-	int end_index = database->getHeader().EndTest;
+	int zerotime_index = m_pDatabase->getHeader().StartTest;
+	int end_index = m_pDatabase->getHeader().EndTest;
 	
-	Variable_ <MTime> varTime;// = database->GetTimeFromZero(zerotime_index).getWithoutUnchecked(checked);//отсчитываем время 
-	Variable_<uint8_t> checked(database->getCount(), 0);
+	Variable_ <MTime> varTime;// = m_pDatabase->GetTimeFromZero(zerotime_index).getWithoutUnchecked(checked);//отсчитываем время 
+	Variable_<uint8_t> checked(m_pDatabase->getCount(), 0);
 
 	for (int i = zerotime_index; i <= end_index; ++i)
 	{
-		if (database->getChecked(i))
+		if (m_pDatabase->getChecked(i))
 		{
-			varTime.append(database->getDatetime(i).getTime());
+			varTime.append(m_pDatabase->getDatetime(i).getTime());
 			checked[i] = true;
 		}
 	}
 
 	Algorithm alg;
 	auto intervals = alg.getIntervalsByTime(varTime, "30 sec");
-	Variable mop = database->getVariable("Минутное_потребление_O2").getWithoutUnchecked(checked).meanByIntervals(intervals);
-	Variable mcop = database->getVariable("Минутное_выделение_CO2").getWithoutUnchecked(checked).meanByIntervals(intervals);
+	Variable mop = m_pDatabase->getVariable("Минутное_потребление_O2").getWithoutUnchecked(checked).meanByIntervals(intervals);
+	Variable mcop = m_pDatabase->getVariable("Минутное_выделение_CO2").getWithoutUnchecked(checked).meanByIntervals(intervals);
 	
 
 	Variable HR;
 	Variable SD;
-	if (database->getHeader().HR)
+	if (m_pDatabase->getHeader().HR)
 	{
-		HR = database->getVariable("ЧСС").getWithoutUnchecked(checked).meanByIntervals(intervals);
-		SD = database->getVariable("SD").getWithoutUnchecked(checked).meanByIntervals(intervals);
+		HR = m_pDatabase->getVariable("ЧСС").getWithoutUnchecked(checked).meanByIntervals(intervals);
+		SD = m_pDatabase->getVariable("SD").getWithoutUnchecked(checked).meanByIntervals(intervals);
 	}
 	
-	Variable VO2 = database->getVariable("Вентиляционный_эквивалент_O2").getWithoutUnchecked(checked).meanByIntervals(intervals);
-	Variable VCO2 = database->getVariable("Вентиляционный_эквивалент_CO2").getWithoutUnchecked(checked).meanByIntervals(intervals);
-	Variable EtO2 = database->getVariable("FetO2").getWithoutUnchecked(checked).meanByIntervals(intervals);
-	Variable EtCO2 = database->getVariable("FetCO2").getWithoutUnchecked(checked).meanByIntervals(intervals);
+	Variable VO2 = m_pDatabase->getVariable("Вентиляционный_эквивалент_O2").getWithoutUnchecked(checked).meanByIntervals(intervals);
+	Variable VCO2 = m_pDatabase->getVariable("Вентиляционный_эквивалент_CO2").getWithoutUnchecked(checked).meanByIntervals(intervals);
+	Variable EtO2 = m_pDatabase->getVariable("FetO2").getWithoutUnchecked(checked).meanByIntervals(intervals);
+	Variable EtCO2 = m_pDatabase->getVariable("FetCO2").getWithoutUnchecked(checked).meanByIntervals(intervals);
 
 	
 	std::stringstream out;
@@ -380,9 +395,9 @@ std::string  BigPlotDialog::ExportMPKTable()
 	string template_ = "<td align=center valign=top><font size=2>";
 	out << "<tr>"
 		<<	template_<< "<b>Время опыта</b>"
-		<< (database->getHeader().HR ? template_+string("<b>ЧСС, 1/мин.</b>") : "")
-		<< (database->getHeader().HR ? template_ + string("<b>RR, мс</b>") : "")
-		<< (database->getHeader().HR ? template_ + string("<b>SD, мс</b>") : "")
+		<< (m_pDatabase->getHeader().HR ? template_+string("<b>ЧСС, 1/мин.</b>") : "")
+		<< (m_pDatabase->getHeader().HR ? template_ + string("<b>RR, мс</b>") : "")
+		<< (m_pDatabase->getHeader().HR ? template_ + string("<b>SD, мс</b>") : "")
 		<< template_ << "<b>Потребл. O2 (мл/мин.)</b>"
 		<< template_ << "<b>Выдел. CO2 (мл/мин.)</b>"
 		<< template_ << "<b>ВЭO2</b>"
@@ -412,7 +427,7 @@ std::string  BigPlotDialog::ExportMPKTable()
 		options.EtO2 = EtO2[i];
 		options.EtCO2 = EtCO2[i];
 		
-		if (database->getHeader().HR)
+		if (m_pDatabase->getHeader().HR)
 		{
 			options.HR = HR[i];
 			options.SD = static_cast<int>(SD[i]);
@@ -427,7 +442,7 @@ std::string  BigPlotDialog::ExportMPKTable()
 			options.delta = static_cast<int>((mop[i] * 1000 + mop[i - 1] * 1000) / 2 - (mop[i - 2] * 1000 + mop[i - 3] * 1000) / 2);
 
 		// нагрузка
-		options.power = database->getHeader().PowerStep * (i/ 4 + 1);
+		options.power = m_pDatabase->getHeader().PowerStep * (i/ 4 + 1);
 		
 		print(out, options);
 	}
@@ -436,93 +451,106 @@ std::string  BigPlotDialog::ExportMPKTable()
 	out << "</table>";
 	//------
 	double imt = 1;
-	if (database->getHeader().PatientSex == 1)
-		imt = 50. + (database->getHeader().PatientHeight - 150.) *0.75 + (database->getHeader().PatientAge - 21.) / 4.;
+	if (m_pDatabase->getHeader().PatientSex == 1)
+		imt = 50. + (m_pDatabase->getHeader().PatientHeight - 150.) *0.75 + (m_pDatabase->getHeader().PatientAge - 21.) / 4.;
 	else
-		imt = 50. + (database->getHeader().PatientHeight - 150.) * 0.32 + (database->getHeader().PatientAge - 24.) / 5.;
+		imt = 50. + (m_pDatabase->getHeader().PatientHeight - 150.) * 0.32 + (m_pDatabase->getHeader().PatientAge - 24.) / 5.;
 	//------
 
 	
 	
-	if (database->getHeader().AeT > 0)
+	if (m_pDatabase->getHeader().AeT > 0)
 	{
 		out << "<br><table bordercolor=black border=1 style='border-bottom=none'><tr><td colspan=2 align=center bgcolor=black><font size=4 color=white>Порог аэробного окисления (ПАО)</font>";
-		out << "<tr><td>Время достижения ПАО (AeT)<td align=center>" << (database->getDatetime(database->getHeader().AeT).getTime() - database->getDatetime(database->getHeader().StartTest).getTime()).getStringAlt();
-		double MOP = database->getVariable("Минутное_потребление_O2")[database->getHeader().AeT];
+		out << "<tr><td>Время достижения ПАО (AeT)<td align=center>" << (m_pDatabase->getDatetime(m_pDatabase->getHeader().AeT).getTime() - m_pDatabase->getDatetime(m_pDatabase->getHeader().StartTest).getTime()).getStringAlt();
+		double MOP = m_pDatabase->getVariable("Минутное_потребление_O2")[m_pDatabase->getHeader().AeT];
 		out << "<tr><td>Потребление О2 на ПАО (AeT), л/мин.<td align=center>" << MOP;
-		if (database->getHeader().HR)
+		double MCOP = m_pDatabase->getVariable("Минутное_выделение_CO2")[m_pDatabase->getHeader().AeT];
+		out << "<tr><td>Выделение CО2 на ПАО (AeT), л/мин.<td align=center>" << MCOP;
+		out << "<tr><td>Дыхательный коэффициент<td align=center>" << MCOP/MOP;
+		if (m_pDatabase->getHeader().HR)
 		{
-			out << "<tr><td>ЧСС при ПАО (AeT), 1/мин.<td align=center>" << static_cast<int>(database->getVariable("ЧСС")[database->getHeader().AeT]);
-			out << "<tr><td>SD при ПАО (AeT), мс<td align=center>" << static_cast<int>(database->getVariable("SD")[database->getHeader().AeT]);
+			out << "<tr><td>ЧСС при ПАО (AeT), 1/мин.<td align=center>" << static_cast<int>(m_pDatabase->getVariable("ЧСС")[m_pDatabase->getHeader().AeT]);
+			out << "<tr><td>SD при ПАО (AeT), мс<td align=center>" << static_cast<int>(m_pDatabase->getVariable("SD")[m_pDatabase->getHeader().AeT]);
 			//SD при  AeT, мс
 		}
-		out << "<tr><td>Относительное потребление O2 на ПАО (AeT), мл/мин/кг массы тела<td align=center>" << (MOP * 1000 / database->getHeader().PatientWeight);
+		out << "<tr><td>Относительное потребление O2 на ПАО (AeT), мл/мин/кг массы тела<td align=center>" << (MOP * 1000 / m_pDatabase->getHeader().PatientWeight);
 		out << "<tr><td>Относительное потребление O2 на ПАО (AeT), мл/мин/кг идеальной массы тела<td align=center>" << (MOP * 1000 / imt);
-		int pos = FindInterval(intervals, database->getHeader().AeT - database->getHeader().StartTest);
-		double power = database->getHeader().PowerStep * (pos / 4 + 1);
+		int pos = FindInterval(intervals, m_pDatabase->getHeader().AeT - m_pDatabase->getHeader().StartTest);
+		double power = m_pDatabase->getHeader().PowerStep * (pos / 4 + 1);
 		out << "<tr><td>Мощность на ПАО (AeT), Вт<td align=center>" << int(power);
-		out << "<tr><td>Относительная мощность на ПАО (AeT), Вт/кг массы тела<td align=center>" << ((double)power / (double)database->getHeader().PatientWeight);
+		out << "<tr><td>Относительная мощность на ПАО (AeT), Вт/кг массы тела<td align=center>" << ((double)power / (double)m_pDatabase->getHeader().PatientWeight);
 		out << "</table>";
 	}
-	if (database->getHeader().AT)
+	if (m_pDatabase->getHeader().AT)
 	{
 		out << "<br><table bordercolor=black border=1 style='border-bottom=none'><tr><td colspan=2 align=center bgcolor=black><font size=4 color=white>Порог анаэробного окисления (ПАНО)</font>";
-		out << "<tr><td>Время достижения ПАНО (AnT)<td align=center>" << (database->getDatetime(database->getHeader().AT).getTime() - database->getDatetime(database->getHeader().StartTest).getTime()).getStringAlt();
-		double MOP = database->getVariable("Минутное_потребление_O2")[database->getHeader().AT];
+		out << "<tr><td>Время достижения ПАНО (AnT)<td align=center>" << (m_pDatabase->getDatetime(m_pDatabase->getHeader().AT).getTime() - m_pDatabase->getDatetime(m_pDatabase->getHeader().StartTest).getTime()).getStringAlt();
+		double MOP = m_pDatabase->getVariable("Минутное_потребление_O2")[m_pDatabase->getHeader().AT];
 		out << "<tr><td>Потребление О2 на ПАНО (AnT), л/мин.<td align=center>" << MOP;
-		if (database->getHeader().HR)
+		double MCOP = m_pDatabase->getVariable("Минутное_выделение_CO2")[m_pDatabase->getHeader().AT];
+		out << "<tr><td>Выделение CО2 на ПАНО (AeT), л/мин.<td align=center>" << MCOP;
+		out << "<tr><td>Дыхательный коэффициент<td align=center>" << MCOP / MOP;
+		if (m_pDatabase->getHeader().HR)
 		{
-			out << "<tr><td>ЧСС при ПАНО (AnT), 1/мин.<td align=center>" << static_cast<int>(database->getVariable("ЧСС")[database->getHeader().AT]);
-			out << "<tr><td>SD при ПАНО (AnT), мс<td align=center>" << static_cast<int>(database->getVariable("SD")[database->getHeader().AT]);
+			out << "<tr><td>ЧСС при ПАНО (AnT), 1/мин.<td align=center>" << static_cast<int>(m_pDatabase->getVariable("ЧСС")[m_pDatabase->getHeader().AT]);
+			out << "<tr><td>SD при ПАНО (AnT), мс<td align=center>" << static_cast<int>(m_pDatabase->getVariable("SD")[m_pDatabase->getHeader().AT]);
 		}
 		//SD при  AnT, мс
-		out << "<tr><td>Относительное потребление O2 на ПАНО (AnT), мл/мин/кг массы тела<td align=center>" << (MOP * 1000 / database->getHeader().PatientWeight);
+		out << "<tr><td>Относительное потребление O2 на ПАНО (AnT), мл/мин/кг массы тела<td align=center>" << (MOP * 1000 / m_pDatabase->getHeader().PatientWeight);
 		out << "<tr><td>Относительное потребление O2 на ПАНО (AnT), мл/мин/кг идеальной массы тела<td align=center>" << (MOP * 1000 / imt);
-		int pos = FindInterval(intervals, database->getHeader().AT - database->getHeader().StartTest);
-		double power = database->getHeader().PowerStep * (pos / 4 + 1);
+		int pos = FindInterval(intervals, m_pDatabase->getHeader().AT - m_pDatabase->getHeader().StartTest);
+		double power = m_pDatabase->getHeader().PowerStep * (pos / 4 + 1);
 		out << "<tr><td>Мощность на ПАНО (AnT), Вт<td align=center>" << int(power);
-		out << "<tr><td>Относительная мощность на ПАНО (AnT), Вт/кг массы тела<td align=center>" << ((double)power / (double)database->getHeader().PatientWeight);
+		out << "<tr><td>Относительная мощность на ПАНО (AnT), Вт/кг массы тела<td align=center>" << ((double)power / (double)m_pDatabase->getHeader().PatientWeight);
 		out << "</table>";
 	}
 
-	if (database->getHeader().MCO)
+	if (m_pDatabase->getHeader().MCO)
 	{
 		out << "<br><table bordercolor=black border=1 style='border-bottom=none'><tr><td colspan=2 align=center bgcolor=black><font size=4 color=white>Максимальное потребление кислорода (МПК)</font>";
-		out << "<tr><td>Время достижения МПК<td align=center>" << (database->getDatetime(database->getHeader().MCO).getTime() - database->getDatetime(database->getHeader().StartTest).getTime()).getStringAlt();
-		double MOP = database->getVariable("Минутное_потребление_O2")[database->getHeader().MCO];
+		out << "<tr><td>Время достижения МПК<td align=center>" << (m_pDatabase->getDatetime(m_pDatabase->getHeader().MCO).getTime() - m_pDatabase->getDatetime(m_pDatabase->getHeader().StartTest).getTime()).getStringAlt();
+		double MOP = m_pDatabase->getVariable("Минутное_потребление_O2")[m_pDatabase->getHeader().MCO];
 		out << "<tr><td>МПК, л/мин.<td align=center>" << MOP;
-		if (database->getHeader().HR)
+		double MCOP = m_pDatabase->getVariable("Минутное_выделение_CO2")[m_pDatabase->getHeader().MCO];
+		out << "<tr><td>Выделение CО2, л/мин.<td align=center>" << MCOP;
+		out << "<tr><td>Дыхательный коэффициент<td align=center>" << MCOP / MOP;
+		if (m_pDatabase->getHeader().HR)
 		{
-			out << "<tr><td>ЧСС при МПК, 1/мин.<td align=center>" << static_cast<int>(database->getVariable("ЧСС")[database->getHeader().MCO]);
-			out << "<tr><td>SD при МПК, мс<td align=center>" << static_cast<int>(database->getVariable("SD")[database->getHeader().MCO]);
+			out << "<tr><td>ЧСС при МПК, 1/мин.<td align=center>" << static_cast<int>(m_pDatabase->getVariable("ЧСС")[m_pDatabase->getHeader().MCO]);
+			out << "<tr><td>SD при МПК, мс<td align=center>" << static_cast<int>(m_pDatabase->getVariable("SD")[m_pDatabase->getHeader().MCO]);
 			//SD при  МПК, мс
 		}
-		out << "<tr><td>Относительное МПК, мл/мин/кг массы тела<td align=center>" << (MOP * 1000 / database->getHeader().PatientWeight);
+		out << "<tr><td>Относительное МПК, мл/мин/кг массы тела<td align=center>" << (MOP * 1000 / m_pDatabase->getHeader().PatientWeight);
 		out << "<tr><td>Относительное МПК, мл/мин/кг идеальной массы тела<td align=center>" << (MOP * 1000 / imt);
-		int pos = FindInterval(intervals, database->getHeader().MCO - database->getHeader().StartTest);
-		double power = database->getHeader().PowerStep * (pos / 4 + 1);
+		int pos = FindInterval(intervals, m_pDatabase->getHeader().MCO - m_pDatabase->getHeader().StartTest);
+		double power = m_pDatabase->getHeader().PowerStep * (pos / 4 + 1);
 		out << "<tr><td>Максимальная аэробная мощность, Вт<td align=center>" << int(power);
-		out << "<tr><td>Относительная максимальная аэробная мощность, Вт/кг массы тела<td align=center>" << ((double)power / (double)database->getHeader().PatientWeight);
+		out << "<tr><td>Относительная максимальная аэробная мощность, Вт/кг массы тела<td align=center>" << ((double)power / (double)m_pDatabase->getHeader().PatientWeight);
 		out << "</table>" << endl;
 	}
-	
-	
-
-	
-	
-
-
 	return out.str();
 }
 //-----------------------------------------------------------------------
-
 void BigPlotDialog::OnBnClickedExportMpkButton()
 {
 	ExportButtonClick();
 }
-
-
+//-----------------------------------------------------------------------
 void BigPlotDialog::OnBnClickedClearButton()
 {
-	bigPlot.ClearMarks();
+	m_BigPlot.ClearMarks();
+}
+//-----------------------------------------------------------------------
+int BigPlotDialog::FindInterval(vector<int>& v, int p)
+{
+	for (size_t i = 0; i < v.size(); i++)
+	{
+		if (p < v[i])
+		{
+			p = i - 1;
+			break;
+		}
+	}
+	return p;
 }

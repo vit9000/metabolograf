@@ -46,9 +46,7 @@ void TimerWindow::OnPaint()
 	SetBounds();
 
 	UGC ugc(GetDC(), Width, Height);
-	int dpix = static_cast<int>(ugc.getDPIX());
 	
-
 	ugc.getGraphics()->Clear(Color(225, 225, 225));
 	
 	ugc.SetDrawColor(50, 50, 50);
@@ -58,20 +56,20 @@ void TimerWindow::OnPaint()
 	int y = 0;
 	ugc.SetAlign(Align::CENTER);
 
-	ugc.SetTextSize((FontSize - 1)*dpix);
+	ugc.SetTextSize(DPIX()(FontSize - 1));
 	ugc.DrawString("Время исследования", x, y);
 	y += ugc.GetTextHeight();
-	ugc.SetTextSize((FontSize+2)*dpix);
+	ugc.SetTextSize(DPIX()(FontSize+2));
 	ugc.DrawString(rec, x, y);
 	y += ugc.GetTextHeight();
 
 	
 	if (!test.empty())
 	{
-		ugc.SetTextSize((FontSize - 1)*dpix);
+		ugc.SetTextSize(DPIX()(FontSize - 1));
 		ugc.DrawString("Время теста", x, y);
 		y += ugc.GetTextHeight();
-		ugc.SetTextSize((FontSize + 2)*dpix);
+		ugc.SetTextSize(DPIX()(FontSize + 2));
 		ugc.DrawString(test, x, y);
 	}
 

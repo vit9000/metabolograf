@@ -272,10 +272,20 @@ public:
 		}
 	}
 	//-------------------------------------------------------
+	void DrawDashLine(int x1, int y1, int x2, int y2, int line_width = 1)
+	{
+		Gdiplus::Pen penCurrent(color);
+		penCurrent.SetWidth(static_cast<Gdiplus::REAL>(DPIX().GetValue(line_width)));
+		penCurrent.SetDashStyle(Gdiplus::DashStyleCustom);
+		Gdiplus::REAL dashValues[4] = { 1, 2 };
+		penCurrent.SetDashPattern(dashValues, 2);
+		g->DrawLine(&penCurrent, x1, y1, x2, y2);
+	}
+	//-------------------------------------------------------
 	void DrawLine(int x1, int y1, int x2, int y2, int line_width = 1)
 	{
 		Gdiplus::Pen penCurrent(color);
-		penCurrent.SetWidth(static_cast<Gdiplus::REAL>(line_width*getDPIX()));
+		penCurrent.SetWidth(static_cast<Gdiplus::REAL>(DPIX().GetValue(line_width)));
 
 		g->DrawLine(&penCurrent, x1, y1, x2, y2);
 	};
@@ -369,7 +379,7 @@ public:
 	int GetTextWidth(string str,int size)
 	{
 		
-		Gdiplus::Font font(FontName.c_str(), static_cast<Gdiplus::REAL>(size/getDPIX()), Bold ? Gdiplus::FontStyleBold : Gdiplus::FontStyleRegular);
+		Gdiplus::Font font(FontName.c_str(), static_cast<Gdiplus::REAL>(DPIX().GetValue(size)), Bold ? Gdiplus::FontStyleBold : Gdiplus::FontStyleRegular);
 		//Font font(L"Helvetica", TextSize, FontStyleRegular);
 
 		int length = str.length();
@@ -403,7 +413,7 @@ public:
 	void DrawString(string mstring, int x, int y)
 	{
 
-		Gdiplus::Font font(FontName.c_str(), static_cast<Gdiplus::REAL>(TextSize/getDPIX()), Bold?Gdiplus::FontStyleBold:Gdiplus::FontStyleRegular);
+		Gdiplus::Font font(FontName.c_str(), static_cast<Gdiplus::REAL>(DPIX().GetValue(TextSize)), Bold?Gdiplus::FontStyleBold:Gdiplus::FontStyleRegular);
 		//Font font(L"Helvetica", TextSize, FontStyleBold);
 		g->SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);//SetTextRenderingHint(TextRenderingHintAntiAlias);
 		Gdiplus::SolidBrush brush(color);
@@ -613,12 +623,6 @@ public:
 		wstring w = pwText;
 		delete[] pwText;
 		return w;
-	}
-
-	double getDPIX()
-	{
-		
-		return DPIX();
 	}
 
 	

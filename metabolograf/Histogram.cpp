@@ -4,7 +4,7 @@
 
 Histogram::Histogram()
 {
-	border = static_cast<int>(20 * (double)DPIX());
+	border = DPIX()(20);
 }
 
 
@@ -63,11 +63,9 @@ void Histogram::OnPaint()
 	int bitH = (Height - border*2) / maxHBits;
 	if (bitH <= 0) bitH = 1;
 	UGC ugc(GetDC(), Width, Height);
-	double dpix = (double) DPIX();
-
-
+	
 	ugc.SetAlign(Align::CENTER);
-	ugc.SetTextSize(static_cast<int>(8 * dpix));
+	ugc.SetTextSize(DPIX()(8));
 	for (int i = 0; i < table_size; ++i)
 	{
 		int length = static_cast<int>(table[i].size());
@@ -87,8 +85,8 @@ void Histogram::OnPaint()
 	ugc.DrawNumber(min + step*table_size, border + table_size*bitW, Height - border);
 
 	// рисуем ошибку
-	ugc.SetTextSize(static_cast<int>(14 * dpix));
-	ugc.DrawNumber(CalculateErr(), Width/2, static_cast<int>(2 * dpix));
+	ugc.SetTextSize(DPIX()(14));
+	ugc.DrawNumber(CalculateErr(), Width/2, DPIX()(2));
 }
 
 double Histogram::CalculateErr()

@@ -74,7 +74,7 @@ BOOL PlotCustomization::OnInitDialog()
 			m_plotMean.SetCurSel(index);
 		index++;
 	}
-	//m_plotMean.SetWindowTextA(plot->meanTime.c_str());
+	//m_plotMean.SetWindowTextA(m_pPlot->meanTime.c_str());
 
 	type1 = false;
 	if (plot->get_var_X().size() == 0)
@@ -236,7 +236,7 @@ void PlotCustomization::OnBnClickedOk()
 	try
 	{
 		plot->Run(database, str);
-		//plot->Run(database, "график(y=ЧД)");
+		//m_pPlot->Run(m_pDatabase, "график(y=ЧД)");
 		plot->DrawPlot();
 	}
 	catch (exception &ex)
