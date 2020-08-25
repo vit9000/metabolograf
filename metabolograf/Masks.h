@@ -19,8 +19,11 @@ class Masks
 private:
 	vector<Mask> data;
 	string filename;
+	int m_iLastUsed;
 public:
-	Masks():filename("metabolograf_config.ini")
+	Masks()
+		: filename("metabolograf_config.ini")
+		, m_iLastUsed(0)
 	{
 		Ini ini(filename);
 		int count = ini.Read("Masks", "count", 0);
@@ -38,9 +41,17 @@ public:
 			}
 		}
 		else LoadDefaultValues();
+		m_iLastUsed = ini.Read("Masks", "last_used", 0);
 
 	}
 
+	void setLastUsed(int lastUsed)
+	{
+		Ini ini(filename);
+		ini.Write("Masks", "last_used", lastUsed);
+	}
+
+	inline int getLastUsed() { return m_iLastUsed; }
 	size_t count() { return data.size(); }
 	const Mask& getMask(size_t index) const
 	{

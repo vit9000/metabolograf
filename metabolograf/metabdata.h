@@ -58,6 +58,10 @@ struct CIKL_SPIRO // дыхательный цикл спирографа
 
 	int begi;
 	int ende;
+
+	float VO2;
+	float VCO2;
+	float MTB;
 };
 
 
@@ -198,6 +202,16 @@ struct METAB_DATA
 
 	int RR;
 	int HR;
+
+	int mrdone;
+
+	unsigned char pac_height; // рост пациента
+	unsigned char pac_weight; // вес пациента
+	unsigned char pac_age; // возраст
+	unsigned char pac_sex; // пол
+
+	int vds_mask; // объем мертвого пространства маски
+
 
 };
 

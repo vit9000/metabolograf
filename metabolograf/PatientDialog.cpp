@@ -13,6 +13,7 @@ IMPLEMENT_DYNAMIC(PatientDialog, CDialogEx)
 
 PatientDialog::PatientDialog(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PATIENT_DIALOG, pParent)
+	, active(false)
 {
 
 }
@@ -79,7 +80,7 @@ BOOL PatientDialog::OnInitDialog()
 		}
 	}
 	auto& hdata = database->getHeader();
-	int index = static_cast<int>(database->getHeader().MaskNumber);
+	int index = active ? masks.getLastUsed() : static_cast<int>(database->getHeader().MaskNumber);
 	m_MaskCombo.SetCurSel(index);
 
 	return TRUE;
@@ -127,7 +128,10 @@ void PatientDialog::OnBnClickedOk()
 	database->getHeader().PatientWrist = Wrist;
 	database->getHeader().PatientSex = Sex;
 	database->getHeader().MaskNumber = m_MaskCombo.GetCurSel();
-	
+	{ // сохраняем индекс последней использованной маски
+		Masks masks;
+		masks.setLastUsed(m_MaskCombo.GetCurSel());
+	}
 	// TODO: добавьте свой код обработчика уведомлений
 	CDialogEx::OnOK();
 }
