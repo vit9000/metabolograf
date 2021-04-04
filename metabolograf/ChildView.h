@@ -59,11 +59,11 @@ public:
 	bool ProtolsAvailable();
 	// Созданные функции схемы сообщений
 protected:
+	Metab metab;
 	MainPlot main_plot;
 	PlaygroundView playground;
 	MyListCtrl main_list;
 	CTabCtrl m_Tab;
-	Metab metab;
 	CurrentValues curValues;
 	TimerWindow timerWindow;
 	CString filename;

@@ -115,13 +115,17 @@ void Metab::ReadData()
 	{
 		return;
 	}
-	if (g_pdata == NULL || g_pdata->AmntCikl <= 0)
+	if (g_pdata == NULL)
 	{
 		return;
 	}
 	//printf("%d\n", g_pdata->AmntCikl);
 
 	Circle = g_pdata->AmntCikl;
+	HR = g_pdata->HR;
+
+	if (g_pdata->AmntCikl <= 0)
+		return;
 
 	if (Circle == lastCircle) return;//если новые данные не пришли
 

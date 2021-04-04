@@ -8,11 +8,12 @@
 #include "DPIX.h"
 #include <sstream>
 #include <iomanip>
+#include "Metab.h"
 class CurrentValues :
 	public CWnd
 {
 public:
-	CurrentValues();
+	CurrentValues(const Metab &metab);
 	~CurrentValues();
 	void Init();
 	void SetSelected(int new_selected);
@@ -20,6 +21,7 @@ public:
 	
 private:
 	int selected;
+	const Metab &m_rMetab;
 	Database* database;
 	int Width;
 	int Height;

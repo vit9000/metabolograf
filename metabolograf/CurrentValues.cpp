@@ -6,7 +6,8 @@ BEGIN_MESSAGE_MAP(CurrentValues, CWnd)
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
-CurrentValues::CurrentValues()
+CurrentValues::CurrentValues(const Metab &metab)
+	: m_rMetab(metab)
 {
 	selected = -1;
 }
@@ -98,7 +99,7 @@ void CurrentValues::OnPaint()
 	for (size_t i = 0; i < variable_names.size(); i++)
 	{
 		string& vname = variable_names[i];
-		if (vname=="ЧСС" && !database->isVariableExists(vname)) continue;//если чсс не учитывается и нет такой переменной то рисовать не надо
+		//if (vname=="ЧСС" && !database->isVariableExists(vname)) continue;//если чсс не учитывается и нет такой переменной то рисовать не надо
 		
 		int yi = static_cast<int>(i / 2);
 		yi *= static_cast<int>(space * 2.7);
@@ -124,6 +125,9 @@ void CurrentValues::OnPaint()
 		double value = 0;
 		if (selected != -1)
 			value = database->getVariable(vname)[selected];
+		else if (vname == "ЧСС")
+			value = m_rMetab.HR;
+
 		ugc.SetDrawColor(235, 235, 235);
 		ugc.SetDrawColor(0, 0, 0);
 

@@ -15,6 +15,7 @@ using namespace std;
 
 
 CChildView::CChildView()
+	: curValues(metab)
 {
 	database = Database::getInstance();
 	Circle = 0;
@@ -669,8 +670,12 @@ bool CChildView::GetNewData()
 {
 	metab.ReadData();
 
-	if (!metab.IsNewDataRecieved()) return false;//если новые данные не получили, то пропускаем
-	if (metab.RespRate == 0 || metab.RespRate>100) return false;
+	if (!metab.IsNewDataRecieved() || metab.RespRate == 0 || metab.RespRate > 100)
+	{
+		curValues.RedrawWindow();
+		return false;//если новые данные не получили, то пропускаем
+	}
+	
 	metab.NewDataReaded();//если данные получили
 
 	time_t t = time(NULL);
