@@ -122,7 +122,7 @@ void CurrentValues::OnPaint()
 		ugc.SetTextSize(DPIX()(22));
 
 		
-		double value = 0;
+		double value = -1;
 		if (selected != -1)
 			value = database->getVariable(vname)[selected];
 		else if (vname == "ЧСС")
@@ -256,7 +256,7 @@ string CurrentValues::DoubleToString(double val)
 
 string CurrentValues::ToString(string var_name, double value)
 {
-	if (value < 0) return string("НД");
+	if (value < 0) return string("--");
 
 	int precision = 3;
 	if (var_name == "Метаболизм_O2" ||

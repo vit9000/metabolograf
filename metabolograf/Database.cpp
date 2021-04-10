@@ -106,7 +106,7 @@ void Database::DefaultVarNames()
 	variable_names.push_back("Метаболизм_CO2");
 	variable_names.push_back("ДМП");
 	variable_names.push_back("Минутная_вентиляция");
-
+	
 	variable_pseudonames.load();
 	
 	
@@ -115,6 +115,7 @@ void Database::DefaultVarNames()
 		variable_names.push_back("ЧСС");
 		variable_names.push_back("RR");
 		variable_names.push_back("SD");
+		variable_names.push_back("O2_ЧСС");
 	}
 	else hdata.HR = 0;
 }
@@ -397,6 +398,8 @@ void Database::CalculateParameters()
 	variables["Вентиляционный_эквивалент_O2"] = Vexp / variables["Потребление_O2"];
 	variables["Вентиляционный_эквивалент_CO2"] = Vexp / variables["Выделение_CO2"];
 
+	variables["O2_ЧСС"] = variables["Минутное_потребление_O2"] * 1000 / variables["ЧСС"];
+	
 	// РАСЧЕТ ДЫХАТЕЛЬНОГО КОЭФФИЦИЕНТА
 	variables["Дыхательный_коэффициент"] = variables["Минутное_выделение_CO2"] / variables["Минутное_потребление_O2"];
 	Variable& BrK_Ptr = variables["Дыхательный_коэффициент"];
@@ -557,8 +560,10 @@ void Database::CalculateParameters(int i)
 	variables["Вентиляционный_эквивалент_O2"][i] = Vexp / variables["Потребление_O2"][i];
 	variables["Вентиляционный_эквивалент_CO2"][i] = Vexp / variables["Выделение_CO2"][i];
 
+	variables["O2_ЧСС"][i] = variables["Минутное_потребление_O2"][i] / variables["ЧСС"][i];
+	
 	// РАСЧЕТ ДЫХАТЕЛЬНОГО КОЭФФИЦИЕНТА
-	variables["Дыхательный_коэффициент"][i] = variables["Минутное_выделение_CO2"][i] / variables["Минутное_потребление_O2"][i];
+	variables["Дыхательный_коэффициент"][i] = variables["Минутное_выделение_CO2"][i] * 1000 / variables["Минутное_потребление_O2"][i];
 	double& BrK_Ptr = variables["Дыхательный_коэффициент"][i];
 	double tempMOP = variables["Минутное_потребление_O2"][i];
 	double tempMCOP = variables["Минутное_выделение_CO2"][i];

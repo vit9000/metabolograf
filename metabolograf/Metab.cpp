@@ -7,20 +7,20 @@ Metab::Metab()
 	DemoReserv = false;
 	Demo = false;
 	Initialized = false;
-	FiO2 = 0.;
-	FetO2 = 0.;
-	FiCO2 = 0.;
-	FetCO2 = 0.;
+	FiO2 = -1;
+	FetO2 = -1;
+	FiCO2 = -1;
+	FetCO2 = -1;
 
-	RespRate = 0;
-	Circle = 0;
-	FirstCircle = 0;
+	RespRate = -1;
+	Circle = -1;
+	FirstCircle = -1;
 	lastCircle = -1;
 	NewDataRecieved = false;
-	Vol_insp = 0.;
-	Vol_exsp = 0.;
-	RespRate = 0;
-	HR = 0;
+	Vol_insp = -1;
+	Vol_exsp = -1;
+	RespRate = -1;
+	HR = -1;
 	g_pdata = 0;
 
 

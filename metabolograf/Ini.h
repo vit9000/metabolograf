@@ -43,12 +43,12 @@ public:
 
 	string Read(const string& section, const string& field, const string& default_value)
 	{
-		char out[256];
+		char out[4000];
 		
 		DWORD dd = GetPrivateProfileString(
 				section.c_str(), field.c_str(), default_value.c_str(),
 				out,
-				256,
+				4000,
 				file_name_.c_str());
 		return string(out);
 	}

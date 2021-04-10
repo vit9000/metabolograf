@@ -84,39 +84,40 @@ BOOL PlotCustomization::OnInitDialog()
 	if (plot->getPlotCode().empty()) return TRUE;
 	
 
-	const vector<PlotParameter>* var_XY;
+	const vector<PlotParameter>* var_Y;
+
+	var_Y = &plot->get_var_Y();
+	if (var_Y->size() == 0) return TRUE;
 
 	if (type1)// x - one-time, y - multi
 	{
-		var_XY = &plot->get_var_Y();
-		if (var_XY->size() == 0) return TRUE;
+		
 	}
-	else // x - multi, y -one
+	else // x - one, y - multi
 	{
-		var_XY = &plot->get_var_X();
-		if (var_XY->size() == 0) return TRUE;
+		const PlotParameter& varX = plot->get_var_X()[0];
 
+		//m_onevarlist.SetWindowTextA(database->GetPseudoname(varX.getVarname(0)).c_str());
 
-		const PlotParameter& varY = plot->get_var_Y()[0];
-		for (const auto& varname : database->getVariableNames())
+		/*for (const auto& varname : database->getVariableNames())
 		{
-			if (varY.getVarname(0) == varname)
+			if (varX.getVarname(0) == varname)
 				m_onevarlist.SetWindowTextA(varname.c_str());
-		}
+		}*/
 		double start = -1;
-		if (!varY.getAutoStart())
-			start = varY.getStart();
+		if (!varX.getAutoStart())
+			start = varX.getStart();
 
 		double end = -1;
-		if (!varY.getAutoEnd())
-			end = varY.getEnd();
+		if (!varX.getAutoEnd())
+			end = varX.getEnd();
 
-		Parameter p = { varY.getVarname(0), varY.getLegend(0), start, end, 0 };
-		axisY.push_back(p);
+		Parameter p = { varX.getVarname(0), varX.getLegend(0), start, end, 0 };
+		axisX.push_back(p);
 	}
 	//загрузка данных
 	int axis_number = 0;
-	for (const auto& var : (*var_XY))
+	for (const auto& var : (*var_Y))
 	{
 		//Parameter p;
 		int count = var.count();
@@ -166,16 +167,16 @@ string PlotCustomization::BuildCode()
 	else
 	{
 
-		multivar = "x=";
+		multivar = "y=";
 		result +=
-			string("y=") +
-			axisY[0].varname + string(",") +
+			string("x=") +
+			axisX[0].varname + string(",") +
 			string("легенда=\"") +
-			axisY[0].legend + string("\",");
-		if (axisY[0].start != -1)
-			result += string("начало=") + to_string(axisY[0].start) + ",";
-		if (axisY[0].end != -1)
-			result += string("конец=") + to_string(axisY[0].end) + ",";
+			axisX[0].legend + string("\",");
+		if (axisX[0].start != -1)
+			result += string("начало=") + to_string(axisX[0].start) + ",";
+		if (axisX[0].end != -1)
+			result += string("конец=") + to_string(axisX[0].end) + ",";
 
 	}
 
@@ -288,22 +289,22 @@ void PlotCustomization::SetView()
 	m_type1.SetCheck(type1);
 	m_type2.SetCheck(!type1);
 	
-	if (type1)
+	//if (type1)
 	{
 		multiAxis = &axisY;
-		m_onevarlist.ShowWindow(SW_HIDE);
 		m_text_multi.SetWindowTextA("Ось Y");
-		m_text_one.ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_ONEAXISEDITBUTTON)->ShowWindow(SW_HIDE);
+		m_text_one.ShowWindow(type1 ? SW_HIDE : SW_SHOW);
+		m_onevarlist.ShowWindow(type1 ? SW_HIDE : SW_SHOW);
+		GetDlgItem(IDC_ONEAXISEDITBUTTON)->ShowWindow(type1 ? SW_HIDE : SW_SHOW);
 	}
-	else
+	/*else
 	{
 		multiAxis = &axisX;
 		m_onevarlist.ShowWindow(SW_SHOW);
 		m_text_multi.SetWindowTextA("Ось X");
 		m_text_one.ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_ONEAXISEDITBUTTON)->ShowWindow(SW_SHOW);
-	}
+	}*/
 	if (!fullCustomization)
 	{
 		m_onevarlist.ShowWindow(SW_HIDE);
@@ -321,8 +322,7 @@ void PlotCustomization::SetView()
 void PlotCustomization::UpdateLists()
 {
 	m_multivarlist.ResetContent();
-	vector<Parameter>* multiAxis = &axisX;
-	if(type1)  multiAxis = &axisY;
+	vector<Parameter>* multiAxis = &axisY;
 	//загружаем лист переменных
 	int scaleN = 1;
 	for (auto& var : (*multiAxis))
@@ -332,8 +332,8 @@ void PlotCustomization::UpdateLists()
 		m_multivarlist.AddString(str.c_str());
 	}
 	m_onevarlist.ResetContent();
-	if(axisY.size()!=0)
-		m_onevarlist.AddString(axisY[0].varname.c_str());
+	if(axisX.size()!=0)
+		m_onevarlist.AddString(database->GetPseudoname(axisX[0].varname).c_str());
 }
 
 void PlotCustomization::OnAddButtonClick()
@@ -388,12 +388,12 @@ void PlotCustomization::OnOneAxisEditButtonClick()
 	int selected = 0;//m_onevarlist.GetCurSel();
 	
 	AxisDialog dlg;
-	dlg.Init(GetAxisCount(axisY) + 1);
-	dlg.SetParameter(axisY[selected]);
+	dlg.Init(GetAxisCount(axisX) + 1);
+	dlg.SetParameter(axisX[selected]);
 
 	if (dlg.DoModal() == IDOK)
 	{
-		axisY[selected] = dlg.GetParameter();
+		axisX[selected] = dlg.GetParameter();
 		UpdateLists();
 	}
 }

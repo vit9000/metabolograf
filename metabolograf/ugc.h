@@ -450,6 +450,20 @@ public:
 		DrawString(ToString(number, count), x, y);
 	}
 	//-------------------------------------------------------
+	void DrawNumberAlt(double number, int x, int y)
+	{
+		DrawString(ToStringAlt(number), x, y);
+	}
+	//-------------------------------------------------------
+	string ToStringAlt(double number)
+	{
+		if (abs(number) >= 10)
+			return ToString(number, 0);
+		else if (abs(number) < 0.001)
+			return ToString(0, 0);
+		return ToString(number, 1);
+	}
+	//-------------------------------------------------------
 	string ToString(double number)
 	{
 		int sign = 1;

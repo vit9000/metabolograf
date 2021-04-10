@@ -65,7 +65,7 @@ struct CIKL_SPIRO // дыхательный цикл спирографа
 };
 
 
-struct METAB_DATA 
+struct METAB_DATA
 {
 	int AmntCikl;						//кол-во дыхательных циклов
 	CIKL_SPIRO CiklSpiro[MaxCikl];		//массив структур дыхательного цикла
@@ -91,7 +91,7 @@ struct METAB_DATA
 	int PtrCapno;							//указатель на массивы карнограммы и оксиграммы
 	float Kapnogramma[MinutValueCapno];		//массивы значения капнограммы за минуту
 	float Oxigramma[MinutValueCapno];		//массивы значения оксиграммы  за минуты
-    float Oxigramma0;						//текущее значение оксиграммы	
+	float Oxigramma0;						//текущее значение оксиграммы	
 	float Kapnogramma0;						//текущее значение капнограммы
 
 	int FiCO2;								// концентрация CO2 на вдохе (мм.рт.ст.)
@@ -212,7 +212,7 @@ struct METAB_DATA
 
 	int vds_mask; // объем мертвого пространства маски
 
+	int HRnew;
 
 };
 
-  

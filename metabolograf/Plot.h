@@ -111,7 +111,7 @@ public:
 	void DrawAxisTime(UGC& ugc, const VitLib::Bounds& plotRect);
 	void DrawLegend(UGC& ugc, vector<string> var_Y, const VitLib::Bounds& rect);
 	void DrawTwoParamPlot();
-	
+	double GetStep(double range);
 
 };
 

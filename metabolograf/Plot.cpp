@@ -548,9 +548,39 @@ void Plot::DrawTimePlot()
 	DrawAxisTime(ugc, plotRect);
 }
 //-------------------------------------------------------------------------------------------------------
+double Plot::GetStep(double range)
+{
+	auto f = [](int range) 
+	{
+		if (range % 6 == 0)
+		{
+			return range / 6;
+		}
+		else if (range % 4 == 0)
+		{
+			return range / 4;
+		}
+		else if (range % 5 == 0)
+		{
+			return range / 5;
+		}
+		return range / 10;
+	};
+
+
+	if (range > (int)range / 10 * 10)
+	{
+		int r = (int)(range * 10);
+		double result = static_cast<double>(f(r)) / 10.;
+		return result;
+	}
+	return f((int)range);
+	
+
+}
+//-------------------------------------------------------------------------------------------------------
 void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, const int& position, const VitLib::Bounds& plotRect)
 {
-	int countPointsInAxis = 10;
 	int x;
 
 	int space = 4;
@@ -569,25 +599,23 @@ void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, const int& position, con
 
 	double range = variable.getRange();
 	double start = variable.getStart();
-
+	double end = variable.getEnd();
+	double step = GetStep(range);
+	
 	ugc.SetTextSize(TextSizeAxis);
 	x += space;
 	int w = ugc.GetTextWidth(ugc.ToString(start + range), TextSizeAxis);
-	for (int i = 0; i < countPointsInAxis; i++)
+	ugc.SetDrawColor(Color(0, 0, 0));
+	for (double number = start; number <= end; number += step)
 	{
-		double number = (range / (double)countPointsInAxis)*(double)i;
-
-		int y = plotRect.y - i*plotRect.height / countPointsInAxis;
-
-		ugc.SetDrawColor(Color(0, 0, 0));
-		ugc.DrawNumber(number + start, x, y - ugc.GetTextHeight() / 2);
-		//ugc.DrawLine(x - 1, y, x + 1, y);
-		ugc.SetDrawColor(Color(155, 155, 155));
-		ugc.DrawDashLine(plotRect.x, y, plotRect.x + plotRect.width, y);
-
-		int temp = ugc.GetTextWidth(ugc.ToString(start + number), TextSizeAxis);
-		if (temp > w) w = temp;
+		int yi = plotRect.y - (int)((number-start) * (plotRect.height/range));
+		ugc.DrawNumberAlt(number, x, yi - ugc.GetTextHeight() / 2);
+		if (position % 2 == 0)
+			ugc.DrawLine(x, yi, x+2, yi);
+		else
+			ugc.DrawLine(x - 2, yi, x, yi);
 	}
+
 	ugc.SetDrawColor(Color(0, 0, 0));
 	ugc.SetTextSize(TextSizeLegend);
 	string text = "";
@@ -614,26 +642,28 @@ void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, const int& position, con
 //-------------------------------------------------------------------------------------------------------
 void Plot::DrawAxisX(UGC& ugc, PlotParameter& variable, const int& position, const VitLib::Bounds& plotRect)
 {
-	int step = ugc.GetTextWidth("12345", TextSizeAxis);
-	int countPointsInAxis = plotRect.width / step;
+	//int step = ugc.GetTextWidth("12345", TextSizeAxis);
+	//int countPointsInAxis = plotRect.width / step;
 	int x = plotRect.x;
 	int y = plotRect.y + position*(ugc.GetTextHeight(TextSizeAxis) + ugc.GetTextHeight(TextSizeLegend));
 	int space = 4;
 	double range = variable.getRange();
 	double start = variable.getStart();
+	double end = variable.getEnd();
+	double step = GetStep(range);
+
 	ugc.SetTextSize(TextSizeAxis);
 	int textHeight = static_cast<int>(ugc.GetTextHeight()*1.3);
 	ugc.SetAlign(Align::CENTER);
-	for (int i = 0; i < countPointsInAxis; i++)
+	ugc.SetDrawColor(Color(0, 0, 0));
+	for (double number = start; number <= end; number += step)
 	{
-		double number = (range / (double)countPointsInAxis)*(double)i;
-		ugc.SetDrawColor(Color(0, 0, 0));
-		ugc.DrawNumber(number + start, x + i*step, y + 4);
-		
-		ugc.SetDrawColor(Color(155, 155, 155));
-		ugc.DrawDashLine(x + i * step, plotRect.y, x + i * step, plotRect.y-plotRect.height);
-		
+		int xi = plotRect.x + (int)((number - start) * (plotRect.width / range));
+
+		ugc.DrawNumberAlt(number, xi, y + 4);
+		ugc.DrawDashLine(xi, plotRect.y + 4, xi, plotRect.y + 6);
 	}
+	
 	ugc.SetDrawColor(Color(0, 0, 0));
 	ugc.SetTextSize(TextSizeLegend);
 	string text = "";
@@ -717,7 +747,7 @@ void Plot::DrawLegend(UGC& ugc, vector<string> var_Y, const VitLib::Bounds& rect
 	}
 }
 //-------------------------------------------------------------------------------------------------------
-void Plot::DrawTwoParamPlot()
+void Plot::DrawTwoParamPlot()//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 {
 	//подготовка к прорисовке
 	UGC ugc(bitmap);
@@ -730,15 +760,22 @@ void Plot::DrawTwoParamPlot()
 
 	int legendHeight = 0;//variables.size() * 16;
 	int legendItemHeight = ugc.GetTextHeight(TextSizeLegend + 1);
-	for (size_t i = 0; i < var_X.size(); i++)
-		legendHeight += var_X[i].count() * (legendItemHeight);
+	if (var_Y.size() > 1)
+	{
+		for (size_t i = 0; i < var_Y.size(); i++)
+			legendHeight += var_Y[i].count() * (legendItemHeight);
+	}
+
 
 	int axisX_height = ugc.GetTextHeight(TextSizeAxis) + ugc.GetTextHeight(TextSizeLegend);
 	axisX_height *= var_X.size();
 
+	int e = even(var_Y.size()) - 1;
+	int o = odd(var_Y.size());
+
 	plotRect = { borderX / 10 + borderX,
 		Height - borderY / 2 - axisX_height,
-		Width - borderX / 5 - borderX,
+		Width - borderX / 5 - borderX * o - borderX * e,
 		static_cast<int>(Height - borderY*1.5 - legendHeight - headerHeight - axisX_height) };
 
 	//рисуем рамку рабочей области графика
@@ -753,29 +790,31 @@ void Plot::DrawTwoParamPlot()
 	temp_ugc.SetDrawColor(bgColor);
 	temp_ugc.Clear();
 
-	for (int i = 0; i < 1;/*var_X.size()*/ i++)//допускаем только одно значение по Y
+	int xi = 0;
+	for (int yi = 0; yi < (int)var_Y.size(); yi++)//допускаем только одно значение по Y
 	{
 		// масштабируем график
-		double startX = var_X[i].getStart();
-		double endX = var_X[i].getEnd();
-		double scaleX = var_X[i].getZoom(plotRect.width);
-		double startY = var_Y[i].getStart();
-		double endY = var_Y[i].getEnd();
-		double scaleY = var_Y[i].getZoom(plotRect.height);
+		double startX = var_X[xi].getStart();
+		double endX = var_X[xi].getEnd();
+		double scaleX = var_X[xi].getZoom(plotRect.width);
+		double startY = var_Y[yi].getStart();
+		double endY = var_Y[yi].getEnd();
+		double scaleY = var_Y[yi].getZoom(plotRect.height);
 
 		//проверка если переменная пустая
-		for (int v = 0; v < static_cast<int>(var_X[i].count()); v++)
+		for (int v = 0; v < static_cast<int>(var_Y[yi].count()); v++)
 		{
 			//определяемся с размером прорисовки. Если значений больше, чем ширина графика, то обрезаем до ширины графика
-			int sizeX = var_X[i].size(v);
-			if (sizeX > plotRect.width) sizeX = plotRect.width;
+			int sizeX = var_X[xi].size(v);
+			if (sizeX > plotRect.width) 
+				sizeX = plotRect.width;
 
-			legends.push_back(var_X[i].getLegend(v));
+			legends.push_back(var_Y[yi].getLegend(v));
 
 			temp_ugc.SetDrawColor(ColorPalette[countPlots]);
 			// рисуем кривые
-			Variable& varX = var_X[i].getVar(v);
-			Variable& varY = var_Y[i].getVar(0);
+			Variable& varX = var_X[xi].getVar(0);
+			Variable& varY = var_Y[yi].getVar(v);
 			int x_step = plotRect.width;;
 			if(sizeX>0) x_step/= sizeX;
 
@@ -811,11 +850,13 @@ void Plot::DrawTwoParamPlot()
 		}
 	}
 	ugc.DrawBitmap(&temp_bitmap, plotRect.x, plotRect.y - plotRect.height, plotRect.width, plotRect.height);
-	DrawLegend(ugc, legends, plotRect);
+	if(legends.size() > 1)
+		DrawLegend(ugc, legends, plotRect);
 
-	DrawAxisY(ugc, var_Y[0], 0, plotRect);
-	for (size_t i = 0; i<var_X.size(); i++)
-		DrawAxisX(ugc, var_X[i], i, plotRect);
+	for (int i = 0; i < (int)var_Y.size(); i++)
+		DrawAxisY(ugc, var_Y[i], i, plotRect);
+	//for (size_t i = 0; i<var_X.size(); i++)
+	DrawAxisX(ugc, var_X[0], 0, plotRect);
 
 }
 //-------------------------------------------------------------------------------------------------------
