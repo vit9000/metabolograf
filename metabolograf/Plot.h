@@ -69,6 +69,7 @@ public:
 		for (auto& m : marks) m = -1;
 		DrawPlot();
 	}
+	bool IsTimePlot() { return plot_type == "TimePlot"; }
 	const string getMeanTime() { return meanTime; };
 	bool IsExperience() const { return experience; }
 	void SetExperience(bool status) { experience = status; }

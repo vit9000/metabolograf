@@ -356,9 +356,15 @@ void Plot::Run(Database* database, const vector<string>& str)
 		}
 	}
 	if (var_X.size() == 0)
+	{
 		plot_type = "TimePlot";
+		experience = true;
+	}
 	else
+	{
+		experience = false;
 		plot_type = "TwoParamPlot";
+	}
 
 	if (experience)
 	{
@@ -434,9 +440,15 @@ void Plot::DrawPlot()
 	catch (...) { return; }
 
 	if (plot_type == "TimePlot")
+	{
+		experience = true;
 		DrawTimePlot();
+	}
 	else //if(plot_type == "TwoParamPlot")
+	{
+		experience = false;
 		DrawTwoParamPlot();
+	}
 }
 //-------------------------------------------------------------------------------------------------------
 int Plot::GetStep(int& size)
@@ -583,18 +595,18 @@ void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, const int& position, con
 {
 	int x;
 
-	int space = 4;
+	int space = 1;
 	if (position % 2 == 0)//четный график - начиная с 0. Ось рисуется слева
 	{
 		ugc.SetAlign(Align::RIGHT);
 		x = plotRect.x - borderX*(position / 2) - 3;
-		space = -4;
+		space = -1;
 	}
 	else//нечетный график. Ось рисуется справа
 	{
 		ugc.SetAlign(Align::LEFT);
 		x = plotRect.x + borderX*(position / 2) + plotRect.width + 3;
-		space = 4;
+		space = 1;
 	}
 
 	double range = variable.getRange();
