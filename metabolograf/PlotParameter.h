@@ -75,9 +75,28 @@ public:
 			if (varY.size() == 1 || max > end)
 				end = max;
 
-			double temp = (end - start)*0.05;
-			start -= temp;
-			end += temp;
+			int t = (int)max;
+			if (t < 1)
+			{
+				double temp = (end - start)*0.05;
+				start -= temp;
+				end += temp;
+			}
+			else
+			{
+				int counter = 0;
+				while (t > 10)
+				{
+					t /= 10;
+					counter++;
+				}
+				end = (t+1) * pow(10, counter);
+				t = (int)(min / pow(10, counter));
+				if (t == 0)
+					start = 0;
+				else
+					start = t * pow(10, counter);
+			}
 		}
 		
 
