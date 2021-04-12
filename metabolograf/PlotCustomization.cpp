@@ -328,12 +328,16 @@ void PlotCustomization::UpdateLists()
 	for (auto& var : (*multiAxis))
 	{
 		string str = "шкала " + to_string(var.axis_number+1) + ": ";
-		str += database->GetPseudoname(var.varname);
+		str += var.legend.empty() ? database->GetPseudoname(var.varname) : var.legend;
 		m_multivarlist.AddString(str.c_str());
 	}
 	m_onevarlist.ResetContent();
-	if(axisX.size()!=0)
-		m_onevarlist.AddString(database->GetPseudoname(axisX[0].varname).c_str());
+	if (axisX.size() != 0)
+	{
+		auto& var = axisX[0];
+		string str = var.legend.empty() ? database->GetPseudoname(var.varname) : var.legend;
+		m_onevarlist.AddString(str.c_str());
+	}
 }
 
 void PlotCustomization::OnAddButtonClick()
