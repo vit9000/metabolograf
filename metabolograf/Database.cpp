@@ -398,7 +398,8 @@ void Database::CalculateParameters()
 	variables["Вентиляционный_эквивалент_O2"] = Vexp / variables["Потребление_O2"];
 	variables["Вентиляционный_эквивалент_CO2"] = Vexp / variables["Выделение_CO2"];
 
-	variables["O2_ЧСС"] = variables["Минутное_потребление_O2"] * 1000 / variables["ЧСС"];
+	if(variables.count("ЧСС"))
+		variables["O2_ЧСС"] = variables["Минутное_потребление_O2"] * 1000 / variables["ЧСС"];
 	
 	// РАСЧЕТ ДЫХАТЕЛЬНОГО КОЭФФИЦИЕНТА
 	variables["Дыхательный_коэффициент"] = variables["Минутное_выделение_CO2"] / variables["Минутное_потребление_O2"];
@@ -560,7 +561,8 @@ void Database::CalculateParameters(int i)
 	variables["Вентиляционный_эквивалент_O2"][i] = Vexp / variables["Потребление_O2"][i];
 	variables["Вентиляционный_эквивалент_CO2"][i] = Vexp / variables["Выделение_CO2"][i];
 
-	variables["O2_ЧСС"][i] = variables["Минутное_потребление_O2"][i] / variables["ЧСС"][i];
+	if (variables.count("ЧСС"))
+		variables["O2_ЧСС"][i] = variables["Минутное_потребление_O2"][i] / variables["ЧСС"][i];
 	
 	// РАСЧЕТ ДЫХАТЕЛЬНОГО КОЭФФИЦИЕНТА
 	variables["Дыхательный_коэффициент"][i] = variables["Минутное_выделение_CO2"][i] * 1000 / variables["Минутное_потребление_O2"][i];

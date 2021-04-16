@@ -123,7 +123,7 @@ void CurrentValues::OnPaint()
 
 		
 		double value = -1;
-		if (selected != -1)
+		if (selected != -1 && database->isVariableExists(vname))
 			value = database->getVariable(vname)[selected];
 		else if (vname == "×ÑÑ")
 			value = m_rMetab.HR;
