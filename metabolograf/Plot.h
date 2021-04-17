@@ -105,14 +105,14 @@ public:
 	int DrawHeader(UGC& ugc);
 	void CheckData();
 	void DrawPlot();
-	int GetStep(int& size);
+	double GetStepX(int size);
 	void DrawTimePlot();
 	void DrawAxisY(UGC& ugc, PlotParameter& variable, int position, const VitLib::Bounds& plotRect);
 	void DrawAxisX(UGC& ugc, PlotParameter& variable, int position, const VitLib::Bounds& plotRect);
 	void DrawAxisTime(UGC& ugc, const VitLib::Bounds& plotRect);
 	void DrawLegend(UGC& ugc, vector<string> var_Y, const VitLib::Bounds& rect);
 	void DrawTwoParamPlot();
-	double GetStep(double range);
+	double GetStepY(double range);
 
 };
 

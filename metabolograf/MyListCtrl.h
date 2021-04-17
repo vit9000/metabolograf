@@ -22,6 +22,8 @@ using namespace std;
 class MyListCtrl : public CListCtrl
 {
 protected:
+	int m_iWidth;
+	int m_iHeight;
 	const string ini_filename;
 	Database *database;
 	vector<string> show_parameters;
@@ -72,5 +74,5 @@ public:
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 };

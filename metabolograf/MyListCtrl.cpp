@@ -5,10 +5,13 @@
 BEGIN_MESSAGE_MAP(MyListCtrl, CWnd)
 	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
 MyListCtrl::MyListCtrl()
+	: m_iWidth(0)
+	, m_iHeight(0)
 {
 	busy = false;
 	experienceStatusTracker = nullptr;
@@ -64,8 +67,6 @@ void MyListCtrl::SetSelectedItem(int index)
 {
 	busy = true;
 
-
-
 	SetSelectionMark(index);
 	//SetItemState(index, LVIS_SELECTED | LVIS_FOCUSED, 0xFF);
 	SetItemState(index, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
@@ -73,7 +74,6 @@ void MyListCtrl::SetSelectedItem(int index)
 
 
 	busy = false;
-
 }
 void MyListCtrl::UnSelectCurrentItem()
 {
@@ -138,11 +138,13 @@ void MyListCtrl::MyInsertColumn(int index, const string& param, Ini& ini)
 	string var_name;
 	database->getRealName(param, var_name);
 
-	int width = DPIX()(5 * 10);
-	if (var_name == "ЧД" || var_name == "FiO2" || var_name == "FetO2" || var_name == "FiCO2" || var_name == "FetCO2" ||
+	int width = m_iWidth - DPIX()(110);
+	width /= (int)show_parameters.size();
+	//int width = DPIX()(5 * 10);
+	/*if (var_name == "ЧД" || var_name == "FiO2" || var_name == "FetO2" || var_name == "FiCO2" || var_name == "FetCO2" ||
 		var_name == "ДМП" || var_name == "ЧСС" || var_name == "RR" || var_name == "SD" ||
 		var_name == "Минутная_вентиляция" || var_name == "Вентиляционный_эквивалент_O2" || var_name == "Вентиляционный_эквивалент_CO2")
-		width = DPIX()(4 * 10);
+		width = DPIX()(4 * 10);*/
 	if (ini.IsExists())
 	{
 		//int wt = 0;
@@ -523,7 +525,32 @@ BOOL MyListCtrl::OnEraseBkgnd(CDC* pDC)
 
 void MyListCtrl::OnPaint()
 {
-	
-	CListCtrl::OnPaint();
+	if(!busy)
+		CListCtrl::OnPaint();
 	
 }
+
+void MyListCtrl::OnSize(UINT nType, int cx, int cy)
+{
+	if (GetSafeHwnd())
+	{
+		int oldWidth = m_iWidth;
+		m_iWidth = cx;
+		m_iHeight = cy;
+
+		if (oldWidth != 0)
+		{
+			busy = true;
+			int countColumnes = 2 + (int)show_parameters.size();
+			for (int i = 2; i < countColumnes; i++)
+			{
+				double colWidth = GetColumnWidth(i);
+				colWidth = colWidth / oldWidth * m_iWidth;
+				SetColumnWidth(i, (int)colWidth);
+			}
+			busy = false;
+		}
+	}
+	CWnd::OnSize(nType, cx, cy);
+}
+

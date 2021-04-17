@@ -47,8 +47,8 @@ void Plot::Resize(int width, int height)
 
 	double ind = height / 400.;
 	TextSizeHeader = static_cast<int>(16 * ind / 2 * 2 * UIZoom);
-	TextSizeLegend = static_cast<int>(12 * ind / 2 * 2 * UIZoom);
-	TextSizeAxis = static_cast<int>(12 * ind / 2 * 2 * UIZoom);
+	TextSizeLegend = static_cast<int>(14 * ind / 2 * 2 * UIZoom);
+	TextSizeAxis = static_cast<int>(13 * ind / 2 * 2 * UIZoom);
 	borderX = static_cast<int>(60 * ind * UIZoom);
 	borderY = static_cast<int>(20 * ind * UIZoom);
 }
@@ -96,15 +96,15 @@ void Plot::SetMarkPosByMouseCoordinate(int type, int pos)
 {
 		if (plot_type != "TimePlot") return;
 		int size = varTime.size();
-		int step = GetStep(size);
+		auto step = GetStepX(size);
 
-		int result = pos / step;
-		double temp = (double)(pos) / (double)(step)-result;
+		double result = pos / step;
+		double temp = (double)(pos) / step-result;
 		if (temp > 0.5)
 			result++;
 		if (result > size) result = size - 1;
 		if (type < static_cast<int>(marks.size()))
-			marks[type] = result;
+			marks[type] = static_cast<int>(result);
 
 		result;
 }
@@ -452,15 +452,16 @@ void Plot::DrawPlot()
 	}
 }
 //-------------------------------------------------------------------------------------------------------
-int Plot::GetStep(int& size)
+double Plot::GetStepX(int size)
 {
+	size--;
 	if (size > plotRect.width) size = plotRect.width;
-	int step = plotRect.width;
+	double step = plotRect.width;
 	if(size>0)
-		step = plotRect.width / size;
+		step = static_cast<double>(plotRect.width) / size;
 
-	if (step > DPIX()(20.))
-		step = DPIX()(20.);
+	//if (step > DPIX()(20.))
+		//step = DPIX()(20.);
 
 	return step;
 }
@@ -522,7 +523,7 @@ void Plot::DrawTimePlot()
 			Variable& var = variables[i].getVar(v);
 			//определяемся с размером прорисовки. Если значений больше, чем ширина графика, то обрезаем до ширины графика
 			int size = variables[i].size(v);
-			int x_step = GetStep(size);
+			auto x_step = GetStepX(size);
 			for (int j = 1; j < size; j++)
 			{
 				double y0 = var[j - 1];
@@ -534,7 +535,8 @@ void Plot::DrawTimePlot()
 				if (y1 > end) y1 = end;
 				if (y1 < start) y1 = start;
 				y1 = (y1 - start)*scale;
-				ugc.DrawLine(plotRect.x + (j - 1)*x_step, static_cast<int>(plotRect.y - y0), plotRect.x + j*x_step, static_cast<int>(plotRect.y - y1), 2);
+				
+				ugc.DrawLine(static_cast<int>(plotRect.x + (j - 1)*x_step), static_cast<int>(plotRect.y - y0), static_cast<int>(plotRect.x + j * x_step), static_cast<int>(plotRect.y - y1), 2);
 			}
 
 			countPlots++;
@@ -545,7 +547,7 @@ void Plot::DrawTimePlot()
 	Draw Marks
 	*/
 	int size = varTime.size();
-	int step = GetStep(size);
+	auto step = GetStepX(size);
 	
 	for (int c = 0; c<3; c++)//!!!!!!!!!!!!!!!!!!!!!
 	{
@@ -557,14 +559,14 @@ void Plot::DrawTimePlot()
 				ugc.SetDrawColor(0, 255, 0);
 			else
 				ugc.SetDrawColor(0, 0, 255);
-			ugc.FillRectangle(plotRect.x + marks[c] * step, plotRect.y - plotRect.height, DPIX()(2), plotRect.height);
+			ugc.FillRectangle(static_cast<int>(plotRect.x + marks[c] * step), plotRect.y - plotRect.height, DPIX()(2), plotRect.height);
 		}
 	}
 	DrawLegend(ugc, legends, plotRect);
 	DrawAxisTime(ugc, plotRect);
 }
 //-------------------------------------------------------------------------------------------------------
-double Plot::GetStep(double range)
+double Plot::GetStepY(double range)
 {
 	auto f = [](int range) 
 	{
@@ -616,7 +618,7 @@ void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, int position, const VitL
 	double range = variable.getRange();
 	double start = variable.getStart();
 	double end = variable.getEnd();
-	double step = GetStep(range);
+	double step = GetStepY(range);
 	
 	ugc.SetTextSize(TextSizeAxis);
 	//x += space;
@@ -646,7 +648,7 @@ void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, int position, const VitL
 	//int w = ugc.GetTextWidth(ugc.ToString(start + range), TextSizeAxis);
 	int h = ugc.GetTextHeight();
 	if (space < 0)
-		x -= (w + h*3/4);//borderX;
+		x -= (w + h*5/6);//borderX;
 	else
 		x += (w);//borderX - ugc.TextSize*1.75;
 
@@ -666,7 +668,7 @@ void Plot::DrawAxisX(UGC& ugc, PlotParameter& variable, int position, const VitL
 	double range = variable.getRange();
 	double start = variable.getStart();
 	double end = variable.getEnd();
-	double step = GetStep(range);
+	double step = GetStepY(range);
 
 	ugc.SetTextSize(TextSizeAxis);
 	int textHeight = static_cast<int>(ugc.GetTextHeight()*1.3);
@@ -702,8 +704,8 @@ void Plot::DrawAxisTime(UGC& ugc, const VitLib::Bounds& plotRect)
 	int text_height = ugc.GetTextWidth("000 m 00 s");//определяем ширину надписи
 
 	int size = varTime.size();
-	int x_step = GetStep(size);//plotRect.width / varTime.size();
-	countPointsInAxis /= x_step;
+	auto x_step = GetStepX(size);//plotRect.width / varTime.size();
+	countPointsInAxis = static_cast<int>(countPointsInAxis /x_step);
 	if (countPointsInAxis <= 0) countPointsInAxis = 1;
 
 	int x = plotRect.x;
@@ -718,9 +720,9 @@ void Plot::DrawAxisTime(UGC& ugc, const VitLib::Bounds& plotRect)
 
 		string time = varTime[i].getStringAlt();
 		ugc.SetDrawColor(0, 0, 0);
-		ugc.DrawVerticalString(time, x + i*x_step - ugc.GetTextHeight() / 2, y + TextSizeAxis);
+		ugc.DrawVerticalString(time, x + static_cast<int>(i*x_step) - ugc.GetTextHeight() / 2, y + TextSizeAxis);
 		ugc.SetDrawColor(155, 155, 155);
-		ugc.DrawDashLine(x + i * x_step, plotRect.y, x + i * x_step, plotRect.y - plotRect.height);
+		ugc.DrawDashLine(static_cast<int>(x + i * x_step), plotRect.y, static_cast<int>(x + i * x_step), plotRect.y - plotRect.height);
 		//ugc.DrawLine(x + i*x_step, y + 2, x + i*x_step, y + 4);
 	}
 	ugc.SetAlign(Align::LEFT);
