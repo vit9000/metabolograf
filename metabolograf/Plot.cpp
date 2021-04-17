@@ -48,7 +48,7 @@ void Plot::Resize(int width, int height)
 	double ind = height / 400.;
 	TextSizeHeader = static_cast<int>(16 * ind / 2 * 2 * UIZoom);
 	TextSizeLegend = static_cast<int>(12 * ind / 2 * 2 * UIZoom);
-	TextSizeAxis = static_cast<int>(10 * ind / 2 * 2 * UIZoom);
+	TextSizeAxis = static_cast<int>(12 * ind / 2 * 2 * UIZoom);
 	borderX = static_cast<int>(60 * ind * UIZoom);
 	borderY = static_cast<int>(20 * ind * UIZoom);
 }
@@ -117,7 +117,7 @@ void Plot::SetMarkPosByTableIndex(Database* database, int type, int pos)
 int Plot::FromTableIndexToPlotIndex(Database* database, int type, int pos)//конвертер индекса строки таблицы в индекс графика
 {
 	int start = database->getHeader().StartTest;
-	if (!experience) start = 0;
+	//if (!experience) start = 0;
 	if (start < 0 || start >= static_cast<int>(database->getCount())) return -1;
 
 	MTime starttime = database->getDatetime(start).getTime();
@@ -161,7 +161,8 @@ int Plot::FromPlotIndexToTableIndex(int type, Database* database)//возвращем инд
 	if (p < 0 || p >= varTime.size())
 		return -1;
 	int start = 0;
-	if (experience) start = database->getHeader().StartTest;
+	//if (experience) 
+	start = database->getHeader().StartTest;
 	MTime& vt = varTime[p];
 	MTime tt = database->getDatetime(start).getTime();
 	MTime time = vt + tt;
@@ -250,7 +251,7 @@ void Plot::Run(Database* database, const vector<string>& str)
 
 
 	//если проводим эксперимент
-	if (experience)
+	//if (experience)
 	{
 		if (database->getHeader().StartTest != 0)
 		{
@@ -358,15 +359,15 @@ void Plot::Run(Database* database, const vector<string>& str)
 	if (var_X.size() == 0)
 	{
 		plot_type = "TimePlot";
-		experience = true;
+		//experience = true;
 	}
 	else
 	{
-		experience = false;
+		//experience = false;
 		plot_type = "TwoParamPlot";
 	}
 
-	if (experience)
+	//if (experience)
 	{
 		SetMarkPosByTableIndex(database, 0, database->getHeader().AeT);
 		SetMarkPosByTableIndex(database, 1, database->getHeader().AT);
@@ -441,12 +442,12 @@ void Plot::DrawPlot()
 
 	if (plot_type == "TimePlot")
 	{
-		experience = true;
+		//experience = true;
 		DrawTimePlot();
 	}
 	else //if(plot_type == "TwoParamPlot")
 	{
-		experience = false;
+		//experience = false;
 		DrawTwoParamPlot();
 	}
 }
@@ -489,6 +490,9 @@ void Plot::DrawTimePlot()
 		Height - borderY / 2 - axisX_height,
 		Width - borderX / 5 - borderX * o - borderX * e,
 		static_cast<int>(Height - borderY*1.5 - legendHeight - headerHeight - axisX_height) };
+
+	plotRect.x += 5;
+	plotRect.width -= 15;
 
 	//рисуем рамку рабочей области графика
 	ugc.SetDrawColor(125, 125, 125);
@@ -591,7 +595,7 @@ double Plot::GetStep(double range)
 
 }
 //-------------------------------------------------------------------------------------------------------
-void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, const int& position, const VitLib::Bounds& plotRect)
+void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, int position, const VitLib::Bounds& plotRect)
 {
 	int x;
 
@@ -615,8 +619,8 @@ void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, const int& position, con
 	double step = GetStep(range);
 	
 	ugc.SetTextSize(TextSizeAxis);
-	x += space;
-	int w = ugc.GetTextWidth(ugc.ToString(start + range), TextSizeAxis);
+	//x += space;
+	int w = ugc.GetTextWidth(ugc.ToStringAlt(end), TextSizeAxis);
 	ugc.SetDrawColor(Color(0, 0, 0));
 	for (double number = start; number <= end; number += step)
 	{
@@ -642,7 +646,7 @@ void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, const int& position, con
 	//int w = ugc.GetTextWidth(ugc.ToString(start + range), TextSizeAxis);
 	int h = ugc.GetTextHeight();
 	if (space < 0)
-		x -= (w + h);//borderX;
+		x -= (w + h*3/4);//borderX;
 	else
 		x += (w);//borderX - ugc.TextSize*1.75;
 
@@ -652,7 +656,7 @@ void Plot::DrawAxisY(UGC& ugc, PlotParameter& variable, const int& position, con
 	ugc.SetAlign(Align::LEFT);
 }
 //-------------------------------------------------------------------------------------------------------
-void Plot::DrawAxisX(UGC& ugc, PlotParameter& variable, const int& position, const VitLib::Bounds& plotRect)
+void Plot::DrawAxisX(UGC& ugc, PlotParameter& variable, int position, const VitLib::Bounds& plotRect)
 {
 	//int step = ugc.GetTextWidth("12345", TextSizeAxis);
 	//int countPointsInAxis = plotRect.width / step;
@@ -735,7 +739,7 @@ void Plot::DrawLegend(UGC& ugc, vector<string> var_Y, const VitLib::Bounds& rect
 		int yi = (var_Y.size() - i) * textheight;
 		ugc.DrawLine(x, y - yi, x + borderX, y - yi, 3);
 		ugc.SetDrawColor(50, 50, 50);
-		yi += ugc.GetTextHeight() * 3 / 4;
+		yi += textheight * 3 / 4;
 		string temp = var_Y[i];
 		for (char& c : temp)
 			if (c == '_') c = ' ';
@@ -743,7 +747,7 @@ void Plot::DrawLegend(UGC& ugc, vector<string> var_Y, const VitLib::Bounds& rect
 	}
 	if (experience && plot_type == "TimePlot")
 	{
-		int yi = static_cast<int>(var_Y.size()+2) * textheight;
+		int yi = static_cast<int>(var_Y.size()+1) * textheight + 12;
 		vector<string> v{ "ПАО", "ПАНО", "МПК" };
 		vector<Color> c{ Color(255,0,0), Color(0,255,0), Color(0,0,255) };
 		int width = rect.width;
@@ -752,9 +756,9 @@ void Plot::DrawLegend(UGC& ugc, vector<string> var_Y, const VitLib::Bounds& rect
 		{
 			int xi = x + i*width;
 			ugc.SetDrawColor(0,0,0);
-			ugc.DrawString(v[i], xi+ textheight, y - yi);
+			ugc.DrawString(v[i], xi + textheight, y - yi);
 			ugc.SetDrawColor(c[i]);
-			ugc.FillRectangle(xi, y - yi + textheight/4, textheight/2, textheight/2);
+			ugc.FillRectangle(xi, y - yi, textheight/2, textheight/2);
 		}
 	}
 }
@@ -789,6 +793,9 @@ void Plot::DrawTwoParamPlot()//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		Height - borderY / 2 - axisX_height,
 		Width - borderX / 5 - borderX * o - borderX * e,
 		static_cast<int>(Height - borderY*1.5 - legendHeight - headerHeight - axisX_height) };
+
+	plotRect.x += 5;
+	plotRect.width -= 15;
 
 	//рисуем рамку рабочей области графика
 	ugc.SetDrawColor(125, 125, 125);
