@@ -54,6 +54,9 @@ private:
 	vector<PlotParameter> var_X;
 	string plot_code;
 
+	int m_iStartExperience;
+	int m_iEndExperience;
+
 	
 	
 private:// удаленные конструктор копирования и оператор присваивания
@@ -92,7 +95,7 @@ public:
 	void SetMarkPosByTime(int type, const MTime& time);
 	void SetMarkPosByMouseCoordinate(int type, int pos);
 	void SetMarkPosByTableIndex(Database* database, int type, int pos);
-	int FromTableIndexToPlotIndex(Database* database, int type, int pos);//конвертер индекса строки таблицы в индекс графика
+	int FromTableIndexToPlotIndex(Database* database, int pos);//конвертер индекса строки таблицы в индекс графика
 	int FromPlotIndexToTableIndex(int type, Database* database);//возвращем индекс строки в таблице по индексу графика
 	int GetScreenDPI();
 	void Run(Database* database, const string& code);

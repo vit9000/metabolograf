@@ -14,12 +14,12 @@ Plot::Plot(int width, int height)
 	Resize(width, height);
 
 
-	ColorPalette.push_back(Color(0, 128, 0));
-	ColorPalette.push_back(Color(255, 127, 0));
 	ColorPalette.push_back(Color(148, 0, 211));
+	ColorPalette.push_back(Color(255, 127, 0));
 	ColorPalette.push_back(Color(0, 0, 128));
 	ColorPalette.push_back(Color(205, 205, 0));
 	ColorPalette.push_back(Color(128, 0, 0));
+	ColorPalette.push_back(Color(0, 128, 0));
 
 
 	bgColor = Color(255, 255, 255);
@@ -27,6 +27,8 @@ Plot::Plot(int width, int height)
 //---------------------------------------------------------------------
 void Plot::Default()
 {
+	m_iStartExperience = -1;
+	m_iEndExperience = -1;
 	plot_type.clear();
 	header.clear();
 	meanTime = "1 сек";
@@ -111,28 +113,16 @@ void Plot::SetMarkPosByMouseCoordinate(int type, int pos)
 //-------------------------------------------------------------------------------------------------------
 void Plot::SetMarkPosByTableIndex(Database* database, int type, int pos)
 {
-	marks[type] = FromTableIndexToPlotIndex(database, type, pos);
+	marks[type] = FromTableIndexToPlotIndex(database, pos);
 }
 //-------------------------------------------------------------------------------------------------------
-int Plot::FromTableIndexToPlotIndex(Database* database, int type, int pos)//конвертер индекса строки таблицы в индекс графика
+int Plot::FromTableIndexToPlotIndex(Database* database, int pos)//конвертер индекса строки таблицы в индекс графика
 {
-	int start = database->getHeader().StartTest;
-	//if (!experience) start = 0;
-	if (start < 0 || start >= static_cast<int>(database->getCount())) return -1;
-
-	MTime starttime = database->getDatetime(start).getTime();
-
-	int value;
-	if (type == 0) value = database->getHeader().AeT;
-	else if (type == 1) value = database->getHeader().AT;
-	else /*if(type==2)*/ value = database->getHeader().MCO;
-
-	if (value < 0 || value >= static_cast<int>(database->getCount()))
+	if (pos < 0 || pos >= static_cast<int>(database->getCount()))
 		return -1;
 
-	MTime time = database->getDatetime(value).getTime();
-	time = time - starttime;
-
+	MTime time = database->getDatetime(pos).getTime() - database->getDatetime(0).getTime();
+	
 	int result = -1;
 	//------------
 	if (time >= varTime[0])
@@ -160,16 +150,12 @@ int Plot::FromPlotIndexToTableIndex(int type, Database* database)//возвращем инд
 	int p = marks[type];
 	if (p < 0 || p >= varTime.size())
 		return -1;
-	int start = 0;
-	//if (experience) 
-	start = database->getHeader().StartTest;
-	MTime& vt = varTime[p];
-	MTime tt = database->getDatetime(start).getTime();
-	MTime time = vt + tt;
-
+	
+	MTime& time = varTime[p];
+	
 	for (int i = 0; i < static_cast<int>(database->getCount()); i++)
 	{
-		MTime& temptime = database->getDatetime(i).getTime();
+		MTime temptime = database->getDatetime(i).getTime() - database->getDatetime(0).getTime();
 		if (temptime > time)
 		{
 			return i - 1;
@@ -256,16 +242,16 @@ void Plot::Run(Database* database, const vector<string>& str)
 		if (database->getHeader().StartTest != 0)
 		{
 			zerotime_index = database->getHeader().StartTest;//устанавливаем нулевую отметку на графиках
-			for (int i = 0; i < database->getHeader().StartTest; i++)
-				checked[i] = false;// снимаем галки до начала опыта
+			//for (int i = 0; i < database->getHeader().StartTest; i++)
+				//checked[i] = false;// снимаем галки до начала опыта
 		}
 		else
 			experience = false;
 
 		if (database->getHeader().EndTest != 0)
 		{
-			for (int i = database->getHeader().EndTest + 1; i < static_cast<int>(database->getCount()); i++)
-				checked[i] = false;//снимаем галки после конца опыта
+			//for (int i = database->getHeader().EndTest + 1; i < static_cast<int>(database->getCount()); i++)
+				//checked[i] = false;//снимаем галки после конца опыта
 		}
 
 	}
@@ -372,6 +358,8 @@ void Plot::Run(Database* database, const vector<string>& str)
 		SetMarkPosByTableIndex(database, 0, database->getHeader().AeT);
 		SetMarkPosByTableIndex(database, 1, database->getHeader().AT);
 		SetMarkPosByTableIndex(database, 2, database->getHeader().MCO);
+		m_iStartExperience = FromTableIndexToPlotIndex(database, database->getHeader().StartTest);
+		m_iEndExperience = FromTableIndexToPlotIndex(database, database->getHeader().EndTest);
 	}
 	CheckData();
 }
@@ -460,8 +448,8 @@ double Plot::GetStepX(int size)
 	if(size>0)
 		step = static_cast<double>(plotRect.width) / size;
 
-	//if (step > DPIX()(20.))
-		//step = DPIX()(20.);
+	if (step > DPIX()(20.))
+		step = DPIX()(20.);
 
 	return step;
 }
@@ -479,25 +467,31 @@ void Plot::DrawTimePlot()
 	//определяемся с полями графика
 	int e = even(variables.size()) - 1;
 	int o = odd(variables.size());
-	int legendHeight = 0;//variables.size() * 16;
-	int legendItemHeight = ugc.GetTextHeight(TextSizeLegend + 1);
-	for (size_t i = 0; i < variables.size(); i++)
-		legendHeight += variables[i].count() * (legendItemHeight);
-	if (experience && plot_type == "TimePlot") legendHeight += legendItemHeight;
-
-	int axisX_height = ugc.GetTextWidth("00:00:00", TextSizeAxis);
+	
+	int axisX_height = ugc.GetTextWidth("00:00", TextSizeAxis);
 
 	plotRect = { borderX / 10 + borderX * o,
 		Height - borderY / 2 - axisX_height,
 		Width - borderX / 5 - borderX * o - borderX * e,
-		static_cast<int>(Height - borderY*1.5 - legendHeight - headerHeight - axisX_height) };
+		static_cast<int>(Height - borderY*1.5 - headerHeight - axisX_height) };
 
 	plotRect.x += 5;
 	plotRect.width -= 15;
 
+
+	int size = varTime.size();
+	auto x_step = GetStepX(size);
 	//рисуем рамку рабочей области графика
 	ugc.SetDrawColor(125, 125, 125);
 	ugc.DrawRectangle(plotRect.x - 2, plotRect.y - plotRect.height - 2, plotRect.width + 4, plotRect.height + 4);
+	if (m_iStartExperience >= 0)
+	{
+		ugc.SetDrawColor(235, 235, 235);
+		int x = static_cast<int>(m_iStartExperience * x_step);
+		
+		int width = (m_iEndExperience >= 0 ? static_cast<int>(m_iEndExperience * x_step) : plotRect.width);
+		ugc.FillRectangle(plotRect.x + x , plotRect.y - plotRect.height, width - x, plotRect.height);
+	}
 
 	ugc.SetAlign(Align::RIGHT);
 	int countPlots = 0;
@@ -522,8 +516,7 @@ void Plot::DrawTimePlot()
 			// рисуем кривые
 			Variable& var = variables[i].getVar(v);
 			//определяемся с размером прорисовки. Если значений больше, чем ширина графика, то обрезаем до ширины графика
-			int size = variables[i].size(v);
-			auto x_step = GetStepX(size);
+			
 			for (int j = 1; j < size; j++)
 			{
 				double y0 = var[j - 1];
@@ -546,9 +539,8 @@ void Plot::DrawTimePlot()
 	/*
 	Draw Marks
 	*/
-	int size = varTime.size();
-	auto step = GetStepX(size);
-	
+	vector<string> v{ "ПАО", "ПАНО", "МПК" };
+	ugc.SetBold(true);
 	for (int c = 0; c<3; c++)//!!!!!!!!!!!!!!!!!!!!!
 	{
 		if (marks[c] >= 0)
@@ -556,14 +548,20 @@ void Plot::DrawTimePlot()
 			if (c == 0)
 				ugc.SetDrawColor(255, 0, 0);
 			else if (c == 1)
-				ugc.SetDrawColor(0, 255, 0);
+				ugc.SetDrawColor(0, 155, 0);
 			else
 				ugc.SetDrawColor(0, 0, 255);
-			ugc.FillRectangle(static_cast<int>(plotRect.x + marks[c] * step), plotRect.y - plotRect.height, DPIX()(2), plotRect.height);
+			int x = static_cast<int>(plotRect.x + marks[c] * x_step);
+			int y = plotRect.y - plotRect.height;
+			ugc.FillRectangle(x, y, DPIX()(2), plotRect.height);
+			if (experience)
+				ugc.DrawString(v[c], x + 2, plotRect.y - DPIX()(18));
 		}
 	}
-	DrawLegend(ugc, legends, plotRect);
+	ugc.SetBold(false);
+	
 	DrawAxisTime(ugc, plotRect);
+	DrawLegend(ugc, legends, plotRect);
 }
 //-------------------------------------------------------------------------------------------------------
 double Plot::GetStepY(double range)
@@ -731,38 +729,54 @@ void Plot::DrawAxisTime(UGC& ugc, const VitLib::Bounds& plotRect)
 void Plot::DrawLegend(UGC& ugc, vector<string> var_Y, const VitLib::Bounds& rect)
 {
 	int y = rect.y - rect.height;
-	int x = rect.x;
+	int x = rect.x + 5;
 	ugc.SetAlign(Align::LEFT);
 	ugc.SetTextSize(TextSizeLegend);
 	int textheight = ugc.GetTextHeight(TextSizeLegend + 1);
-	for (int i = 0; i < static_cast<int>(var_Y.size()); i++)
+
+	ugc.SetDrawColor(155, 255, 255, 255);
+	int legendWidth = 0;
+	for (auto& varName : var_Y)
 	{
-		ugc.SetDrawColor(ColorPalette[i]);
-		int yi = (var_Y.size() - i) * textheight;
-		ugc.DrawLine(x, y - yi, x + borderX, y - yi, 3);
-		ugc.SetDrawColor(50, 50, 50);
-		yi += textheight * 3 / 4;
-		string temp = var_Y[i];
-		for (char& c : temp)
-			if (c == '_') c = ' ';
-		ugc.DrawString(temp, x + static_cast<int>(borderX*1.5), y - yi);
+		legendWidth = max(legendWidth, ugc.GetTextWidth(varName));
+
 	}
-	if (experience && plot_type == "TimePlot")
+	ugc.FillRectangle(rect.x, y, textheight / 2 + legendWidth + 8, static_cast<int>(var_Y.size() * textheight));
+
+
+	/*if (experience && plot_type == "TimePlot")
 	{
-		int yi = static_cast<int>(var_Y.size()+1) * textheight + 12;
+		int yi = static_cast<int>(var_Y.size() + 1) * textheight + 12;
 		vector<string> v{ "ПАО", "ПАНО", "МПК" };
 		vector<Color> c{ Color(255,0,0), Color(0,255,0), Color(0,0,255) };
 		int width = rect.width;
 		width /= 3;
 		for (int i = 0; i < 3; i++)
 		{
-			int xi = x + i*width;
-			ugc.SetDrawColor(0,0,0);
+			int xi = x + i * width;
+			ugc.SetDrawColor(0, 0, 0);
 			ugc.DrawString(v[i], xi + textheight, y - yi);
 			ugc.SetDrawColor(c[i]);
-			ugc.FillRectangle(xi, y - yi, textheight/2, textheight/2);
+			ugc.FillRectangle(xi, y - yi, textheight / 2, textheight / 2);
 		}
+	}*/
+
+	
+
+
+
+	for (int i = 0; i < static_cast<int>(var_Y.size()); i++)
+	{
+		ugc.SetDrawColor(ColorPalette[i]);
+		int yi = i * textheight;
+		ugc.FillRectangle(x, y + yi + 4, textheight/2, textheight/2);
+		ugc.SetDrawColor(50, 50, 50);
+		string temp = var_Y[i];
+		for (char& c : temp)
+			if (c == '_') c = ' ';
+		ugc.DrawString(temp, x + textheight/2 + 3, y + yi);
 	}
+	
 }
 //-------------------------------------------------------------------------------------------------------
 void Plot::DrawTwoParamPlot()//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -776,15 +790,6 @@ void Plot::DrawTwoParamPlot()//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	int headerHeight = DrawHeader(ugc);
 	//определяемся с полями графика
 
-	int legendHeight = 0;//variables.size() * 16;
-	int legendItemHeight = ugc.GetTextHeight(TextSizeLegend + 1);
-	if (var_Y.size() > 1)
-	{
-		for (size_t i = 0; i < var_Y.size(); i++)
-			legendHeight += var_Y[i].count() * (legendItemHeight);
-	}
-
-
 	int axisX_height = ugc.GetTextHeight(TextSizeAxis) + ugc.GetTextHeight(TextSizeLegend);
 	axisX_height *= var_X.size();
 
@@ -794,7 +799,7 @@ void Plot::DrawTwoParamPlot()//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	plotRect = { borderX / 10 + borderX,
 		Height - borderY / 2 - axisX_height,
 		Width - borderX / 5 - borderX * o - borderX * e,
-		static_cast<int>(Height - borderY*1.5 - legendHeight - headerHeight - axisX_height) };
+		static_cast<int>(Height - borderY*1.5 - headerHeight - axisX_height) };
 
 	plotRect.x += 5;
 	plotRect.width -= 15;
@@ -871,14 +876,15 @@ void Plot::DrawTwoParamPlot()//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		}
 	}
 	ugc.DrawBitmap(&temp_bitmap, plotRect.x, plotRect.y - plotRect.height, plotRect.width, plotRect.height);
-	if(legends.size() > 1)
-		DrawLegend(ugc, legends, plotRect);
+	
 
 	for (int i = 0; i < (int)var_Y.size(); i++)
 		DrawAxisY(ugc, var_Y[i], i, plotRect);
 	//for (size_t i = 0; i<var_X.size(); i++)
 	DrawAxisX(ugc, var_X[0], 0, plotRect);
 
+	if (legends.size() > 1)
+		DrawLegend(ugc, legends, plotRect);
 }
 //-------------------------------------------------------------------------------------------------------
 

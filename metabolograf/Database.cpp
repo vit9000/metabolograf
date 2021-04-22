@@ -71,9 +71,10 @@ Variable_<MTime> Database::GetTimeFromZero(int zerotime)
 	for (size_t i = 0; i < size; i++)
 	{
 
-		temp[i] = datetime[i].getTime() - datetime[zerotime].getTime();
+		temp[i] = datetime[i].getTime() - datetime[0].getTime();//datetime[zerotime].getTime();
 	}
 	return temp;
+	
 }
 //---------------------------------------------------------------------
 void Database::DefaultVarNames()
@@ -562,10 +563,10 @@ void Database::CalculateParameters(int i)
 	variables["Вентиляционный_эквивалент_CO2"][i] = Vexp / variables["Выделение_CO2"][i];
 
 	if (variables.count("ЧСС"))
-		variables["O2_ЧСС"][i] = variables["Минутное_потребление_O2"][i] / variables["ЧСС"][i];
+		variables["O2_ЧСС"][i] = variables["Минутное_потребление_O2"][i] * 1000 / variables["ЧСС"][i];
 	
 	// РАСЧЕТ ДЫХАТЕЛЬНОГО КОЭФФИЦИЕНТА
-	variables["Дыхательный_коэффициент"][i] = variables["Минутное_выделение_CO2"][i] * 1000 / variables["Минутное_потребление_O2"][i];
+	variables["Дыхательный_коэффициент"][i] = variables["Минутное_выделение_CO2"][i] / variables["Минутное_потребление_O2"][i];
 	double& BrK_Ptr = variables["Дыхательный_коэффициент"][i];
 	double tempMOP = variables["Минутное_потребление_O2"][i];
 	double tempMCOP = variables["Минутное_выделение_CO2"][i];

@@ -127,7 +127,9 @@ END_MESSAGE_MAP()
 
 
 void CChildView::OnShowWindow(BOOL bShow, UINT nStatus)
-{}
+{
+	
+}
 //----------------------------------------------------------------------------------------------
 void CChildView::Init(CMFCRibbonBar* _ribbonbar, CMFCRibbonStatusBar* _statusbar)
 {
@@ -218,7 +220,7 @@ int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	main_list.SetFocus();
 	main_list.ModifyStyle(LVS_LIST, LVS_REPORT, 0); //- ставим режим таблицы
 	main_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_CHECKBOXES);
-	main_list.Init(&main_plot);
+	
 
 	curValues.Create(NULL, NULL, WS_VISIBLE | WS_CHILD, CRect(0, 0, 100, 100), this, IDC_CURRVALUES);
 	curValues.Init();
@@ -303,6 +305,8 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 {
 
 	CWnd::OnSize(nType, cx, cy);
+	if (cx == 0)
+		return;
 	CRect rect;
 	GetWindowRect(&rect);
 	ScreenToClient(&rect);
@@ -364,6 +368,7 @@ void CChildView::OnSize(UINT nType, int cx, int cy)
 
 	curValues.RedrawWindow();
 	main_plot.RedrawWindow();
+	main_list.Init(&main_plot);
 	main_list.RedrawWindow();
 	timerWindow.RedrawWindow();
 

@@ -19,6 +19,8 @@ MyListCtrl::MyListCtrl()
 //-------------------------------------------------------------------------------------------
 void MyListCtrl::Init(IExperienceStatusTracker* ExperienceStatusTracker)
 {
+	if (experienceStatusTracker)
+		return;
 	database = Database::getInstance();
 	experienceStatusTracker = ExperienceStatusTracker;
 	LoadConfig();
@@ -99,8 +101,6 @@ vector<int> MyListCtrl::GetSelectedItems() const
 			v.push_back(nItem);
 		}
 	}
-	
-
 	return v;
 }
 
